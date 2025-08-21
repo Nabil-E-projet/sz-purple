@@ -26,7 +26,8 @@ class GPTVisionService:
             logger.warning("Clé API OpenAI non fournie. L'analyse GPT Vision sera désactivée.")
         
         # Le texte de la convention n'est plus chargé ici, il sera passé dynamiquement.
-        self.smic_data_for_prompt = SMIC_DATA
+        # On réduit la taille du tableau SMIC pour limiter les tokens envoyés
+        self.smic_data_for_prompt = self._prepare_smic_excerpt(SMIC_DATA)
         self.api_client = OpenAIVisionClient(self.api_key) if self.api_key else None
 
     def analyze_multiple_images(self, base64_images: List[str], additional_data: Dict = None) -> Dict[str, Any]:
@@ -61,6 +62,7 @@ class GPTVisionService:
 
         try:
             # Appel à l'API Vision
+            # Laisser le client choisir le modèle par défaut via settings (gpt-5-mini)
             return self.api_client.call_vision_api(prompt, base64_images)
         except Exception as e:
             logger.error(f"Erreur lors de l'analyse des images: {str(e)}", exc_info=True)
@@ -154,6 +156,14 @@ class GPTVisionService:
         contractual_salary_context = additional_data.get('contractual_salary', 'NON FOURNI')
         # On récupère dynamiquement le texte de la convention depuis les données additionnelles
         convention_collective_text = additional_data.get('convention_collective_text', 'Aucune convention collective spécifiée.')
+        # On tronque le texte de la convention pour éviter les prompts trop volumineux
+        try:
+            from django.conf import settings as dj_settings
+            max_chars = getattr(dj_settings, 'CONVENTION_TEXT_MAX_CHARS', 3000)
+        except Exception:
+            max_chars = 3000
+        if convention_collective_text and len(convention_collective_text) > max_chars:
+            convention_collective_text = convention_collective_text[:max_chars] + "\n[...]"
 
         return f"""
         Tu es un expert en analyse de fiches de paie françaises. Tu vas recevoir plusieurs images représentant les pages consécutives d'UNE SEULE fiche de paie. Analyse l'ensemble des pages.
@@ -248,3 +258,15 @@ class GPTVisionService:
         - Heures supplémentaires: si des HS sont mentionnées mais non payées ou sous-payées, estime le dû.
         - Si aucune anomalie conduisant à un montant dû, renvoyer "montant_potentiel_du_salarie": 0 (ou null) et une explication comme "Aucun montant clairement dû détecté".
         """
+
+    def _prepare_smic_excerpt(self, smic_csv: str, last_n: int = 18) -> str:
+        """Retourne l'en-tête + les N dernières lignes du tableau SMIC pour limiter la taille du prompt."""
+        if not smic_csv:
+            return smic_csv
+        lines = [ln for ln in smic_csv.splitlines() if ln.strip()]
+        if not lines:
+            return smic_csv
+        header = lines[0]
+        data = lines[1:]
+        tail = data[-last_n:] if len(data) > last_n else data
+        return "\n".join([header] + tail)

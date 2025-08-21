@@ -22,7 +22,7 @@ def pil_image_to_base64(image: Image.Image, format="JPEG") -> str:
     buffered = io.BytesIO()
     if image.mode == 'RGBA' or image.mode == 'P':  # Check for RGBA or P (paletted) mode
         image = image.convert('RGB')  # Convert to RGB to ensure JPEG compatibility
-    image.save(buffered, format=format, quality=85)  # Specify quality for JPEGs
+    image.save(buffered, format=format, quality=70)
     return base64.b64encode(buffered.getvalue()).decode('utf-8')
 
 def image_file_to_base64(image_path: str) -> str:

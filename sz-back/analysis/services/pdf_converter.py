@@ -9,7 +9,7 @@ from PIL import Image
 
 logger = logging.getLogger('salariz.gpt_vision')
 
-def convert_pdf_to_images(pdf_path: str, max_pages: Optional[int] = None, dpi: int = 200) -> List[Image.Image]:
+def convert_pdf_to_images(pdf_path: str, max_pages: Optional[int] = None, dpi: int = 150) -> List[Image.Image]:
     """
     Convertit un PDF en liste d'images PIL.
     

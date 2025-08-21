@@ -40,13 +40,17 @@ SMIC_DATA = load_text_file('smic.csv')
 
 # Tarifs par modèle (USD par 1000 tokens) avec les prix Batch API
 MODEL_PRICING = {
-    # Prix Batch API (environ 50% moins cher)
-    "gpt-4.1":      {"prompt": 1.00,  "completion": 4.00},  # au lieu de 2.00/8.00
-    "gpt-4.1-mini": {"prompt": 0.20,  "completion": 0.80},  # au lieu de 0.40/1.60
-    "gpt-4.1-nano": {"prompt": 0.05,  "completion": 0.20},  # au lieu de 0.10/0.40
-    "gpt-4o":       {"prompt": 1.25,  "completion": 5.00},  # au lieu de 2.50/10.00
-    "o1-mini":      {"prompt": 0.55,  "completion": 2.20},  # au lieu de 1.10/4.40
-    "o3-mini":      {"prompt": 0.55,  "completion": 2.20},  # au lieu de 1.10/4.40
-    "o4-mini":      {"prompt": 0.55,  "completion": 2.20},  # au lieu de 1.10/4.40
-    "gpt-4o-mini":  {"prompt": 0.075, "completion": 0.30},  # au lieu de 0.15/0.60
+    # GPT‑5 family
+    "gpt-5":       {"prompt": 1.25,  "completion": 10.00},
+    "gpt-5-mini":  {"prompt": 0.25,  "completion": 2.00},
+    "gpt-5-nano":  {"prompt": 0.05,  "completion": 0.40},
+    # Legacy/alternatives (conservés si besoin)
+    "gpt-4.1":      {"prompt": 1.00,  "completion": 4.00},
+    "gpt-4.1-mini": {"prompt": 0.20,  "completion": 0.80},
+    "gpt-4.1-nano": {"prompt": 0.05,  "completion": 0.20},
+    "gpt-4o":       {"prompt": 1.25,  "completion": 5.00},
+    "gpt-4o-mini":  {"prompt": 0.075, "completion": 0.30},
+    "o1-mini":      {"prompt": 0.55,  "completion": 2.20},
+    "o3-mini":      {"prompt": 0.55,  "completion": 2.20},
+    "o4-mini":      {"prompt": 0.55,  "completion": 2.20},
 }

@@ -27,6 +27,7 @@ sz-back/logs/
 .cache/
 sz-front/.cache/
 sz-front/node_modules/.cache/
+media/
 
 # IDEs
 .vscode/

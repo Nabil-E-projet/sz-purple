@@ -20,9 +20,9 @@ class OpenAIVisionClient:
     def call_vision_api(self, 
                         prompt: str, 
                         base64_images: List[str], 
-                        model: str = "gpt-4.1",
-                        temperature: float = 0.1, 
-                        max_tokens: int = 4090,
+                        model: str = None,
+                        temperature: float = None, 
+                        max_tokens: int = None,
                         timeout: int = 180) -> Dict[str, Any]:
         """
         Appelle l'API Vision d'OpenAI pour analyser des images.
@@ -51,26 +51,61 @@ class OpenAIVisionClient:
                 "image_url": {"url": f"data:image/jpeg;base64,{b64_img}", "detail": "high"}
             })
 
-        # Configuration de la requête
+        # Valeurs par défaut depuis les settings (permet override par argument)
+        try:
+            from django.conf import settings
+            default_model = getattr(settings, 'OPENAI_VISION_MODEL', 'gpt-5-mini')
+            default_temperature = getattr(settings, 'OPENAI_TEMPERATURE', 0.1)
+            default_max_tokens = getattr(settings, 'OPENAI_MAX_OUTPUT_TOKENS', 8192)  # Plus de tokens pour GPT-5
+        except Exception:
+            default_model, default_temperature, default_max_tokens = 'gpt-5-mini', 0.1, 8192
+
+        model = model or default_model
+        temperature = default_temperature if temperature is None else temperature
+        max_tokens = default_max_tokens if max_tokens is None else max_tokens
+
+        # Configuration de la requête (support GPT-4 et GPT-5)
         payload = {
             "model": model,
             "messages": [{"role": "user", "content": content_list}],
             "response_format": {"type": "json_object"},
-            "max_tokens": max_tokens,
             "temperature": temperature
         }
+        
+        # GPT-5 utilise 'max_completion_tokens', GPT-4 utilise 'max_tokens'
+        if model.startswith('gpt-5'):
+            payload["max_completion_tokens"] = max_tokens
+            # GPT-5 ne supporte que temperature=1 par défaut
+            if temperature != 1.0:
+                logger.warning(f"GPT-5 ne supporte que temperature=1, ignoré temperature={temperature}")
+                payload.pop("temperature", None)
+        else:
+            payload["max_tokens"] = max_tokens
+        
+        # DEBUG: Log de la configuration de la requête
+        logger.info(f"Configuration requête API:")
+        logger.info(f"  Modèle: {model}")
+        logger.info(f"  Max tokens: {max_tokens}")
+        logger.info(f"  Temperature: {temperature}")
+        logger.info(f"  Nombre d'images: {len(base64_images)}")
+        logger.info(f"  Taille du prompt: {len(prompt)} caractères")
 
         try:
             logger.info(f"Envoi de la requête à l'API OpenAI (modèle: {model})...")
-            response = requests.post(
-                "https://api.openai.com/v1/chat/completions",
-                headers={
-                    "Content-Type": "application/json",
-                    "Authorization": f"Bearer {self.api_key}"
-                },
-                json=payload,
-                timeout=timeout
-            )
+            
+            # GPT-5 utilise l'API responses, GPT-4 utilise chat/completions
+            if model.startswith('gpt-5'):
+                return self._call_responses_api(prompt, base64_images, model, max_tokens, timeout)
+            else:
+                response = requests.post(
+                    "https://api.openai.com/v1/chat/completions",
+                    headers={
+                        "Content-Type": "application/json",
+                        "Authorization": f"Bearer {self.api_key}"
+                    },
+                    json=payload,
+                    timeout=timeout
+                )
             
             # Gestion des erreurs HTTP
             response.raise_for_status()
@@ -139,12 +174,129 @@ class OpenAIVisionClient:
             if req_err.response is not None:
                 try:
                     error_details = req_err.response.json()
+                    logger.error(f"Détails de l'erreur API: {json.dumps(error_details, indent=2)}")
                 except json.JSONDecodeError:
                     error_details = req_err.response.text
+                    logger.error(f"Réponse d'erreur brute: {error_details}")
             raise
         except Exception as e:
             logger.error(f"Erreur inattendue: {str(e)}", exc_info=True)
             raise
+
+    def _call_responses_api(self, prompt: str, base64_images: List[str], model: str, max_tokens: int, timeout: int) -> Dict[str, Any]:
+        """
+        Appelle l'API Responses d'OpenAI pour GPT-5 avec support des images.
+        """
+        # Construction du contenu avec images pour l'API responses
+        content_list = []
+        
+        # Ajouter le texte en premier
+        content_list.append({
+            "type": "message",
+            "role": "user",
+            "content": [{"type": "input_text", "text": prompt}]
+        })
+        
+        # Ajouter les images
+        for b64_img in base64_images:
+            content_list.append({
+                "type": "message",
+                "role": "user",
+                "content": [{
+                    "type": "input_image",
+                    "image_url": f"data:image/jpeg;base64,{b64_img}"
+                }]
+            })
+        
+        # Format pour l'API responses
+        payload = {
+            "model": model,
+            "input": content_list,  # 'input' au lieu de 'messages'
+            "max_output_tokens": max_tokens,  # API Responses utilise max_output_tokens
+            "reasoning": {"effort": "minimal"},  # Pour plus de rapidité
+            "text": {
+                "verbosity": "low",
+                "format": {"type": "json_object"}
+            },
+            "store": False
+        }
+        
+        logger.info(f"Utilisation de l'API Responses pour GPT-5")
+        
+        response = requests.post(
+            "https://api.openai.com/v1/responses",
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {self.api_key}"
+            },
+            json=payload,
+            timeout=timeout
+        )
+        
+        response.raise_for_status()
+        logger.info(f"Réponse reçue de l'API Responses (status {response.status_code}).")
+        result = response.json()
+        
+        # Adapter la réponse au format attendu (supporte différents formats de Responses)
+        content_str = None
+        usage = result.get("usage", {})
+        # Nouveau format: tableau 'output' avec un bloc 'message' contenant 'output_text'
+        output_blocks = result.get("output")
+        if isinstance(output_blocks, list):
+            for block in output_blocks:
+                if block.get("type") == "message":
+                    for piece in block.get("content", []):
+                        if piece.get("type") == "output_text":
+                            content_str = (piece.get("text") or "").strip()
+                            break
+                if content_str:
+                    break
+        # Ancien format: champ top-level 'output_text'
+        if not content_str and "output_text" in result:
+            content_str = (result["output_text"] or "").strip()
+
+        # Extraction des métriques d'usage selon les clés présentes
+        prompt_tokens = usage.get("input_tokens", usage.get("prompt_tokens", 0))
+        completion_tokens = usage.get("output_tokens", usage.get("completion_tokens", 0))
+
+        if content_str:
+            # Calcul du coût estimé
+            estimated_cost = self._calculate_cost(model, prompt_tokens, completion_tokens)
+            # Parser la réponse JSON
+            try:
+                json_result = json.loads(content_str)
+                logger.info("Analyse JSON extraite avec succès via API Responses.")
+                logger.info(f"=== DEBUG REPONSE GPT-5 BRUTE ===")
+                logger.info(f"Réponse JSON parsée: {json.dumps(json_result, indent=2, ensure_ascii=False)}")
+                anomalies = json_result.get('anomalies_potentielles_observees', [])
+                logger.info(f"Anomalies détectées par GPT-5: {len(anomalies)}")
+                for i, anomalie in enumerate(anomalies):
+                    logger.info(f"  Anomalie GPT-5 {i+1}: {anomalie}")
+                logger.info(f"Note conformité GPT-5: {json_result.get('note_conformite_legale', 'ABSENTE')}")
+                logger.info(f"Note globale GPT-5: {json_result.get('note_globale', 'ABSENTE')}")
+                logger.info(f"=== FIN DEBUG GPT-5 ===")
+                return {
+                    "gpt_analysis": json_result,
+                    "raw": content_str,
+                    "usage": usage,
+                    "estimated_cost": estimated_cost
+                }
+            except json.JSONDecodeError as json_err:
+                logger.error(f"Réponse GPT-5 non JSON: {content_str[:200]}... Erreur: {json_err}")
+                estimated_cost = self._calculate_cost(model, prompt_tokens, completion_tokens)
+                return {
+                    "error": "Réponse GPT-5 non au format JSON valide",
+                    "raw_analysis": content_str,
+                    "details": str(json_err),
+                    "usage": usage,
+                    "estimated_cost": estimated_cost
+                }
+
+        logger.error(f"Format de réponse inattendu de l'API Responses: {result}")
+        return {
+            "error": "Format de réponse API Responses inattendu",
+            "details": result
+        }
 
     def _calculate_cost(self, model: str, prompt_tokens: int, completion_tokens: int) -> float:
         """Calcule le coût estimé d'une requête API"""

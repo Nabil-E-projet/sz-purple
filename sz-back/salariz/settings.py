@@ -214,6 +214,23 @@ elif not OPENAI_API_KEY and DEBUG:
     import warnings
     warnings.warn('OPENAI_API_KEY n\'est pas définie. L\'analyse GPT sera désactivée en mode DEBUG.')
 
+# OpenAI model configuration (defaults to GPT-5 mini)
+OPENAI_VISION_MODEL = os.environ.get('OPENAI_VISION_MODEL', 'gpt-5-mini')
+try:
+    OPENAI_MAX_OUTPUT_TOKENS = int(os.environ.get('OPENAI_MAX_OUTPUT_TOKENS', '2048'))
+except ValueError:
+    OPENAI_MAX_OUTPUT_TOKENS = 2048
+try:
+    OPENAI_TEMPERATURE = float(os.environ.get('OPENAI_TEMPERATURE', '1.0'))
+except ValueError:
+    OPENAI_TEMPERATURE = 1.0
+
+# Prompt size guards
+try:
+    CONVENTION_TEXT_MAX_CHARS = int(os.environ.get('CONVENTION_TEXT_MAX_CHARS', '3000'))
+except ValueError:
+    CONVENTION_TEXT_MAX_CHARS = 3000
+
 # Logging configuration
 LOGGING = {
     'version': 1,
