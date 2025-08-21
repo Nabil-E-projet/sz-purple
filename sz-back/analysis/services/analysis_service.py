@@ -1,6 +1,7 @@
 import logging
 import traceback
 import datetime
+import json
 from typing import Optional, Dict, Any
 from decimal import Decimal, InvalidOperation
 
@@ -80,21 +81,24 @@ class AnalysisService:
         Met à jour le modèle PaySlip avec les données extraites ET crée/met à jour
         l'objet PayslipAnalysis associé avec les résultats complets.
         """
-        # === ÉTAPE 1 : Sauvegarder le résultat complet dans PayslipAnalysis ===
+        # === ÉTAPE 1 : Calculer les scores et enrichir les résultats ===
+        enriched_result = self._calculate_scores(analysis_result)
+        
+        # === ÉTAPE 2 : Sauvegarder le résultat complet dans PayslipAnalysis ===
         analysis, created = PayslipAnalysis.objects.get_or_create(
             payslip=payslip,
             defaults={
                 'analysis_status': 'success',
-                'analysis_details': analysis_result
+                'analysis_details': enriched_result
             }
         )
         if not created:
             analysis.analysis_status = 'success'
-            analysis.analysis_details = analysis_result
+            analysis.analysis_details = enriched_result
             analysis.save()
         
-        # === ÉTAPE 2 : Mettre à jour les champs clés sur le PaySlip lui-même ===
-        gpt_data = analysis_result.get('gpt_analysis', {})
+        # === ÉTAPE 3 : Mettre à jour les champs clés sur le PaySlip lui-même ===
+        gpt_data = enriched_result.get('gpt_analysis', {})
         updated_fields = []
         
         # Période (texte et date)
@@ -194,3 +198,175 @@ class AnalysisService:
             group_item.group.update_progress()
         
         logger.info(f"Statut 'error' enregistré pour PaySlip {payslip.id}.")
+
+    def _calculate_scores(self, analysis_result: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Calcule les scores de conformité et global basés sur l'analyse GPT
+        et enrichit les résultats avec ces scores.
+        """
+        gpt_data = analysis_result.get('gpt_analysis', {})
+        anomalies = gpt_data.get('anomalies_potentielles_observees', [])
+        
+        # Calcul du score de conformité (basé sur les anomalies)
+        conformity_score = self._calculate_conformity_score(anomalies)
+        
+        # Calcul du score global (basé sur conformité + autres facteurs)
+        global_score = self._calculate_global_score(gpt_data, conformity_score)
+        
+        # Enrichir les résultats avec les scores
+        enriched_result = analysis_result.copy()
+        if 'gpt_analysis' in enriched_result:
+            enriched_result['gpt_analysis']['note_conformite_legale'] = conformity_score
+            enriched_result['gpt_analysis']['note_globale'] = global_score
+            
+        # Ajouter des métadonnées sur le scoring
+        enriched_result['scoring_metadata'] = {
+            'version': '1.0',
+            'calculation_date': datetime.datetime.now().isoformat(),
+            'total_anomalies': len(anomalies),
+            'anomalies_by_severity': self._count_anomalies_by_severity(anomalies)
+        }
+        
+        logger.info(f"Scores calculés - Conformité: {conformity_score}/10, Global: {global_score}/10")
+        
+        # DEBUG: Log détaillé des données GPT pour debugging
+        logger.info(f"=== DEBUG ANALYSE GPT ===")
+        logger.info(f"Données GPT reçues: {json.dumps(gpt_data, indent=2, ensure_ascii=False)}")
+        logger.info(f"Nombre d'anomalies: {len(anomalies)}")
+        for i, anomalie in enumerate(anomalies):
+            logger.info(f"Anomalie {i+1}: Type={anomalie.get('type')}, Level={anomalie.get('level')}, Description={anomalie.get('description')}")
+        logger.info(f"Score conformité calculé: {conformity_score}")
+        logger.info(f"Score global calculé: {global_score}")
+        logger.info(f"=== FIN DEBUG ===")
+        
+        return enriched_result
+
+    def _calculate_conformity_score(self, anomalies: list) -> float:
+        """
+        Calcule le score de conformité légale basé sur les anomalies détectées.
+        Score sur 10, où 10 = parfaitement conforme, 0 = très problématique.
+        """
+        if not anomalies:
+            logger.info("Aucune anomalie détectée, score de conformité = 10.0")
+            return 10.0
+        
+        # Pondération par gravité (compatible avec le champ 'level' de GPT)
+        severity_weights = {
+            'critical': 3.0,  # Anomalie critique = -3 points
+            'haute': 3.0,     # Anomalie grave = -3 points  
+            'warning': 1.5,   # Anomalie warning = -1.5 points
+            'moyenne': 1.5,   # Anomalie moyenne = -1.5 points
+            'info': 0.5,      # Anomalie info = -0.5 points
+            'basse': 0.5,     # Anomalie mineure = -0.5 points
+            'positive_check': 0.0  # Pas de pénalité pour les vérifications positives
+        }
+        
+        total_penalty = 0.0
+        logger.info(f"Calcul du score de conformité pour {len(anomalies)} anomalie(s):")
+        
+        for i, anomalie in enumerate(anomalies):
+            # Compatibilité avec les deux formats (level et gravite)
+            severity = anomalie.get('level', anomalie.get('gravite', 'basse')).lower()
+            penalty = severity_weights.get(severity, 0.5)
+            total_penalty += penalty
+            logger.info(f"  Anomalie {i+1}: severity='{severity}' -> pénalité={penalty}")
+        
+        # Score final (minimum 0, maximum 10)
+        score = max(0.0, min(10.0, 10.0 - total_penalty))
+        logger.info(f"Score conformité: 10.0 - {total_penalty} = {score}")
+        return round(score, 1)
+
+    def _calculate_global_score(self, gpt_data: dict, conformity_score: float) -> float:
+        """
+        Calcule un score global tenant compte de la conformité et d'autres facteurs.
+        """
+        logger.info(f"Calcul du score global basé sur conformité: {conformity_score}")
+        
+        # Base : score de conformité (poids 60%)
+        score = conformity_score * 0.6
+        logger.info(f"  Score base (conformité * 0.6): {score}")
+        
+        # Facteur complétude des informations (poids 20%)
+        completeness_score = self._calculate_completeness_score(gpt_data)
+        score += completeness_score * 0.2
+        logger.info(f"  Score complétude: {completeness_score}, ajout: {completeness_score * 0.2}")
+        
+        # Facteur clarté/lisibilité (poids 10%)
+        clarity_score = self._calculate_clarity_score(gpt_data)
+        score += clarity_score * 0.1
+        logger.info(f"  Score clarté: {clarity_score}, ajout: {clarity_score * 0.1}")
+        
+        # Facteur bonus/malus spéciaux (poids 10%)
+        special_score = self._calculate_special_factors_score(gpt_data)
+        score += special_score * 0.1
+        logger.info(f"  Score spécial: {special_score}, ajout: {special_score * 0.1}")
+        
+        final_score = round(min(10.0, max(0.0, score)), 1)
+        logger.info(f"Score global final: {final_score}")
+        
+        return final_score
+
+    def _calculate_completeness_score(self, gpt_data: dict) -> float:
+        """
+        Évalue la complétude des informations extraites.
+        """
+        required_fields = [
+            ('informations_generales', 'nom_salarie'),
+            ('periode', 'periode_du'),
+            ('periode', 'periode_au'),
+            ('remuneration', 'net_a_payer'),
+            ('details_salaire', 'salaire_brut'),
+        ]
+        
+        found_fields = 0
+        for section, field in required_fields:
+            if gpt_data.get(section, {}).get(field):
+                found_fields += 1
+        
+        return (found_fields / len(required_fields)) * 10.0
+
+    def _calculate_clarity_score(self, gpt_data: dict) -> float:
+        """
+        Évalue la clarté/lisibilité de la fiche de paie.
+        """
+        # Score basé sur la présence d'informations structurées
+        clarity_indicators = [
+            bool(gpt_data.get('convention_collective_detectee')),
+            bool(gpt_data.get('details_salaire')),
+            bool(gpt_data.get('cotisations_sociales')),
+            len(gpt_data.get('anomalies_potentielles_observees', [])) == 0,  # Pas d'anomalies = plus clair
+        ]
+        
+        return (sum(clarity_indicators) / len(clarity_indicators)) * 10.0
+
+    def _calculate_special_factors_score(self, gpt_data: dict) -> float:
+        """
+        Calcule des bonus/malus spéciaux.
+        """
+        score = 5.0  # Score neutre de base
+        
+        # Bonus si convention collective détectée
+        if gpt_data.get('convention_collective_detectee'):
+            score += 2.0
+        
+        # Bonus si évaluation financière présente
+        if gpt_data.get('evaluation_financiere_salarie'):
+            score += 2.0
+        
+        # Malus si beaucoup d'anomalies
+        anomalies_count = len(gpt_data.get('anomalies_potentielles_observees', []))
+        if anomalies_count > 5:
+            score -= 1.0
+        
+        return min(10.0, max(0.0, score))
+
+    def _count_anomalies_by_severity(self, anomalies: list) -> dict:
+        """
+        Compte les anomalies par niveau de gravité.
+        """
+        counts = {'haute': 0, 'moyenne': 0, 'basse': 0}
+        for anomalie in anomalies:
+            severity = anomalie.get('gravite', 'basse').lower()
+            if severity in counts:
+                counts[severity] += 1
+        return counts

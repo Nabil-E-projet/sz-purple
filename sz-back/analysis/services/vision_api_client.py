@@ -103,6 +103,17 @@ class OpenAIVisionClient:
                 json_result = json.loads(content_str)
                 logger.info("Analyse JSON extraite avec succès.")
                 
+                # DEBUG: Log détaillé de ce que retourne GPT
+                logger.info(f"=== DEBUG REPONSE GPT BRUTE ===")
+                logger.info(f"Réponse JSON parsée: {json.dumps(json_result, indent=2, ensure_ascii=False)}")
+                anomalies = json_result.get('anomalies_potentielles_observees', [])
+                logger.info(f"Anomalies détectées par GPT: {len(anomalies)}")
+                for i, anomalie in enumerate(anomalies):
+                    logger.info(f"  Anomalie GPT {i+1}: {anomalie}")
+                logger.info(f"Note conformité GPT: {json_result.get('note_conformite_legale', 'ABSENTE')}")
+                logger.info(f"Note globale GPT: {json_result.get('note_globale', 'ABSENTE')}")
+                logger.info(f"=== FIN DEBUG GPT ===")
+                
                 return {
                     "gpt_analysis": json_result,  # JSON parsé
                     "raw": content_str,          # Contenu brut

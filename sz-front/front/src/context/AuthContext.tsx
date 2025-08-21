@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { api } from '@/lib/api';
 
 type User = {
@@ -23,6 +24,7 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const bootstrap = async () => {
@@ -67,6 +69,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     logout: async () => {
       await api.logout();
       setUser(null);
+      navigate('/login');
     },
     refresh: async () => {
       const refreshed = await api.refreshAccessToken();

@@ -2,7 +2,7 @@ from rest_framework import generics, status, permissions
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from .models import PaySlip
-from .serializers import PaySlipSerializer
+from .serializers import PaySlipSerializer, PaySlipDashboardSerializer
 from analysis.models import CONVENTION_CHOICES
 from django.http import FileResponse, Http404
 from wsgiref.util import FileWrapper
@@ -68,12 +68,13 @@ class PaySlipUploadView(generics.CreateAPIView):
             f"payslip_id={instance.id}, filename={instance.uploaded_file.name}"
         )
 class PaySlipListView(generics.ListAPIView):
-    serializer_class = PaySlipSerializer
+    serializer_class = PaySlipDashboardSerializer
     permission_classes = [permissions.IsAuthenticated]
     
     def get_queryset(self):
         # Ne retourner que les fiches de paie de l'utilisateur connecté
-        return PaySlip.objects.filter(user=self.request.user).order_by('-upload_date')
+        # Optimisation: précharger les analyses pour éviter les requêtes N+1
+        return PaySlip.objects.filter(user=self.request.user).select_related('analysis').order_by('-upload_date')
 
 class PaySlipDetailView(generics.RetrieveAPIView):
     serializer_class = PaySlipSerializer

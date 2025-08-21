@@ -42,7 +42,7 @@ class PayslipAnalysisView(APIView):
             logger.debug(f"Fiche de paie {payslip_id} trouvée pour l'utilisateur {request.user.id}.")
 
             # Lancer l'analyse (qui utilise maintenant les données supplémentaires stockées dans le modèle PaySlip)
-            analysis_result = self.analysis_service.analyze_payslip(payslip_id) # analyze_payslip récupère les données du modèle
+            analysis_result = self.analysis_service.analyze_payslip(payslip_id) # Retourne un PaySlip ou None
 
             if not analysis_result:
                 logger.error(f"Échec de l'analyse pour la fiche de paie {payslip_id}. Le service n'a retourné aucun résultat.")
@@ -51,12 +51,22 @@ class PayslipAnalysisView(APIView):
                     "error": "Échec de l'analyse interne du service."
                 }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-            if analysis_result.analysis_status == 'error':
-                error_details = analysis_result.analysis_details.get('error', 'Erreur inconnue lors de l\'analyse.')
+            # Récupérer l'objet d'analyse lié
+            try:
+                analysis = analysis_result.analysis  # related_name='analysis'
+            except PayslipAnalysis.DoesNotExist:
+                logger.error(f"Aucune analyse associée trouvée pour la fiche {payslip_id} après traitement.")
+                return Response({
+                    "message": "Analyse non disponible",
+                    "error": "Analyse introuvable après traitement."
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+            if analysis.analysis_status == 'error':
+                error_details = analysis.analysis_details.get('error', 'Erreur inconnue lors de l\'analyse.')
                 logger.warning(f"Analyse terminée avec statut 'error' pour la fiche {payslip_id}. Détails: {error_details}")
                 return Response({
                     "message": "Erreur lors de l'analyse",
-                    "status": analysis_result.analysis_status,
+                    "status": analysis.analysis_status,
                     "error": error_details
                 }, status=status.HTTP_500_INTERNAL_SERVER_ERROR) # Ou 400/422 si c'est une erreur client/GPT
 
@@ -64,15 +74,15 @@ class PayslipAnalysisView(APIView):
             logger.info(f"Analyse réussie pour la fiche de paie {payslip_id}. Statut: {analysis_result.analysis_status}")
 
             # Préparer la réponse avec les données extraites par GPT
-            analysis_details = analysis_result.analysis_details
+            analysis_details = analysis.analysis_details
             # Ajuster le chemin si la structure de 'result' a changé dans GPTVisionService
             gpt_data = analysis_details.get('gpt_analysis', {}).get('result', {}) # Chemin vers les données JSON extraites
 
             return Response({
                 "message": "Analyse terminée avec succès",
-                "status": analysis_result.analysis_status,
+                "status": analysis.analysis_status,
                 "payslip_id": payslip_id,
-                "analysis_id": analysis_result.id,
+                "analysis_id": analysis.id,
                 "analysis_data": gpt_data # Renvoyer les données JSON extraites
             }, status=status.HTTP_200_OK)
 
@@ -120,6 +130,18 @@ class FullAnalysisResultView(APIView):
             # serializer = PayslipAnalysisSerializer(analysis)
             # return Response(serializer.data, status=status.HTTP_200_OK)
 
+            # DEBUG: Log des données retournées à l'API
+            logger.info(f"=== DEBUG RETOUR API ===")
+            logger.info(f"Analysis ID: {analysis.id}")
+            logger.info(f"Status: {analysis.analysis_status}")
+            logger.info(f"Details keys: {list(analysis.analysis_details.keys()) if analysis.analysis_details else 'None'}")
+            if 'gpt_analysis' in (analysis.analysis_details or {}):
+                gpt_data = analysis.analysis_details['gpt_analysis']
+                logger.info(f"GPT Analysis keys: {list(gpt_data.keys()) if gpt_data else 'None'}")
+                logger.info(f"Note conformité dans DB: {gpt_data.get('note_conformite_legale', 'ABSENTE')}")
+                logger.info(f"Note globale dans DB: {gpt_data.get('note_globale', 'ABSENTE')}")
+            logger.info(f"=== FIN DEBUG API ===")
+            
             # Ou retourner directement les détails stockés dans le modèle PayslipAnalysis
             return Response({
                 "payslip_id": payslip.id,
@@ -251,3 +273,62 @@ class BulkAnalysisResultView(APIView):
             })
         
         return Response(response_data)
+
+
+class RecalculateScoresView(APIView):
+    """Vue de debug pour recalculer les scores d'une analyse existante."""
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def post(self, request, payslip_id):
+        """Recalcule les scores pour une analyse existante (debug uniquement)."""
+        logger.info(f"Requête de recalcul des scores pour la fiche {payslip_id} par l'utilisateur {request.user.id}")
+        
+        try:
+            # Vérifier que la fiche appartient à l'utilisateur
+            payslip = PaySlip.objects.get(id=payslip_id, user=request.user)
+            
+            # Récupérer l'analyse associée
+            try:
+                analysis = payslip.analysis
+            except PayslipAnalysis.DoesNotExist:
+                return Response({
+                    "error": "Aucune analyse disponible pour cette fiche de paie."
+                }, status=status.HTTP_404_NOT_FOUND)
+            
+            # Recalculer les scores à partir des données existantes
+            from .services.analysis_service import AnalysisService
+            service = AnalysisService()
+            
+            # Récupérer les données GPT existantes
+            existing_data = analysis.analysis_details
+            
+            if 'gpt_analysis' not in existing_data:
+                return Response({
+                    "error": "Pas de données GPT à partir desquelles recalculer les scores."
+                }, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Recalculer et enrichir avec de nouveaux scores
+            enriched_data = service._calculate_scores(existing_data)
+            
+            # Sauvegarder les nouveaux scores
+            analysis.analysis_details = enriched_data
+            analysis.save()
+            
+            logger.info(f"Scores recalculés pour la fiche {payslip_id}")
+            
+            return Response({
+                "message": "Scores recalculés avec succès",
+                "new_conformity_score": enriched_data.get('gpt_analysis', {}).get('note_conformite_legale'),
+                "new_global_score": enriched_data.get('gpt_analysis', {}).get('note_globale'),
+                "scoring_metadata": enriched_data.get('scoring_metadata')
+            }, status=status.HTTP_200_OK)
+            
+        except PaySlip.DoesNotExist:
+            return Response({
+                "error": "Fiche de paie introuvable ou vous n'avez pas les droits."
+            }, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            logger.exception(f"Erreur lors du recalcul des scores pour la fiche {payslip_id}: {str(e)}")
+            return Response({
+                "error": f"Erreur serveur: {str(e)}"
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

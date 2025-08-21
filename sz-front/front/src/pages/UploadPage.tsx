@@ -1,21 +1,21 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Upload, FileText, Calendar as CalendarIcon, Euro, MessageSquare, Sparkles } from 'lucide-react';
+import { Upload, FileText, Calendar as CalendarIcon, Euro, MessageSquare, Sparkles, ArrowRight, ArrowLeft, Check } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { api } from '@/lib/api';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const UploadPage = () => {
+	// États existants
 	const [selectedDate, setSelectedDate] = useState<Date>();
 	const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 	const [dragActive, setDragActive] = useState(false);
@@ -23,21 +23,117 @@ const UploadPage = () => {
 	const navigate = useNavigate();
 	const { toast } = useToast();
 	const [convention, setConvention] = useState<string | undefined>();
+	const [conventions, setConventions] = useState<{ value: string; label: string }[]>([]);
+	const [loadingConventions, setLoadingConventions] = useState<boolean>(false);
 	const [salary, setSalary] = useState<string>('');
 	const [details, setDetails] = useState<string>('');
 
-	const conventions = [
-		"Convention collective nationale du commerce de détail et de gros à prédominance alimentaire",
-		"Convention collective nationale de la métallurgie",
-		"Convention collective nationale du bâtiment et des travaux publics",
-		"Convention collective nationale des employés, techniciens et agents de maîtrise du bâtiment",
-		"Convention collective nationale des services de l'automobile",
-		"Convention collective nationale de l'hôtellerie de plein air",
-		"Convention collective nationale du transport routier et activités auxiliaires du transport",
-		"Convention collective nationale de la coiffure et des soins esthétiques",
-		"Convention collective nationale de la restauration rapide",
-		"Convention collective nationale des organismes de formation"
+	// Nouveaux états pour Typeform-like
+	const [currentStep, setCurrentStep] = useState(0);
+	const [direction, setDirection] = useState(1); // 1 pour suivant, -1 pour précédent
+
+	const steps = [
+		{ 
+			id: 'upload', 
+			title: 'Téléchargez votre fiche de paie', 
+			subtitle: 'Formats acceptés : PDF uniquement',
+			required: true 
+		},
+		{ 
+			id: 'convention', 
+			title: 'Quelle est votre convention collective ?', 
+			subtitle: 'Cette information est obligatoire pour une analyse précise',
+			required: true 
+		},
+		{ 
+			id: 'period', 
+			title: 'Pour quelle période souhaitez-vous analyser ?', 
+			subtitle: 'Optionnel - nous pouvons extraire cette information du document',
+			required: false 
+		},
+		{ 
+			id: 'salary', 
+			title: 'Quel est votre salaire contractuel brut ?', 
+			subtitle: 'Optionnel - cela nous aide à détecter les écarts',
+			required: false 
+		},
+		{ 
+			id: 'details', 
+			title: 'Avez-vous des détails supplémentaires à partager ?', 
+			subtitle: 'Optionnel - toute information qui pourrait nous aider',
+			required: false 
+		},
+		{ 
+			id: 'confirm', 
+			title: 'Tout est prêt !', 
+			subtitle: 'Vérifiez vos informations avant de lancer l\'analyse',
+			required: false 
+		}
 	];
+
+	// Charger les conventions depuis le backend pour garantir des valeurs valides
+	useEffect(() => {
+		const run = async () => {
+			setLoadingConventions(true);
+			try {
+				const data = await api.getConventions<{ value: string; label: string }[]>();
+				setConventions(data || []);
+			} catch (e: any) {
+				toast({ title: 'Erreur', description: 'Impossible de charger les conventions collectives' });
+			} finally {
+				setLoadingConventions(false);
+			}
+		};
+		run();
+	}, [toast]);
+
+	// Fonctions de navigation
+	const nextStep = () => {
+		if (currentStep < steps.length - 1) {
+			setDirection(1);
+			setCurrentStep(currentStep + 1);
+		}
+	};
+
+	const prevStep = () => {
+		if (currentStep > 0) {
+			setDirection(-1);
+			setCurrentStep(currentStep - 1);
+		}
+	};
+
+	// Validation des étapes
+	const canProceed = () => {
+		const step = steps[currentStep];
+		if (!step.required) return true;
+		
+		switch (step.id) {
+			case 'upload':
+				return selectedFiles.length > 0;
+			case 'convention':
+				return !!convention;
+			default:
+				return true;
+		}
+	};
+
+	// Animation variants
+	const slideVariants = {
+		enter: (direction: number) => ({
+			x: direction > 0 ? 1000 : -1000,
+			opacity: 0
+		}),
+		center: {
+			zIndex: 1,
+			x: 0,
+			opacity: 1
+		},
+		exit: (direction: number) => ({
+			zIndex: 0,
+			x: direction < 0 ? 1000 : -1000,
+			opacity: 0
+		})
+	};
 
 	const handleDrag = (e: React.DragEvent) => {
 		e.preventDefault();
@@ -71,8 +167,7 @@ const UploadPage = () => {
 		setSelectedFiles(prev => prev.filter((_, i) => i !== index));
 	};
 
-	const handleSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
+	const handleSubmit = async () => {
 		setIsAnalyzing(true);
 
 		try {
@@ -86,9 +181,9 @@ const UploadPage = () => {
 			});
 			const payslipId = (uploadRes as any)?.id;
 			if (!payslipId) throw new Error('Upload échoué');
-			await api.analyzePayslip(payslipId);
-			toast({ title: 'Upload terminé', description: 'Analyse lancée' });
-			navigate(`/analysis/${payslipId}`);
+			// L'analyse est désormais déclenchée automatiquement par le backend (signal post_save)
+			toast({ title: 'Upload terminé', description: 'Analyse lancée automatiquement' });
+			navigate('/dashboard');
 		} catch (err: any) {
 			const msg = err?.error || err?.message || 'Erreur lors de l\'analyse';
 			toast({ title: 'Erreur', description: typeof msg === 'string' ? msg : JSON.stringify(msg) });
@@ -97,203 +192,272 @@ const UploadPage = () => {
 		}
 	};
 
-	return (
-		<div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8">
-			<div className="max-w-4xl mx-auto">
-				<div className="text-center mb-12 animate-fade-in-up">
-					<h1 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-primary bg-clip-text text-transparent">
-						Analyser une fiche de paie
-					</h1>
-					<p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-						Téléchargez votre fiche de paie et obtenez une analyse détaillée avec détection d'erreurs
-					</p>
-				</div>
-
-				<form onSubmit={handleSubmit} className="space-y-8">
-					<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-						{/* Left Column - Form Fields */}
-						<div className="space-y-6">
-							<Card className="glass-card border-0">
-								<CardHeader>
-									<CardTitle className="flex items-center space-x-2">
-										<FileText className="w-5 h-5 text-primary" />
-										<span>Informations requises</span>
-									</CardTitle>
-									<CardDescription>
-										Ces informations nous aident à mieux analyser votre fiche de paie
-									</CardDescription>
-								</CardHeader>
-								<CardContent className="space-y-4">
-									<div className="space-y-2">
-										<Label htmlFor="convention">Convention collective *</Label>
-										<Select required onValueChange={(v) => setConvention(v)}>
-											<SelectTrigger className="glass-card border-glass-border/30">
-												<SelectValue placeholder="Sélectionnez votre convention collective" />
-											</SelectTrigger>
-											<SelectContent className="glass-card border-glass-border/30 backdrop-blur-md">
-												{conventions.map((convention, index) => (
-													<SelectItem key={index} value={convention}>
-														{convention}
-													</SelectItem>
-												))}
-											</SelectContent>
-										</Select>
-									</div>
-
-									<div className="space-y-2">
-										<Label>Période d'analyse *</Label>
-										<Popover>
-											<PopoverTrigger asChild>
-												<Button
-													variant="outline"
-													className={cn(
-														"w-full justify-start text-left font-normal glass-card border-glass-border/30",
-														!selectedDate && "text-muted-foreground"
-													)}
-												>
-													<CalendarIcon className="mr-2 h-4 w-4" />
-													{selectedDate ? 
-														format(selectedDate, "MMMM yyyy", { locale: fr }) : 
-														"Sélectionnez la période"
-													}
-												</Button>
-											</PopoverTrigger>
-											<PopoverContent className="w-auto p-0 glass-card border-glass-border/30" align="start">
-												<Calendar
-														mode="single"
-														selected={selectedDate}
-														onSelect={setSelectedDate}
-														initialFocus
-														className="p-3 pointer-events-auto"
-												/>
-											</PopoverContent>
-										</Popover>
-									</div>
-
-									<div className="space-y-2">
-										<Label htmlFor="salaire">Salaire contractuel brut (optionnel)</Label>
-										<div className="relative">
-											<Euro className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-											<Input
-												id="salaire"
-												type="number"
-												placeholder="3500"
-												className="pl-10 glass-card border-glass-border/30"
-												step="0.01"
-												value={salary}
-												onChange={(e) => setSalary(e.target.value)}
-											/>
-										</div>
-									</div>
-								</CardContent>
-							</Card>
-
-							<Card className="glass-card border-0">
-								<CardHeader>
-									<CardTitle className="flex items-center space-x-2">
-										<MessageSquare className="w-5 h-5 text-primary" />
-										<span>Commentaires supplémentaires</span>
-									</CardTitle>
-								</CardHeader>
-								<CardContent>
-									<Textarea
-										placeholder="Décrivez ici toute demande spécifique ou point particulier à analyser..."
-										className="glass-card border-glass-border/30 min-h-[120px]"
-										value={details}
-										onChange={(e) => setDetails(e.target.value)}
-									/>
-								</CardContent>
-							</Card>
+	// Fonctions de rendu pour chaque étape
+	const renderStepContent = () => {
+		const step = steps[currentStep];
+		
+		switch (step.id) {
+			case 'upload':
+				return (
+					<div className="space-y-8">
+						<div
+							className={cn(
+								"upload-zone rounded-xl p-12 text-center cursor-pointer transition-all duration-300 border-2 border-dashed",
+								dragActive && "border-primary bg-primary/5",
+								selectedFiles.length > 0 ? "border-green-500 bg-green-50/50" : "border-muted-foreground/30"
+							)}
+							onDragEnter={handleDrag}
+							onDragLeave={handleDrag}
+							onDragOver={handleDrag}
+							onDrop={handleDrop}
+							onClick={() => document.getElementById('file-upload')?.click()}
+						>
+							<div className="space-y-6">
+								<div className="w-20 h-20 bg-gradient-primary rounded-3xl flex items-center justify-center mx-auto">
+									{selectedFiles.length > 0 ? <Check className="w-10 h-10 text-white" /> : <Upload className="w-10 h-10 text-white" />}
+								</div>
+								<div>
+									<p className="text-2xl font-medium mb-2">
+										{selectedFiles.length > 0 ? 'Fichier sélectionné !' : 'Glissez-déposez votre fiche de paie ici'}
+									</p>
+									<p className="text-muted-foreground mb-6">
+										ou cliquez pour parcourir vos fichiers
+									</p>
+									<Button size="lg" variant="outline" className="btn-glass">
+										{selectedFiles.length > 0 ? 'Changer de fichier' : 'Parcourir les fichiers'}
+									</Button>
+								</div>
+							</div>
 						</div>
 
-						{/* Right Column - File Upload */}
-						<div className="space-y-6">
-							<Card className="glass-card border-0">
-								<CardHeader>
-									<CardTitle className="flex items-center space-x-2">
-										<Upload className="w-5 h-5 text-primary" />
-										<span>Téléchargement de fichier</span>
-									</CardTitle>
-									<CardDescription>
-										Formats acceptés : PDF, JPG, PNG (max 10 MB)
-									</CardDescription>
-								</CardHeader>
-								<CardContent>
-									<div
-										className={cn(
-											"upload-zone rounded-xl p-8 text-center cursor-pointer transition-all duration-300",
-											dragActive && "drag-active"
-										)}
-										onDragEnter={handleDrag}
-										onDragLeave={handleDrag}
-										onDragOver={handleDrag}
-										onDrop={handleDrop}
-										onClick={() => document.getElementById('file-upload')?.click()}
-									>
-										<div className="space-y-4">
-											<div className="w-16 h-16 bg-gradient-primary rounded-2xl flex items-center justify-center mx-auto">
-												<Upload className="w-8 h-8 text-primary-foreground" />
-											</div>
-											<div>
-												<p className="text-lg font-medium mb-2">
-													Glissez-déposez vos fichiers ici
-												</p>
-												<p className="text-muted-foreground mb-4">
-													ou cliquez pour parcourir
-												</p>
-												<Button variant="outline" className="btn-glass">
-													Parcourir les fichiers
-												</Button>
-											</div>
+						<input
+							id="file-upload"
+							type="file"
+							accept=".pdf"
+							onChange={handleFileChange}
+							className="hidden"
+						/>
+
+						{selectedFiles.length > 0 && (
+							<motion.div 
+								initial={{ opacity: 0, y: 20 }}
+								animate={{ opacity: 1, y: 0 }}
+								className="glass-card p-4 rounded-lg"
+							>
+								<div className="flex items-center justify-between">
+									<div className="flex items-center space-x-3">
+										<FileText className="w-6 h-6 text-primary" />
+										<div>
+											<p className="font-medium">{selectedFiles[0].name}</p>
+											<p className="text-sm text-muted-foreground">
+												{(selectedFiles[0].size / 1024 / 1024).toFixed(2)} MB
+											</p>
 										</div>
 									</div>
+									<Button
+										variant="ghost"
+										size="sm"
+										onClick={() => setSelectedFiles([])}
+										className="text-destructive hover:text-destructive"
+									>
+										Supprimer
+									</Button>
+								</div>
+							</motion.div>
+						)}
+					</div>
+				);
 
-									<input
-										id="file-upload"
-										type="file"
-										multiple
-										accept=".pdf,.jpg,.jpeg,.png"
-										onChange={handleFileChange}
-										className="hidden"
-									/>
+			case 'convention':
+				return (
+					<div className="space-y-8">
+						<Select disabled={loadingConventions} onValueChange={(v) => setConvention(v)} value={convention}>
+							<SelectTrigger className="glass-card border-glass-border/30 h-14 text-lg">
+								<SelectValue placeholder="Sélectionnez votre convention collective" />
+							</SelectTrigger>
+							<SelectContent className="glass-card border-glass-border/30 backdrop-blur-md">
+								{conventions.map((c, index) => (
+									<SelectItem key={index} value={c.value} className="py-3">
+										{c.label}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
+						
+						{convention && (
+							<motion.div 
+								initial={{ opacity: 0, scale: 0.95 }}
+								animate={{ opacity: 1, scale: 1 }}
+								className="text-center"
+							>
+								<div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+									<Check className="w-6 h-6 text-white" />
+								</div>
+								<p className="text-muted-foreground">Convention sélectionnée !</p>
+							</motion.div>
+						)}
+					</div>
+				);
 
-									{selectedFiles.length > 0 && (
-										<div className="mt-6 space-y-3">
-											<h4 className="font-medium">Fichiers sélectionnés :</h4>
-											{selectedFiles.map((file, index) => (
-												<div key={index} className="flex items-center justify-between glass-card p-3 rounded-lg">
-													<div className="flex items-center space-x-3">
-														<FileText className="w-5 h-5 text-primary" />
-														<span className="text-sm font-medium">{file.name}</span>
-														<span className="text-xs text-muted-foreground">
-															{(file.size / 1024 / 1024).toFixed(2)} MB
-														</span>
-													</div>
-													<Button
-														type="button"
-														variant="ghost"
-														size="sm"
-														onClick={() => removeFile(index)}
-														className="text-destructive hover:text-destructive"
-													>
-														Supprimer
-													</Button>
-												</div>
-											))}
-										</div>
+			case 'period':
+				return (
+					<div className="space-y-8">
+						<Popover>
+							<PopoverTrigger asChild>
+								<Button
+									variant="outline"
+									className={cn(
+										"w-full h-14 text-lg justify-start text-left font-normal glass-card border-glass-border/30",
+										!selectedDate && "text-muted-foreground"
 									)}
-								</CardContent>
-							</Card>
+								>
+									<CalendarIcon className="mr-3 h-5 w-5" />
+									{selectedDate ? 
+										format(selectedDate, "MMMM yyyy", { locale: fr }) : 
+										"Cliquez pour sélectionner la période"
+									}
+								</Button>
+							</PopoverTrigger>
+							<PopoverContent className="w-auto p-0 glass-card border-glass-border/30" align="center">
+								<Calendar
+									mode="single"
+									selected={selectedDate}
+									onSelect={setSelectedDate}
+									initialFocus
+									className="p-3"
+								/>
+							</PopoverContent>
+						</Popover>
+						
+						{selectedDate && (
+							<motion.div 
+								initial={{ opacity: 0, scale: 0.95 }}
+								animate={{ opacity: 1, scale: 1 }}
+								className="text-center"
+							>
+								<div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+									<Check className="w-6 h-6 text-white" />
+								</div>
+								<p className="text-muted-foreground">Période sélectionnée !</p>
+							</motion.div>
+						)}
+					</div>
+				);
+
+			case 'salary':
+				return (
+					<div className="space-y-8">
+						<div className="relative">
+							<Euro className="absolute left-4 top-1/2 transform -translate-y-1/2 w-6 h-6 text-muted-foreground" />
+							<Input
+								type="number"
+								placeholder="3500"
+								className="pl-14 glass-card border-glass-border/30 h-14 text-lg"
+								step="0.01"
+								value={salary}
+								onChange={(e) => setSalary(e.target.value)}
+							/>
+						</div>
+						
+						{salary && (
+							<motion.div 
+								initial={{ opacity: 0, scale: 0.95 }}
+								animate={{ opacity: 1, scale: 1 }}
+								className="text-center"
+							>
+								<div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+									<Check className="w-6 h-6 text-white" />
+								</div>
+								<p className="text-muted-foreground">Salaire enregistré : {salary}€</p>
+							</motion.div>
+						)}
+						
+						<div className="text-center">
+							<Button 
+								variant="ghost" 
+								onClick={nextStep}
+								className="text-muted-foreground hover:text-foreground"
+							>
+								Passer cette étape
+							</Button>
 						</div>
 					</div>
+				);
 
-					{/* Submit Button */}
-					<div className="text-center">
+			case 'details':
+				return (
+					<div className="space-y-8">
+						<Textarea
+							placeholder="Décrivez ici toute demande spécifique ou point particulier à analyser..."
+							className="glass-card border-glass-border/30 min-h-[120px] text-lg"
+							value={details}
+							onChange={(e) => setDetails(e.target.value)}
+						/>
+						
+						{details && (
+							<motion.div 
+								initial={{ opacity: 0, scale: 0.95 }}
+								animate={{ opacity: 1, scale: 1 }}
+								className="text-center"
+							>
+								<div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+									<Check className="w-6 h-6 text-white" />
+								</div>
+								<p className="text-muted-foreground">Détails enregistrés !</p>
+							</motion.div>
+						)}
+						
+						<div className="text-center">
+							<Button 
+								variant="ghost" 
+								onClick={nextStep}
+								className="text-muted-foreground hover:text-foreground"
+							>
+								Passer cette étape
+							</Button>
+						</div>
+					</div>
+				);
+
+			case 'confirm':
+				return (
+					<div className="space-y-8">
+						<div className="glass-card p-6 rounded-xl space-y-4">
+							<div className="flex items-center justify-between">
+								<span className="text-muted-foreground">Fichier :</span>
+								<span className="font-medium">{selectedFiles[0]?.name || 'Aucun'}</span>
+							</div>
+							<div className="flex items-center justify-between">
+								<span className="text-muted-foreground">Convention :</span>
+								<span className="font-medium">
+									{conventions.find(c => c.value === convention)?.label || 'Non sélectionnée'}
+								</span>
+							</div>
+							{selectedDate && (
+								<div className="flex items-center justify-between">
+									<span className="text-muted-foreground">Période :</span>
+									<span className="font-medium">{format(selectedDate, "MMMM yyyy", { locale: fr })}</span>
+								</div>
+							)}
+							{salary && (
+								<div className="flex items-center justify-between">
+									<span className="text-muted-foreground">Salaire contractuel :</span>
+									<span className="font-medium">{salary}€</span>
+								</div>
+							)}
+							{details && (
+								<div className="space-y-2">
+									<span className="text-muted-foreground block">Détails supplémentaires :</span>
+									<p className="text-sm bg-muted/30 p-3 rounded-lg">{details}</p>
+								</div>
+							)}
+						</div>
+						
 						<Button
-							type="submit"
+							onClick={handleSubmit}
 							size="lg"
-							className="bg-gradient-primary hover:opacity-90 border-0 px-12 py-6 text-lg font-semibold"
-							disabled={isAnalyzing || selectedFiles.length === 0}
+							className="w-full bg-gradient-primary hover:opacity-90 border-0 h-14 text-lg font-semibold"
+							disabled={isAnalyzing}
 						>
 							{isAnalyzing ? (
 								<>
@@ -309,7 +473,11 @@ const UploadPage = () => {
 						</Button>
 						
 						{isAnalyzing && (
-							<div className="mt-6 glass-card p-4 rounded-lg max-w-md mx-auto">
+							<motion.div 
+								initial={{ opacity: 0, y: 20 }}
+								animate={{ opacity: 1, y: 0 }}
+								className="glass-card p-4 rounded-lg"
+							>
 								<div className="flex items-center space-x-3">
 									<div className="flex space-x-1">
 										<div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
@@ -320,10 +488,102 @@ const UploadPage = () => {
 										Notre IA analyse votre fiche de paie...
 									</span>
 								</div>
-							</div>
+							</motion.div>
 						)}
 					</div>
-				</form>
+				);
+
+			default:
+				return null;
+		}
+	};
+
+	return (
+		<div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
+			{/* Progress Bar */}
+			<div className="fixed top-0 left-0 w-full h-1 bg-muted z-50">
+				<motion.div 
+					className="h-full bg-gradient-primary"
+					initial={{ width: "0%" }}
+					animate={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
+					transition={{ duration: 0.3 }}
+				/>
+			</div>
+
+			<div className="pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+				<div className="max-w-2xl mx-auto">
+					{/* Header */}
+					<div className="text-center mb-12">
+						<motion.div
+							key={currentStep}
+							initial={{ opacity: 0, y: 20 }}
+							animate={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.3 }}
+						>
+							<div className="flex items-center justify-center space-x-2 mb-4">
+								<span className="text-sm font-medium text-primary">
+									{currentStep + 1} sur {steps.length}
+								</span>
+							</div>
+							<h1 className="text-3xl md:text-4xl font-bold mb-4">
+								{steps[currentStep].title}
+							</h1>
+							<p className="text-xl text-muted-foreground">
+								{steps[currentStep].subtitle}
+							</p>
+							{steps[currentStep].required && (
+								<div className="inline-flex items-center mt-4 px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">
+									Obligatoire
+								</div>
+							)}
+						</motion.div>
+					</div>
+
+					{/* Step Content */}
+					<div className="relative">
+						<AnimatePresence mode="wait" custom={direction}>
+							<motion.div
+								key={currentStep}
+								custom={direction}
+								variants={slideVariants}
+								initial="enter"
+								animate="center"
+								exit="exit"
+								transition={{
+									x: { type: "spring", stiffness: 300, damping: 30 },
+									opacity: { duration: 0.2 }
+								}}
+								className="w-full"
+							>
+								{renderStepContent()}
+							</motion.div>
+						</AnimatePresence>
+					</div>
+
+					{/* Navigation */}
+					<div className="flex items-center justify-between mt-12">
+						<Button
+							variant="ghost"
+							onClick={prevStep}
+							disabled={currentStep === 0}
+							className="flex items-center space-x-2"
+						>
+							<ArrowLeft className="w-4 h-4" />
+							<span>Précédent</span>
+						</Button>
+
+						{currentStep < steps.length - 1 && (
+							<Button
+								onClick={nextStep}
+								disabled={!canProceed()}
+								className="flex items-center space-x-2 bg-gradient-primary hover:opacity-90 border-0"
+							>
+								<span>Suivant</span>
+								<ArrowRight className="w-4 h-4" />
+							</Button>
+						)}
+					</div>
+				</div>
 			</div>
 		</div>
 	);

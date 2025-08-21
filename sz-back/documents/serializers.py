@@ -75,6 +75,65 @@ class PaySlipSerializer(serializers.ModelSerializer):
         payslip.save()
         return payslip
 
+
+# --- Sérialiseur étendu pour le Dashboard avec scores ---
+class PaySlipDashboardSerializer(serializers.ModelSerializer):
+    """Sérialiseur pour afficher les payslips avec les scores dans le dashboard."""
+    user_username = serializers.CharField(source='user.username', read_only=True)
+    analysis_score = serializers.SerializerMethodField()
+    conformity_score = serializers.SerializerMethodField()
+    anomalies_count = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = PaySlip
+        fields = (
+            'id',
+            'user_username',
+            'uploaded_file',
+            'upload_date',
+            'processing_status',
+            'period',
+            'net_salary',
+            'employee_name',
+            'analysis_score',
+            'conformity_score',
+            'anomalies_count',
+        )
+    
+    def get_analysis_score(self, obj):
+        """Récupère le score global de l'analyse."""
+        try:
+            if hasattr(obj, 'analysis'):
+                analysis_details = obj.analysis.analysis_details
+                gpt_data = analysis_details.get('gpt_analysis', {})
+                return gpt_data.get('note_globale', 0)
+        except:
+            pass
+        return 0
+    
+    def get_conformity_score(self, obj):
+        """Récupère le score de conformité de l'analyse."""
+        try:
+            if hasattr(obj, 'analysis'):
+                analysis_details = obj.analysis.analysis_details
+                gpt_data = analysis_details.get('gpt_analysis', {})
+                return gpt_data.get('note_conformite_legale', 0)
+        except:
+            pass
+        return 0
+    
+    def get_anomalies_count(self, obj):
+        """Compte le nombre d'anomalies détectées."""
+        try:
+            if hasattr(obj, 'analysis'):
+                analysis_details = obj.analysis.analysis_details
+                gpt_data = analysis_details.get('gpt_analysis', {})
+                anomalies = gpt_data.get('anomalies_potentielles_observees', [])
+                return len(anomalies)
+        except:
+            pass
+        return 0
+
     # Optionnel: Ajouter une méthode update si tu permets la modification
     # def update(self, instance, validated_data):
     #     # ... logique de mise à jour ...

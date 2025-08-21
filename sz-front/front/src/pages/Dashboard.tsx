@@ -12,7 +12,8 @@ import {
   TrendingUp,
   Calendar,
   BarChart3,
-  Clock
+  Clock,
+  Shield
 } from 'lucide-react';
 
 const Dashboard = () => {
@@ -30,8 +31,9 @@ const Dashboard = () => {
           period: p.period || '—',
           date: new Date(p.upload_date).toLocaleDateString('fr-FR'),
           status: p.processing_status === 'completed' ? 'success' : (p.processing_status === 'error' ? 'errors' : 'warning'),
-          score: 0,
-          errorsCount: 0,
+          score: p.analysis_score || 0,
+          conformityScore: p.conformity_score || 0,
+          errorsCount: p.anomalies_count || 0,
           fileName: (p.uploaded_file || '').split('/').pop() || '—',
         }));
         setAnalyses(mapped);
@@ -44,9 +46,11 @@ const Dashboard = () => {
     run();
   }, []);
 
+  const completedAnalyses = analyses.filter(a => a.status === 'success' && a.score > 0);
   const stats = {
     totalAnalyses: analyses.length,
-    avgScore: analyses.length > 0 ? (analyses.reduce((sum, a) => sum + (a.score || 0), 0) / Math.max(analyses.length, 1)).toFixed(1) : '0.0',
+    avgScore: completedAnalyses.length > 0 ? (completedAnalyses.reduce((sum, a) => sum + (a.score || 0), 0) / completedAnalyses.length).toFixed(1) : '0.0',
+    avgConformityScore: completedAnalyses.length > 0 ? (completedAnalyses.reduce((sum, a) => sum + (a.conformityScore || 0), 0) / completedAnalyses.length).toFixed(1) : '0.0',
     totalErrors: analyses.reduce((sum, a) => sum + (a.errorsCount || 0), 0),
     lastAnalysis: analyses[0]?.date || '—'
   };
@@ -159,11 +163,11 @@ const Dashboard = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Dernière analyse</p>
-                  <p className="text-2xl font-bold text-foreground">{stats.lastAnalysis}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Conformité moyenne</p>
+                  <p className="text-2xl font-bold text-foreground">{stats.avgConformityScore}/10</p>
                 </div>
                 <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center">
-                  <Calendar className="w-6 h-6 text-primary-foreground" />
+                  <Shield className="w-6 h-6 text-primary-foreground" />
                 </div>
               </div>
             </CardContent>

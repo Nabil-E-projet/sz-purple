@@ -30,6 +30,17 @@ const AnalysisDetails = () => {
 				if (!id) return;
 				const { api } = await import('@/lib/api');
 				const data = await api.getPayslipAnalysis(Number(id));
+				
+				// DEBUG: Log détaillé des données reçues
+				console.log('=== DEBUG ANALYSE FRONTEND ===');
+				console.log('Données complètes reçues:', data);
+				console.log('Structure details:', data?.details);
+				console.log('GPT Analysis:', data?.details?.gpt_analysis);
+				console.log('Anomalies:', data?.details?.gpt_analysis?.anomalies_potentielles_observees);
+				console.log('Note conformité:', data?.details?.gpt_analysis?.note_conformite_legale);
+				console.log('Note globale:', data?.details?.gpt_analysis?.note_globale);
+				console.log('=== FIN DEBUG FRONTEND ===');
+				
 				setAnalysis(data);
 			} catch (e: any) {
 				setError(e?.error?.message || 'Impossible de récupérer les résultats');
@@ -82,20 +93,31 @@ const AnalysisDetails = () => {
 		);
 	}
 
+	// Extraire les données réelles de l'analyse GPT (compatibilité avec anciens schémas)
+	const gptData = analysis?.details?.gpt_analysis || analysis?.details?.gpt_analysis?.result || {};
+	const anomalies = Array.isArray(gptData?.anomalies_potentielles_observees) ? gptData.anomalies_potentielles_observees : [];
+	const evaluation = gptData?.evaluation_financiere_salarie || {};
+	const remuneration = gptData?.remuneration || {};
+	const periode = gptData?.periode || {};
+	const recommendations = Array.isArray(gptData?.recommandations_amelioration) ? gptData.recommandations_amelioration : [];
+
+	const conformityScore10 = typeof gptData?.note_conformite_legale === 'number' ? gptData.note_conformite_legale : 0;
+	const conformityPercent = Math.round(Math.max(0, Math.min(100, (conformityScore10 / 10) * 100)));
+
 	const derived = {
-		period: analysis?.details?.period || '—',
-		date: analysis?.date || '—',
-		fileName: analysis?.details?.file || '—',
+		period: (periode?.periode_du && periode?.periode_au) ? `Du ${periode.periode_du} au ${periode.periode_au}` : '—',
+		date: analysis?.date ? new Date(analysis.date).toLocaleString('fr-FR') : '—',
+		fileName: '—',
 		status: analysis?.status || 'success',
-		conformityScore: analysis?.details?.conformity || 0,
-		globalScore: analysis?.details?.globalScore || 0,
-		errors: analysis?.details?.errors || [],
-		recommendations: analysis?.details?.recommendations || [],
+		conformityPercent,
+		globalScore: typeof gptData?.note_globale === 'number' ? gptData.note_globale : 0,
+		errors: anomalies || [], // Ajouté pour éviter l'erreur filter
+		recommendations,
 		details: {
-			salaireBrut: analysis?.details?.salaireBrut || 0,
-			salaireNet: analysis?.details?.salaireNet || 0,
-			cotisationsSociales: analysis?.details?.cotisationsSociales || 0,
-			convention: analysis?.details?.convention || '—',
+			salaireBrut: parseFloat(remuneration?.salaire_brut_total) || 0,
+			salaireNet: parseFloat(remuneration?.net_a_payer) || 0,
+			cotisationsSociales: parseFloat(remuneration?.total_cotisations_salariales) || 0,
+			convention: gptData?.informations_generales?.convention_collective_applicable || '—',
 		},
 	};
 
@@ -118,10 +140,37 @@ const AnalysisDetails = () => {
 							Fiche de paie - {derived.period}
 						</p>
 					</div>
-					<Button className="bg-gradient-primary hover:opacity-90 border-0">
-						<Download className="w-4 h-4 mr-2" />
-						Télécharger le rapport
-					</Button>
+					<div className="flex space-x-2">
+						<Button className="bg-gradient-primary hover:opacity-90 border-0">
+							<Download className="w-4 h-4 mr-2" />
+							Télécharger le rapport
+						</Button>
+						{process.env.NODE_ENV === 'development' && (
+							<Button 
+								variant="outline" 
+								onClick={async () => {
+									try {
+										const { api } = await import('@/lib/api');
+										const response = await fetch(`http://localhost:8000/api/analysis/payslip/${id}/recalculate-scores/`, {
+											method: 'POST',
+											headers: {
+												'Authorization': `Bearer ${api.getAccessToken()}`,
+												'Content-Type': 'application/json'
+											}
+										});
+										const data = await response.json();
+										console.log('Recalcul des scores:', data);
+										// Recharger la page
+										window.location.reload();
+									} catch (e) {
+										console.error('Erreur recalcul:', e);
+									}
+								}}
+							>
+								🔧 Recalculer scores
+							</Button>
+						)}
+					</div>
 				</div>
 
 				<div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -147,9 +196,9 @@ const AnalysisDetails = () => {
 									<div>
 										<div className="flex justify-between text-sm mb-1">
 											<span>Conformité</span>
-											<span>{derived.conformityScore}%</span>
+											<span>{derived.conformityPercent}%</span>
 										</div>
-										<Progress value={derived.conformityScore} className="h-2" />
+										<Progress value={derived.conformityPercent} className="h-2" />
 									</div>
 								</div>
 
@@ -165,7 +214,7 @@ const AnalysisDetails = () => {
 									<div className="flex items-center justify-between">
 										<span className="text-muted-foreground">Erreurs trouvées</span>
 										<span className="text-red-500 font-medium">
-											{derived.errors.filter((e: any) => e.type === 'error').length}
+											{anomalies.filter((e: any) => e.level === 'critical' || e.gravite === 'haute').length}
 										</span>
 									</div>
 								</div>
@@ -220,37 +269,48 @@ const AnalysisDetails = () => {
 									<span>Erreurs et alertes détectées</span>
 								</CardTitle>
 								<CardDescription>
-									{derived.errors.length} point(s) d'attention identifié(s)
+									{anomalies.length} anomalie(s) identifiée(s)
 								</CardDescription>
 							</CardHeader>
 							<CardContent>
 								<div className="space-y-4">
-									{derived.errors.map((error: any, index: number) => (
-										<div key={index} className="glass-card p-4 rounded-lg">
-											<div className="flex items-start space-x-3">
-												{getErrorIcon(error.type)}
-												<div className="flex-1">
-													<div className="flex items-center justify-between mb-2">
-														<h4 className="font-semibold text-foreground">{error.title}</h4>
-														{getErrorBadge(error.type)}
-													</div>
-													<p className="text-sm text-muted-foreground mb-2">
-														{error.description}
-													</p>
-													{error.impact && (
-														<p className="text-sm font-medium text-primary mb-2">
-															Impact : {error.impact}
+									{anomalies.map((anomalie: any, index: number) => {
+										const severity = anomalie.level || (anomalie.gravite === 'haute' ? 'error' : anomalie.gravite === 'moyenne' ? 'warning' : 'info');
+										return (
+											<div key={index} className="glass-card p-4 rounded-lg">
+												<div className="flex items-start space-x-3">
+													{getErrorIcon(severity)}
+													<div className="flex-1">
+														<div className="flex items-center justify-between mb-2">
+															<h4 className="font-semibold text-foreground">{anomalie.type || 'Anomalie détectée'}</h4>
+															{getErrorBadge(severity)}
+														</div>
+														<p className="text-sm text-muted-foreground mb-2">
+															{anomalie.description || 'Aucune description disponible'}
 														</p>
-													)}
-													<div className="bg-muted/30 p-3 rounded-lg">
-														<p className="text-sm">
-															<span className="font-medium">Recommandation :</span> {error.recommendation}
-														</p>
+														{anomalie.impact_financier && (
+															<p className="text-sm font-medium text-primary mb-2">
+																Impact financier : {anomalie.impact_financier}
+															</p>
+														)}
+														{anomalie.recommandation_correctif && (
+															<div className="bg-muted/30 p-3 rounded-lg">
+																<p className="text-sm">
+																	<span className="font-medium">Recommandation :</span> {anomalie.recommandation_correctif}
+																</p>
+															</div>
+														)}
 													</div>
 												</div>
 											</div>
+										);
+									})}
+									{anomalies.length === 0 && (
+										<div className="text-center py-8">
+											<CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-3" />
+											<p className="text-muted-foreground">Aucune anomalie détectée</p>
 										</div>
-									))}
+									)}
 								</div>
 							</CardContent>
 						</Card>
@@ -276,6 +336,12 @@ const AnalysisDetails = () => {
 											<p className="text-sm text-foreground">{recommendation}</p>
 										</div>
 									))}
+									{derived.recommendations.length === 0 && (
+										<div className="text-center py-8">
+											<CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-3" />
+											<p className="text-muted-foreground">Aucune recommandation spécifique</p>
+										</div>
+									)}
 								</div>
 							</CardContent>
 						</Card>
