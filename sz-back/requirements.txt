@@ -1,0 +1,43 @@
+Brotli==1.1.0
+whitenoise==6.9.0
+# --- Framework Django et API REST ---
+Django==4.2.20
+djangorestframework==3.14.0
+djangorestframework-simplejwt==4.8.0
+django-cors-headers==4.0.0
+djoser==2.1.0  # Pour la gestion des utilisateurs (inscription, etc.)
+python-dotenv
+# --- Base de données ---
+psycopg2-binary==2.9.10  # Connecteur PostgreSQL
+
+# --- Traitement PDF et Images ---
+pdf2image==1.16.3      # Convertit les PDF en images (utilisé par GPTVisionService)
+Pillow==10.4.0         # Manipulation d'images (dépendance de pdf2image)
+
+# --- Requêtes HTTP ---
+requests==2.32.3       # Pour faire des appels API (ex: OpenAI)
+# --- Gestion des fichiers ---
+setuptools==67.8.0
+# --- Authentification Sociale (Optionnel - si vous l'utilisez) ---
+python3-openid==3.2.0
+oauthlib==3.2.2
+requests-oauthlib==2.0.0
+social-auth-app-django==4.0.0
+social-auth-core==4.5.6
+
+# --- Sécurité et Utilitaires ---
+cryptography==44.0.2   # Dépendance pour la sécurité (souvent requise par d'autres libs)
+pytz==2025.1           # Gestion des fuseaux horaires
+
+# --- Documentation DRF Interactive (Optionnel - retirez si non utilisé) ---
+coreapi==2.3.3
+coreschema==0.0.4
+itypes==1.2.0
+
+
+gunicorn==21.2.0
+
+
+# --- Emails formatés 
+django-templated-mail==1.1.1
+dj-database-url

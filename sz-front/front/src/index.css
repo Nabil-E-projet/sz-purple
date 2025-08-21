@@ -1,0 +1,215 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Glassmorphisme violet design system */
+    --background: 250 100% 97%;
+    --foreground: 260 15% 15%;
+
+    --card: 250 30% 95%;
+    --card-foreground: 260 15% 15%;
+
+    --popover: 250 50% 98%;
+    --popover-foreground: 260 15% 15%;
+
+    --primary: 270 91% 65%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 250 60% 88%;
+    --secondary-foreground: 260 25% 25%;
+
+    --muted: 250 30% 92%;
+    --muted-foreground: 260 8% 45%;
+
+    --accent: 280 100% 85%;
+    --accent-foreground: 260 15% 15%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 250 30% 85%;
+    --input: 250 30% 85%;
+    --ring: 270 91% 65%;
+
+    /* Glass effects */
+    --glass-bg: 250 100% 100%;
+    --glass-border: 250 100% 100%;
+    --glass-shadow: 270 50% 50%;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(270 91% 65%) 0%, hsl(280 100% 75%) 100%);
+    --gradient-secondary: linear-gradient(135deg, hsl(250 60% 88%) 0%, hsl(260 50% 85%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(270 91% 65%) 0%, hsl(280 100% 75%) 50%, hsl(290 85% 70%) 100%);
+    --gradient-card: linear-gradient(135deg, hsla(250 100% 100% / 0.7) 0%, hsla(260 100% 95% / 0.8) 100%);
+
+    --radius: 1rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 260 20% 8%;
+    --foreground: 250 100% 95%;
+
+    --card: 260 15% 10%;
+    --card-foreground: 250 100% 95%;
+
+    --popover: 260 15% 10%;
+    --popover-foreground: 250 100% 95%;
+
+    --primary: 270 91% 65%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 260 15% 15%;
+    --secondary-foreground: 250 100% 95%;
+
+    --muted: 260 15% 15%;
+    --muted-foreground: 250 20% 70%;
+
+    --accent: 280 100% 85%;
+    --accent-foreground: 260 20% 8%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 260 15% 20%;
+    --input: 260 15% 20%;
+    --ring: 270 91% 65%;
+
+    /* Dark glass effects */
+    --glass-bg: 260 20% 10%;
+    --glass-border: 250 50% 90%;
+    --glass-shadow: 270 50% 30%;
+
+    --gradient-card: linear-gradient(135deg, hsla(260 20% 15% / 0.8) 0%, hsla(270 30% 20% / 0.9) 100%);
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    background: var(--gradient-secondary);
+    min-height: 100vh;
+  }
+}
+
+@layer components {
+  /* Glass morphism utilities */
+  .glass-card {
+    background: var(--gradient-card);
+    backdrop-filter: blur(20px);
+    border: 1px solid hsl(var(--glass-border) / 0.2);
+    box-shadow: 0 8px 32px hsla(var(--glass-shadow) / 0.1);
+  }
+
+  .glass-nav {
+    background: hsla(var(--glass-bg) / 0.9);
+    backdrop-filter: blur(15px);
+    border-bottom: 1px solid hsl(var(--glass-border) / 0.1);
+  }
+
+  .hero-gradient {
+    background: var(--gradient-hero);
+    background-size: 200% 200%;
+    animation: gradient-shift 8s ease-in-out infinite;
+  }
+
+  .btn-glass {
+    background: hsla(var(--glass-bg) / 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid hsl(var(--glass-border) / 0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .btn-glass:hover {
+    background: hsla(var(--glass-bg) / 0.9);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px hsla(var(--glass-shadow) / 0.2);
+  }
+
+  /* Upload area styles */
+  .upload-zone {
+    background: var(--gradient-card);
+    backdrop-filter: blur(15px);
+    border: 2px dashed hsl(var(--primary) / 0.4);
+    transition: all 0.3s ease;
+  }
+
+  .upload-zone:hover {
+    border-color: hsl(var(--primary));
+    background: hsla(var(--primary) / 0.05);
+  }
+
+  .upload-zone.drag-active {
+    border-color: hsl(var(--primary));
+    background: hsla(var(--primary) / 0.1);
+    transform: scale(1.02);
+  }
+}
+
+@layer utilities {
+  .animate-gradient-shift {
+    animation: gradient-shift 8s ease-in-out infinite;
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 0.6s ease-out;
+  }
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

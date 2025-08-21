@@ -1,0 +1,52 @@
+# Environments
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Dependencies
+node_modules/
+sz-front/node_modules/
+sz-back/venv/
+
+# Build outputs
+sz-front/build/
+sz-front/dist/
+
+# Logs
+*.log
+logs/
+sz-back/logs/
+
+# Database
+*.sqlite3
+*.db
+
+# Cache
+.cache/
+sz-front/.cache/
+sz-front/node_modules/.cache/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Media files (peut contenir des données sensibles)
+sz-back/media/
+
+# Backup files
+*.bak
+*.backup

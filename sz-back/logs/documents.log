@@ -1,0 +1,806 @@
+INFO 2025-03-28 02:49:42,114 views Upload de document: user=2, payslip_id=3, filename=payslips/2025/03/fiche.pdf
+INFO 2025-03-28 02:54:41,571 views Upload de document: user=2, payslip_id=4, filename=payslips/2025/03/2022_11_errahmani_nabil_2023_04_25T10_46_38_1.pdf
+INFO 2025-03-28 03:51:59,897 views Upload de document: user=2, payslip_id=5, filename=payslips/2025/03/fiche_o7367M1.pdf
+INFO 2025-03-28 03:52:08,860 views Upload de document: user=2, payslip_id=6, filename=payslips/2025/03/Fiche_de_paie_Word_HPjGT9v.pdf
+WARNING 2025-03-30 03:57:26,530 anonymization_service Erreur lors de l'anonymisation avec le pattern (?<=\b(?:M\.|M |Mme\.|Mme |Mlle\.|Mlle |Nom |Nom:|Prénom |Prénom:|Salarié |Salarié:|Employé |Employé:))\s*[A-ZÉÈÊËÀÂÄÔÖÙÛÜÇ][a-zéèêëàâäôöùûüç]+(?:\s+[A-ZÉÈÊËÀÂÄÔÖÙÛÜÇ][a-zéèêëàâäôöùûüç]+)*: look-behind requires fixed-width pattern
+INFO 2025-03-30 03:57:26,547 views Upload de document: user=2, payslip_id=38, filename=payslips/2025/03/fiche_M4aJ282.pdf
+INFO 2025-03-30 04:22:16,008 anonymization_service PDF anonymisé créé: fiche_URAINS9_anonymized.pdf
+ERROR 2025-03-30 04:22:16,523 extraction_service Erreur lors de l'extraction du fichier fiche_URAINS9_anonymized.pdf: type object 'AnonymizationService' has no attribute 'extract_metadata_before_anonymization'
+INFO 2025-03-30 04:22:16,530 views Upload de document: user=2, payslip_id=39, filename=payslips/2025/03/fiche_URAINS9.pdf
+INFO 2025-03-30 04:25:24,636 anonymization_service PDF anonymisé créé: 2022_11_errahmani_nabil_2023_04_25T10_46_38_1_YQcEIt8_anonymized.pdf
+ERROR 2025-03-30 04:25:25,287 extraction_service Erreur lors de l'extraction du fichier 2022_11_errahmani_nabil_2023_04_25T10_46_38_1_YQcEIt8_anonymized.pdf: type object 'AnonymizationService' has no attribute 'extract_metadata_before_anonymization'
+INFO 2025-03-30 04:25:26,365 views Upload de document: user=2, payslip_id=40, filename=payslips/2025/03/2022_11_errahmani_nabil_2023_04_25T10_46_38_1_YQcEIt8.pdf
+INFO 2025-03-30 04:31:35,321 anonymization_service PDF anonymisé créé: avril_24_2_anonymized.pdf
+ERROR 2025-03-30 04:31:35,763 extraction_service Erreur lors de l'extraction du fichier avril_24_2_anonymized.pdf: type object 'AnonymizationService' has no attribute 'extract_metadata_before_anonymization'
+INFO 2025-03-30 04:31:35,768 views Upload de document: user=2, payslip_id=41, filename=payslips/2025/03/avril_24_2.pdf
+INFO 2025-03-30 04:32:26,468 anonymization_service PDF anonymisé créé: avril_24_2_FYrmkUk_anonymized.pdf
+ERROR 2025-03-30 04:32:26,918 extraction_service Erreur lors de l'extraction du fichier avril_24_2_FYrmkUk_anonymized.pdf: type object 'AnonymizationService' has no attribute 'extract_metadata_before_anonymization'
+INFO 2025-03-30 04:32:26,923 views Upload de document: user=2, payslip_id=42, filename=payslips/2025/03/avril_24_2_FYrmkUk.pdf
+INFO 2025-03-30 04:39:02,553 anonymization_service PDF anonymisé (redaction complète) créé: avril_24_2_URT4Q1a_anonymized.pdf
+ERROR 2025-03-30 04:39:03,044 extraction_service Erreur lors de l'extraction du fichier avril_24_2_URT4Q1a_anonymized.pdf: type object 'AnonymizationService' has no attribute 'extract_metadata_before_anonymization'
+INFO 2025-03-30 04:39:03,049 views Upload de document: user=2, payslip_id=43, filename=payslips/2025/03/avril_24_2_URT4Q1a.pdf
+INFO 2025-03-30 04:49:19,936 anonymization_service PDF anonymisé (méthode équilibrée) créé: avril_24_2_9s1zexP_anonymized.pdf
+ERROR 2025-03-30 04:49:20,463 extraction_service Erreur lors de l'extraction du fichier avril_24_2_9s1zexP_anonymized.pdf: type object 'AnonymizationService' has no attribute 'extract_metadata_before_anonymization'
+INFO 2025-03-30 04:49:20,468 views Upload de document: user=2, payslip_id=44, filename=payslips/2025/03/avril_24_2_9s1zexP.pdf
+INFO 2025-03-30 04:51:33,149 anonymization_service PDF anonymisé avec protection renforcée des noms: avril_24_2_9SMLw6c_anonymized.pdf
+ERROR 2025-03-30 04:51:33,651 extraction_service Erreur lors de l'extraction du fichier avril_24_2_9SMLw6c_anonymized.pdf: type object 'AnonymizationService' has no attribute 'extract_metadata_before_anonymization'
+INFO 2025-03-30 04:51:33,655 views Upload de document: user=2, payslip_id=45, filename=payslips/2025/03/avril_24_2_9SMLw6c.pdf
+INFO 2025-03-30 04:52:14,835 anonymization_service PDF anonymisé (méthode équilibrée) créé: avril_24_2_qZ5uNE9_anonymized.pdf
+ERROR 2025-03-30 04:52:15,350 extraction_service Erreur lors de l'extraction du fichier avril_24_2_qZ5uNE9_anonymized.pdf: type object 'AnonymizationService' has no attribute 'extract_metadata_before_anonymization'
+INFO 2025-03-30 04:52:15,354 views Upload de document: user=2, payslip_id=46, filename=payslips/2025/03/avril_24_2_qZ5uNE9.pdf
+INFO 2025-03-30 04:55:00,442 anonymization_service PDF anonymisé (méthode équilibrée) créé: avril_24_2_dJ5iTt0_anonymized.pdf
+ERROR 2025-03-30 04:55:00,938 extraction_service Erreur lors de l'extraction du fichier avril_24_2_dJ5iTt0_anonymized.pdf: type object 'AnonymizationService' has no attribute 'extract_metadata_before_anonymization'
+INFO 2025-03-30 04:55:00,942 views Upload de document: user=2, payslip_id=47, filename=payslips/2025/03/avril_24_2_dJ5iTt0.pdf
+INFO 2025-03-30 04:58:32,621 anonymization_service PDF anonymisé (méthode équilibrée) créé: avril_24_2_XXZtvjB_anonymized.pdf
+ERROR 2025-03-30 04:58:33,164 extraction_service Erreur lors de l'extraction du fichier avril_24_2_XXZtvjB_anonymized.pdf: type object 'AnonymizationService' has no attribute 'extract_metadata_before_anonymization'
+INFO 2025-03-30 04:58:33,169 views Upload de document: user=2, payslip_id=48, filename=payslips/2025/03/avril_24_2_XXZtvjB.pdf
+INFO 2025-03-30 05:02:29,734 anonymization_service PDF anonymisé avec succès : /app/media/payslips/2025/03/avril_24_2_anonymized.pdf
+ERROR 2025-03-30 05:02:30,234 extraction_service Erreur lors de l'extraction du fichier avril_24_2_anonymized.pdf: type object 'AnonymizationService' has no attribute 'extract_metadata_before_anonymization'
+INFO 2025-03-30 05:02:30,239 views Upload de document: user=2, payslip_id=49, filename=payslips/2025/03/avril_24_2.pdf
+INFO 2025-03-30 05:03:42,689 anonymization_service PDF anonymisé (méthode équilibrée) créé: avril_24_2_JV9BEFK_anonymized.pdf
+ERROR 2025-03-30 05:03:43,183 extraction_service Erreur lors de l'extraction du fichier avril_24_2_JV9BEFK_anonymized.pdf: type object 'AnonymizationService' has no attribute 'extract_metadata_before_anonymization'
+INFO 2025-03-30 05:03:43,188 views Upload de document: user=2, payslip_id=50, filename=payslips/2025/03/avril_24_2_JV9BEFK.pdf
+INFO 2025-03-30 05:08:06,696 anonymization_service PDF anonymisé (méthode équilibrée) créé : avril_24_2_HF7yuXo_anonymized.pdf
+ERROR 2025-03-30 05:08:07,173 extraction_service Erreur lors de l'extraction du fichier avril_24_2_HF7yuXo_anonymized.pdf: type object 'AnonymizationService' has no attribute 'extract_metadata_before_anonymization'
+INFO 2025-03-30 05:08:07,177 views Upload de document: user=2, payslip_id=51, filename=payslips/2025/03/avril_24_2_HF7yuXo.pdf
+INFO 2025-03-30 05:09:24,007 anonymization_service PDF anonymisé (méthode équilibrée) créé: avril_24_2_WA1Lq97_anonymized.pdf
+ERROR 2025-03-30 05:09:24,558 extraction_service Erreur lors de l'extraction du fichier avril_24_2_WA1Lq97_anonymized.pdf: type object 'AnonymizationService' has no attribute 'extract_metadata_before_anonymization'
+INFO 2025-03-30 05:09:24,563 views Upload de document: user=2, payslip_id=52, filename=payslips/2025/03/avril_24_2_WA1Lq97.pdf
+INFO 2025-03-30 05:10:30,041 anonymization_service PDF anonymisé (méthode équilibrée) créé: avril_24_2_VYuyPdA_anonymized.pdf
+ERROR 2025-03-30 05:10:30,497 extraction_service Erreur lors de l'extraction du fichier avril_24_2_VYuyPdA_anonymized.pdf: type object 'AnonymizationService' has no attribute 'extract_metadata_before_anonymization'
+INFO 2025-03-30 05:10:30,502 views Upload de document: user=2, payslip_id=53, filename=payslips/2025/03/avril_24_2_VYuyPdA.pdf
+INFO 2025-03-30 05:11:12,964 anonymization_service PDF anonymisé (robuste aux styles) créé : avril_24_2_dkgSyZQ_anonymized.pdf
+ERROR 2025-03-30 05:11:13,463 extraction_service Erreur lors de l'extraction du fichier avril_24_2_dkgSyZQ_anonymized.pdf: type object 'AnonymizationService' has no attribute 'extract_metadata_before_anonymization'
+INFO 2025-03-30 05:11:13,488 views Upload de document: user=2, payslip_id=54, filename=payslips/2025/03/avril_24_2_dkgSyZQ.pdf
+INFO 2025-03-30 05:13:36,954 anonymization_service PDF anonymisé (méthode équilibrée) créé: avril_24_2_lwXziql_anonymized.pdf
+ERROR 2025-03-30 05:13:37,455 extraction_service Erreur lors de l'extraction du fichier avril_24_2_lwXziql_anonymized.pdf: type object 'AnonymizationService' has no attribute 'extract_metadata_before_anonymization'
+INFO 2025-03-30 05:13:37,460 views Upload de document: user=2, payslip_id=55, filename=payslips/2025/03/avril_24_2_lwXziql.pdf
+INFO 2025-03-30 05:14:12,376 anonymization_service PDF anonymisé (méthode équilibrée) créé: avril_24_2_oEcECZ5_anonymized.pdf
+ERROR 2025-03-30 05:14:12,882 extraction_service Erreur lors de l'extraction du fichier avril_24_2_oEcECZ5_anonymized.pdf: type object 'AnonymizationService' has no attribute 'extract_metadata_before_anonymization'
+INFO 2025-03-30 05:14:12,887 views Upload de document: user=2, payslip_id=56, filename=payslips/2025/03/avril_24_2_oEcECZ5.pdf
+ERROR 2025-03-30 05:18:09,475 extraction_service Erreur lors de l'extraction du fichier avril_24_2_MzNiz6S_anonymized.pdf: type object 'AnonymizationService' has no attribute 'extract_metadata_before_anonymization'
+INFO 2025-03-30 05:18:09,480 views Upload de document: user=2, payslip_id=57, filename=payslips/2025/03/avril_24_2_MzNiz6S.pdf
+INFO 2025-03-30 05:19:36,273 anonymization_service PDF anonymisé (méthode équilibrée) créé: avril_24_2_Uq3WckE_anonymized.pdf
+ERROR 2025-03-30 05:19:36,822 extraction_service Erreur lors de l'extraction du fichier avril_24_2_Uq3WckE_anonymized.pdf: type object 'AnonymizationService' has no attribute 'extract_metadata_before_anonymization'
+INFO 2025-03-30 05:19:36,828 views Upload de document: user=2, payslip_id=58, filename=payslips/2025/03/avril_24_2_Uq3WckE.pdf
+ERROR 2025-03-30 05:22:16,054 anonymization_service Erreur lors de l'anonymisation du PDF: module 'fitz' has no attribute 'TEXT_IGNORECASE'
+ERROR 2025-03-30 05:22:16,500 extraction_service Erreur lors de l'extraction du fichier avril_24_2_WA663X2.pdf: type object 'AnonymizationService' has no attribute 'extract_metadata_before_anonymization'
+INFO 2025-03-30 05:22:16,505 views Upload de document: user=2, payslip_id=59, filename=payslips/2025/03/avril_24_2_WA663X2.pdf
+ERROR 2025-03-30 05:23:15,557 anonymization_service Erreur lors de l'anonymisation du PDF: module 'fitz' has no attribute 'TEXT_IGNORECASE'
+ERROR 2025-03-30 05:23:15,979 extraction_service Erreur lors de l'extraction du fichier avril_24_2.pdf: type object 'AnonymizationService' has no attribute 'extract_metadata_before_anonymization'
+INFO 2025-03-30 05:23:15,983 views Upload de document: user=2, payslip_id=60, filename=payslips/2025/03/avril_24_2.pdf
+ERROR 2025-03-30 05:23:23,639 anonymization_service Erreur lors de l'anonymisation du PDF: module 'fitz' has no attribute 'TEXT_IGNORECASE'
+ERROR 2025-03-30 05:23:24,073 extraction_service Erreur lors de l'extraction du fichier avril_24_2_fsT5kpq.pdf: type object 'AnonymizationService' has no attribute 'extract_metadata_before_anonymization'
+INFO 2025-03-30 05:23:24,079 views Upload de document: user=2, payslip_id=61, filename=payslips/2025/03/avril_24_2_fsT5kpq.pdf
+INFO 2025-03-30 05:24:30,719 anonymization_service PDF anonymisé (méthode équilibrée) créé: avril_24_2_fXXI0lH_anonymized.pdf
+ERROR 2025-03-30 05:24:31,245 extraction_service Erreur lors de l'extraction du fichier avril_24_2_fXXI0lH_anonymized.pdf: type object 'AnonymizationService' has no attribute 'extract_metadata_before_anonymization'
+INFO 2025-03-30 05:24:31,251 views Upload de document: user=2, payslip_id=62, filename=payslips/2025/03/avril_24_2_fXXI0lH.pdf
+ERROR 2025-03-30 05:30:29,350 anonymization_service Erreur lors de l'anonymisation: look-behind requires fixed-width pattern
+ERROR 2025-03-30 05:30:29,898 extraction_service Erreur lors de l'extraction du fichier avril_24_2_tohVr2z.pdf: type object 'AnonymizationService' has no attribute 'extract_metadata_before_anonymization'
+INFO 2025-03-30 05:30:29,904 views Upload de document: user=2, payslip_id=63, filename=payslips/2025/03/avril_24_2_tohVr2z.pdf
+INFO 2025-03-30 05:31:23,386 anonymization_service PDF anonymisé (méthode équilibrée) créé: avril_24_2_dE2uRDD_anonymized.pdf
+ERROR 2025-03-30 05:31:23,925 extraction_service Erreur lors de l'extraction du fichier avril_24_2_dE2uRDD_anonymized.pdf: type object 'AnonymizationService' has no attribute 'extract_metadata_before_anonymization'
+INFO 2025-03-30 05:31:23,931 views Upload de document: user=2, payslip_id=64, filename=payslips/2025/03/avril_24_2_dE2uRDD.pdf
+ERROR 2025-03-30 05:31:54,667 anonymization_service Erreur lors de l'anonymisation du PDF: module 'fitz' has no attribute 'TEXT_IGNORECASE'
+ERROR 2025-03-30 05:31:55,215 extraction_service Erreur lors de l'extraction du fichier avril_24_2_h7P9Y4a.pdf: type object 'AnonymizationService' has no attribute 'extract_metadata_before_anonymization'
+INFO 2025-03-30 05:31:55,220 views Upload de document: user=2, payslip_id=65, filename=payslips/2025/03/avril_24_2_h7P9Y4a.pdf
+INFO 2025-03-30 05:32:25,823 anonymization_service PDF anonymisé (méthode équilibrée) créé: avril_24_2_KR2k4Qm_anonymized.pdf
+ERROR 2025-03-30 05:32:26,366 extraction_service Erreur lors de l'extraction du fichier avril_24_2_KR2k4Qm_anonymized.pdf: type object 'AnonymizationService' has no attribute 'extract_metadata_before_anonymization'
+INFO 2025-03-30 05:32:26,372 views Upload de document: user=2, payslip_id=66, filename=payslips/2025/03/avril_24_2_KR2k4Qm.pdf
+ERROR 2025-03-30 05:33:04,993 anonymization_service Erreur lors de l'anonymisation du PDF: module 'fitz' has no attribute 'TEXT_IGNORECASE'
+ERROR 2025-03-30 05:33:05,547 extraction_service Erreur lors de l'extraction du fichier avril_24_2_q6kZ4cV.pdf: type object 'AnonymizationService' has no attribute 'extract_metadata_before_anonymization'
+INFO 2025-03-30 05:33:05,553 views Upload de document: user=2, payslip_id=67, filename=payslips/2025/03/avril_24_2_q6kZ4cV.pdf
+ERROR 2025-03-30 05:33:20,591 anonymization_service Erreur lors de l'anonymisation: look-behind requires fixed-width pattern
+ERROR 2025-03-30 05:33:21,053 extraction_service Erreur lors de l'extraction du fichier avril_24_2_zWhS7O4.pdf: type object 'AnonymizationService' has no attribute 'extract_metadata_before_anonymization'
+INFO 2025-03-30 05:33:21,059 views Upload de document: user=2, payslip_id=68, filename=payslips/2025/03/avril_24_2_zWhS7O4.pdf
+INFO 2025-03-30 05:33:47,814 anonymization_service PDF anonymisé (méthode équilibrée) créé: avril_24_2_h1hkfhY_anonymized.pdf
+ERROR 2025-03-30 05:33:48,418 extraction_service Erreur lors de l'extraction du fichier avril_24_2_h1hkfhY_anonymized.pdf: type object 'AnonymizationService' has no attribute 'extract_metadata_before_anonymization'
+INFO 2025-03-30 05:33:48,424 views Upload de document: user=2, payslip_id=69, filename=payslips/2025/03/avril_24_2_h1hkfhY.pdf
+ERROR 2025-04-01 03:44:04,886 analysis_service Erreur lors de l'analyse de la fiche de paie #96: type object 'AnonymizationService' has no attribute 'anonymize_pdf'
+INFO 2025-04-01 03:44:04,893 views Upload de document: user=2, payslip_id=96, filename=payslips/2025/04/avril_24_2.pdf
+ERROR 2025-04-01 03:44:44,035 analysis_service Erreur lors de l'analyse de la fiche de paie #97: type object 'AnonymizationService' has no attribute 'anonymize_pdf'
+INFO 2025-04-01 03:44:44,040 views Upload de document: user=2, payslip_id=97, filename=payslips/2025/04/avril_24_2_xH1jsix.pdf
+ERROR 2025-04-01 03:47:37,740 analysis_service Erreur lors de l'analyse de la fiche de paie #97: type object 'AnonymizationService' has no attribute 'anonymize_pdf'
+ERROR 2025-04-01 03:47:37,747 analysis_service Type d'erreur: AttributeError
+INFO 2025-04-07 23:22:33,109 anonymization_service PDF anonymisé créé: avril_24_2_Nw0GMe4_anonymized.pdf
+INFO 2025-04-07 23:22:33,735 views Upload de document: user=2, payslip_id=98, filename=payslips/2025/04/avril_24_2_Nw0GMe4.pdf
+INFO 2025-04-07 23:24:44,148 anonymization_service PDF anonymisé créé: avril_24_2_Nw0GMe4_anonymized.pdf
+ERROR 2025-04-07 23:24:44,634 analysis_service Erreur lors de l'analyse de la fiche de paie #98: duplicate key value violates unique constraint "analysis_payslipanalysis_payslip_id_key"
+DETAIL:  Key (payslip_id)=(98) already exists.
+ERROR 2025-04-07 23:24:44,638 analysis_service Type d'erreur: IntegrityError
+INFO 2025-04-09 00:24:23,025 anonymization_service Anonymized 1 occurrence(s) of ssn
+INFO 2025-04-09 00:24:23,026 anonymization_service Anonymized 1 occurrence(s) of email
+INFO 2025-04-09 00:24:23,027 anonymization_service Anonymized 1 occurrence(s) of phone
+INFO 2025-04-09 00:24:23,027 anonymization_service Anonymized 1 occurrence(s) of siret
+INFO 2025-04-09 00:24:23,028 anonymization_service Anonymized 1 occurrence(s) of address
+INFO 2025-04-09 00:24:23,029 anonymization_service Anonymized 3 occurrence(s) of birth_date
+INFO 2025-04-09 00:24:23,029 anonymization_service Anonymized 1 occurrence(s) of iban
+INFO 2025-04-09 00:25:56,265 anonymization_service Anonymized 1 occurrence(s) of ssn
+INFO 2025-04-09 00:25:56,266 anonymization_service Anonymized 1 occurrence(s) of email
+INFO 2025-04-09 00:25:56,267 anonymization_service Anonymized 1 occurrence(s) of phone
+INFO 2025-04-09 00:25:56,267 anonymization_service Anonymized 1 occurrence(s) of siret
+INFO 2025-04-09 00:25:56,268 anonymization_service Anonymized 1 occurrence(s) of address
+INFO 2025-04-09 00:25:56,268 anonymization_service Anonymized 3 occurrence(s) of birth_date
+INFO 2025-04-09 00:25:56,269 anonymization_service Anonymized 1 occurrence(s) of iban
+INFO 2025-04-09 00:29:08,527 anonymization_service Anonymized 1 occurrence(s) of ssn
+INFO 2025-04-09 00:29:08,528 anonymization_service Anonymized 1 occurrence(s) of email
+INFO 2025-04-09 00:29:08,529 anonymization_service Anonymized 1 occurrence(s) of phone
+INFO 2025-04-09 00:29:08,529 anonymization_service Anonymized 1 occurrence(s) of siret
+INFO 2025-04-09 00:29:08,530 anonymization_service Anonymized 1 occurrence(s) of address
+INFO 2025-04-09 00:29:08,530 anonymization_service Anonymized 1 occurrence(s) of iban
+INFO 2025-04-09 00:38:51,373 views Upload de document: user=2, payslip_id=99, filename=payslips/2025/04/avril_24_2_zAKd0Fz.pdf
+INFO 2025-04-09 00:46:48,117 anonymization_service Anonymized 1 occurrence(s) of siret
+INFO 2025-04-09 00:46:48,117 anonymization_service Anonymized 1 occurrence(s) of address
+INFO 2025-04-09 00:46:48,126 views Upload de document: user=2, payslip_id=100, filename=payslips/2025/04/avril_24_2_YlVpn4r.pdf
+INFO 2025-04-09 00:56:48,623 anonymization_service ssn: 0 remplacement(s)
+INFO 2025-04-09 00:56:48,624 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-09 00:56:48,625 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-09 00:56:48,625 anonymization_service siret: 1 remplacement(s)
+INFO 2025-04-09 00:56:48,626 anonymization_service siren: 0 remplacement(s)
+INFO 2025-04-09 00:56:48,627 anonymization_service address: 2 remplacement(s)
+INFO 2025-04-09 00:56:48,627 anonymization_service postal_code: 1 remplacement(s)
+INFO 2025-04-09 00:56:48,628 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-09 00:56:48,637 views Upload de document: user=2, payslip_id=101, filename=payslips/2025/04/avril_24_2_opp8C65.pdf
+INFO 2025-04-09 01:57:23,755 anonymization_service ssn: 0 remplacement(s)
+INFO 2025-04-09 01:57:23,756 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-09 01:57:23,757 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-09 01:57:23,757 anonymization_service siret: 1 remplacement(s)
+INFO 2025-04-09 01:57:23,758 anonymization_service siren: 0 remplacement(s)
+INFO 2025-04-09 01:57:23,758 anonymization_service address: 2 remplacement(s)
+INFO 2025-04-09 01:57:23,759 anonymization_service postal_code: 1 remplacement(s)
+INFO 2025-04-09 01:57:23,760 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-09 02:03:05,556 anonymization_service ssn: 0 remplacement(s)
+INFO 2025-04-09 02:03:05,557 anonymization_service nir: 0 remplacement(s)
+INFO 2025-04-09 02:03:05,558 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-09 02:03:05,558 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-09 02:03:05,559 anonymization_service siret: 1 remplacement(s)
+INFO 2025-04-09 02:03:05,559 anonymization_service siren: 0 remplacement(s)
+INFO 2025-04-09 02:03:05,560 anonymization_service address: 2 remplacement(s)
+INFO 2025-04-09 02:03:05,560 anonymization_service postal_code: 2 remplacement(s)
+INFO 2025-04-09 02:03:05,561 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-09 02:03:05,561 anonymization_service name_pattern: 2 remplacement(s)
+INFO 2025-04-09 02:04:12,933 anonymization_service ssn: 1 remplacement(s)
+INFO 2025-04-09 02:04:12,933 anonymization_service nir: 0 remplacement(s)
+INFO 2025-04-09 02:04:12,934 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-09 02:04:12,935 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-09 02:04:12,935 anonymization_service siret: 1 remplacement(s)
+INFO 2025-04-09 02:04:12,936 anonymization_service siren: 0 remplacement(s)
+INFO 2025-04-09 02:04:12,936 anonymization_service address: 2 remplacement(s)
+INFO 2025-04-09 02:04:12,937 anonymization_service postal_code: 2 remplacement(s)
+INFO 2025-04-09 02:04:12,937 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-09 02:04:12,938 anonymization_service name_pattern: 2 remplacement(s)
+INFO 2025-04-09 02:06:14,489 anonymization_service ssn: 1 remplacement(s)
+INFO 2025-04-09 02:06:14,490 anonymization_service nir: 0 remplacement(s)
+INFO 2025-04-09 02:06:14,491 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-09 02:06:14,492 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-09 02:06:14,493 anonymization_service siret: 1 remplacement(s)
+INFO 2025-04-09 02:06:14,494 anonymization_service siren: 0 remplacement(s)
+INFO 2025-04-09 02:06:14,495 anonymization_service address: 2 remplacement(s)
+INFO 2025-04-09 02:06:14,495 anonymization_service postal_code: 2 remplacement(s)
+INFO 2025-04-09 02:06:14,495 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-09 02:06:14,496 anonymization_service name_pattern: 2 remplacement(s)
+INFO 2025-04-09 03:07:11,349 anonymization_service ssn: 4 remplacement(s)
+INFO 2025-04-09 03:07:11,350 anonymization_service nir: 0 remplacement(s)
+INFO 2025-04-09 03:07:11,351 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-09 03:07:11,351 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-09 03:07:11,352 anonymization_service siret: 4 remplacement(s)
+INFO 2025-04-09 03:07:11,352 anonymization_service siren: 0 remplacement(s)
+INFO 2025-04-09 03:07:11,353 anonymization_service address: 8 remplacement(s)
+INFO 2025-04-09 03:07:11,353 anonymization_service postal_code: 14 remplacement(s)
+INFO 2025-04-09 03:07:11,354 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-09 03:07:11,354 anonymization_service name_pattern: 8 remplacement(s)
+INFO 2025-04-09 03:07:11,375 views Upload de document: user=2, payslip_id=102, filename=payslips/2025/04/SALAIRE_M_FONTAINE_07_ET_08_2018.pdf
+INFO 2025-04-09 03:07:28,267 anonymization_service ssn: 4 remplacement(s)
+INFO 2025-04-09 03:07:28,268 anonymization_service nir: 0 remplacement(s)
+INFO 2025-04-09 03:07:28,268 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-09 03:07:28,269 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-09 03:07:28,269 anonymization_service siret: 4 remplacement(s)
+INFO 2025-04-09 03:07:28,270 anonymization_service siren: 0 remplacement(s)
+INFO 2025-04-09 03:07:28,270 anonymization_service address: 8 remplacement(s)
+INFO 2025-04-09 03:07:28,271 anonymization_service postal_code: 14 remplacement(s)
+INFO 2025-04-09 03:07:28,271 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-09 03:07:28,272 anonymization_service name_pattern: 8 remplacement(s)
+INFO 2025-04-10 01:35:16,106 anonymization_service ssn: 1 remplacement(s)
+INFO 2025-04-10 01:35:16,107 anonymization_service nir: 0 remplacement(s)
+INFO 2025-04-10 01:35:16,108 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-10 01:35:16,109 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-10 01:35:16,109 anonymization_service siret: 1 remplacement(s)
+INFO 2025-04-10 01:35:16,110 anonymization_service siren: 0 remplacement(s)
+INFO 2025-04-10 01:35:16,111 anonymization_service address: 2 remplacement(s)
+INFO 2025-04-10 01:35:16,111 anonymization_service postal_code: 2 remplacement(s)
+INFO 2025-04-10 01:35:16,112 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-10 01:35:16,112 anonymization_service name_pattern: 2 remplacement(s)
+INFO 2025-04-10 01:35:16,566 views Upload de document: user=2, payslip_id=103, filename=payslips/2025/04/avril_24_2_pDOIte6.pdf
+INFO 2025-04-10 01:35:53,882 anonymization_service ssn: 1 remplacement(s)
+INFO 2025-04-10 01:35:53,882 anonymization_service nir: 0 remplacement(s)
+INFO 2025-04-10 01:35:53,883 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-10 01:35:53,883 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-10 01:35:53,884 anonymization_service siret: 1 remplacement(s)
+INFO 2025-04-10 01:35:53,884 anonymization_service siren: 0 remplacement(s)
+INFO 2025-04-10 01:35:53,884 anonymization_service address: 2 remplacement(s)
+INFO 2025-04-10 01:35:53,885 anonymization_service postal_code: 2 remplacement(s)
+INFO 2025-04-10 01:35:53,885 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-10 01:35:53,885 anonymization_service name_pattern: 2 remplacement(s)
+INFO 2025-04-10 01:38:47,108 anonymization_service ssn: 4 remplacement(s)
+INFO 2025-04-10 01:38:47,108 anonymization_service nir: 0 remplacement(s)
+INFO 2025-04-10 01:38:47,109 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-10 01:38:47,110 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-10 01:38:47,110 anonymization_service siret: 4 remplacement(s)
+INFO 2025-04-10 01:38:47,111 anonymization_service siren: 0 remplacement(s)
+INFO 2025-04-10 01:38:47,111 anonymization_service address: 8 remplacement(s)
+INFO 2025-04-10 01:38:47,112 anonymization_service postal_code: 14 remplacement(s)
+INFO 2025-04-10 01:38:47,112 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-10 01:38:47,112 anonymization_service name_pattern: 8 remplacement(s)
+INFO 2025-04-10 01:38:47,328 views Upload de document: user=2, payslip_id=104, filename=payslips/2025/04/SALAIRE_M_FONTAINE_07_ET_08_2018_3Xhv1Qd.pdf
+INFO 2025-04-10 01:38:52,389 anonymization_service ssn: 4 remplacement(s)
+INFO 2025-04-10 01:38:52,390 anonymization_service nir: 0 remplacement(s)
+INFO 2025-04-10 01:38:52,391 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-10 01:38:52,391 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-10 01:38:52,392 anonymization_service siret: 4 remplacement(s)
+INFO 2025-04-10 01:38:52,392 anonymization_service siren: 0 remplacement(s)
+INFO 2025-04-10 01:38:52,393 anonymization_service address: 8 remplacement(s)
+INFO 2025-04-10 01:38:52,394 anonymization_service postal_code: 14 remplacement(s)
+INFO 2025-04-10 01:38:52,394 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-10 01:38:52,394 anonymization_service name_pattern: 8 remplacement(s)
+INFO 2025-04-10 01:42:21,541 anonymization_service ssn: 4 remplacement(s)
+INFO 2025-04-10 01:42:21,542 anonymization_service nir: 0 remplacement(s)
+INFO 2025-04-10 01:42:21,544 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-10 01:42:21,544 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-10 01:42:21,545 anonymization_service siret: 4 remplacement(s)
+INFO 2025-04-10 01:42:21,546 anonymization_service siren: 0 remplacement(s)
+INFO 2025-04-10 01:42:21,547 anonymization_service address: 8 remplacement(s)
+INFO 2025-04-10 01:42:21,547 anonymization_service postal_code: 14 remplacement(s)
+INFO 2025-04-10 01:42:21,548 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-10 01:42:21,549 anonymization_service name_pattern: 8 remplacement(s)
+INFO 2025-04-10 01:42:54,152 anonymization_service ssn: 4 remplacement(s)
+INFO 2025-04-10 01:42:54,153 anonymization_service nir: 0 remplacement(s)
+INFO 2025-04-10 01:42:54,153 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-10 01:42:54,154 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-10 01:42:54,154 anonymization_service siret: 4 remplacement(s)
+INFO 2025-04-10 01:42:54,155 anonymization_service siren: 0 remplacement(s)
+INFO 2025-04-10 01:42:54,156 anonymization_service address: 8 remplacement(s)
+INFO 2025-04-10 01:42:54,157 anonymization_service postal_code: 14 remplacement(s)
+INFO 2025-04-10 01:42:54,157 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-10 01:42:54,158 anonymization_service name_pattern: 8 remplacement(s)
+INFO 2025-04-10 01:42:54,347 views Upload de document: user=2, payslip_id=105, filename=payslips/2025/04/SALAIRE_M_FONTAINE_07_ET_08_2018_h9Sj1dd.pdf
+INFO 2025-04-10 01:43:01,541 anonymization_service ssn: 4 remplacement(s)
+INFO 2025-04-10 01:43:01,542 anonymization_service nir: 0 remplacement(s)
+INFO 2025-04-10 01:43:01,543 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-10 01:43:01,543 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-10 01:43:01,544 anonymization_service siret: 4 remplacement(s)
+INFO 2025-04-10 01:43:01,544 anonymization_service siren: 0 remplacement(s)
+INFO 2025-04-10 01:43:01,545 anonymization_service address: 8 remplacement(s)
+INFO 2025-04-10 01:43:01,545 anonymization_service postal_code: 14 remplacement(s)
+INFO 2025-04-10 01:43:01,546 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-10 01:43:01,546 anonymization_service name_pattern: 8 remplacement(s)
+INFO 2025-04-10 01:43:23,967 anonymization_service ssn: 1 remplacement(s)
+INFO 2025-04-10 01:43:23,967 anonymization_service nir: 0 remplacement(s)
+INFO 2025-04-10 01:43:23,967 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-10 01:43:23,968 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-10 01:43:23,968 anonymization_service siret: 1 remplacement(s)
+INFO 2025-04-10 01:43:23,968 anonymization_service siren: 0 remplacement(s)
+INFO 2025-04-10 01:43:23,969 anonymization_service address: 2 remplacement(s)
+INFO 2025-04-10 01:43:23,969 anonymization_service postal_code: 2 remplacement(s)
+INFO 2025-04-10 01:43:23,969 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-10 01:43:23,970 anonymization_service name_pattern: 2 remplacement(s)
+INFO 2025-04-10 01:43:24,446 views Upload de document: user=2, payslip_id=106, filename=payslips/2025/04/avril_24_2_LX15M04.pdf
+INFO 2025-04-10 01:43:30,796 anonymization_service ssn: 1 remplacement(s)
+INFO 2025-04-10 01:43:30,796 anonymization_service nir: 0 remplacement(s)
+INFO 2025-04-10 01:43:30,797 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-10 01:43:30,797 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-10 01:43:30,798 anonymization_service siret: 1 remplacement(s)
+INFO 2025-04-10 01:43:30,798 anonymization_service siren: 0 remplacement(s)
+INFO 2025-04-10 01:43:30,798 anonymization_service address: 2 remplacement(s)
+INFO 2025-04-10 01:43:30,799 anonymization_service postal_code: 2 remplacement(s)
+INFO 2025-04-10 01:43:30,799 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-10 01:43:30,799 anonymization_service name_pattern: 2 remplacement(s)
+INFO 2025-04-11 00:19:09,884 anonymization_service ssn: 4 remplacement(s)
+INFO 2025-04-11 00:19:09,885 anonymization_service nir: 0 remplacement(s)
+INFO 2025-04-11 00:19:09,886 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-11 00:19:09,887 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-11 00:19:09,887 anonymization_service siret: 4 remplacement(s)
+INFO 2025-04-11 00:19:09,888 anonymization_service siren: 0 remplacement(s)
+INFO 2025-04-11 00:19:09,889 anonymization_service address: 8 remplacement(s)
+INFO 2025-04-11 00:19:09,889 anonymization_service postal_code: 14 remplacement(s)
+INFO 2025-04-11 00:19:09,890 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-11 00:19:09,890 anonymization_service name_pattern: 8 remplacement(s)
+INFO 2025-04-11 00:19:10,077 views Upload de document: user=2, payslip_id=138, filename=payslips/2025/04/SALAIRE_M_FONTAINE_07_ET_08_2018_wydFMwG.pdf
+INFO 2025-04-11 00:21:05,767 anonymization_service ssn: 4 remplacement(s)
+INFO 2025-04-11 00:21:05,768 anonymization_service nir: 0 remplacement(s)
+INFO 2025-04-11 00:21:05,768 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-11 00:21:05,769 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-11 00:21:05,769 anonymization_service siret: 4 remplacement(s)
+INFO 2025-04-11 00:21:05,770 anonymization_service siren: 0 remplacement(s)
+INFO 2025-04-11 00:21:05,771 anonymization_service address: 8 remplacement(s)
+INFO 2025-04-11 00:21:05,771 anonymization_service postal_code: 14 remplacement(s)
+INFO 2025-04-11 00:21:05,772 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-11 00:21:05,772 anonymization_service name_pattern: 8 remplacement(s)
+INFO 2025-04-11 00:32:51,100 anonymization_service ssn: 4 remplacement(s)
+INFO 2025-04-11 00:32:51,100 anonymization_service nir: 0 remplacement(s)
+INFO 2025-04-11 00:32:51,101 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-11 00:32:51,102 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-11 00:32:51,102 anonymization_service siret: 4 remplacement(s)
+INFO 2025-04-11 00:32:51,103 anonymization_service siren: 0 remplacement(s)
+INFO 2025-04-11 00:32:51,104 anonymization_service address: 8 remplacement(s)
+INFO 2025-04-11 00:32:51,104 anonymization_service postal_code: 14 remplacement(s)
+INFO 2025-04-11 00:32:51,105 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-11 00:32:51,105 anonymization_service name_pattern: 8 remplacement(s)
+INFO 2025-04-11 00:33:15,712 anonymization_service ssn: 1 remplacement(s)
+INFO 2025-04-11 00:33:15,712 anonymization_service nir: 0 remplacement(s)
+INFO 2025-04-11 00:33:15,713 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-11 00:33:15,713 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-11 00:33:15,713 anonymization_service siret: 1 remplacement(s)
+INFO 2025-04-11 00:33:15,714 anonymization_service siren: 0 remplacement(s)
+INFO 2025-04-11 00:33:15,714 anonymization_service address: 2 remplacement(s)
+INFO 2025-04-11 00:33:15,714 anonymization_service postal_code: 2 remplacement(s)
+INFO 2025-04-11 00:33:15,715 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-11 00:33:15,715 anonymization_service name_pattern: 2 remplacement(s)
+INFO 2025-04-11 00:33:16,131 views Upload de document: user=2, payslip_id=139, filename=payslips/2025/04/avril_24_2_AIu7M5g.pdf
+INFO 2025-04-11 00:33:27,314 anonymization_service ssn: 1 remplacement(s)
+INFO 2025-04-11 00:33:27,315 anonymization_service nir: 0 remplacement(s)
+INFO 2025-04-11 00:33:27,315 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-11 00:33:27,315 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-11 00:33:27,316 anonymization_service siret: 1 remplacement(s)
+INFO 2025-04-11 00:33:27,316 anonymization_service siren: 0 remplacement(s)
+INFO 2025-04-11 00:33:27,316 anonymization_service address: 2 remplacement(s)
+INFO 2025-04-11 00:33:27,317 anonymization_service postal_code: 2 remplacement(s)
+INFO 2025-04-11 00:33:27,317 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-11 00:33:27,317 anonymization_service name_pattern: 2 remplacement(s)
+INFO 2025-04-11 00:42:26,565 anonymization_service ssn: 1 remplacement(s)
+INFO 2025-04-11 00:42:26,566 anonymization_service nir: 0 remplacement(s)
+INFO 2025-04-11 00:42:26,566 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-11 00:42:26,567 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-11 00:42:26,568 anonymization_service siret: 1 remplacement(s)
+INFO 2025-04-11 00:42:26,568 anonymization_service siren: 0 remplacement(s)
+INFO 2025-04-11 00:42:26,569 anonymization_service address: 2 remplacement(s)
+INFO 2025-04-11 00:42:26,569 anonymization_service postal_code: 2 remplacement(s)
+INFO 2025-04-11 00:42:26,569 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-11 00:42:26,570 anonymization_service name_pattern: 2 remplacement(s)
+INFO 2025-04-11 00:42:27,297 views Upload de document: user=2, payslip_id=140, filename=payslips/2025/04/avril_24_2_tv43VX4.pdf
+INFO 2025-04-11 00:42:34,284 anonymization_service ssn: 1 remplacement(s)
+INFO 2025-04-11 00:42:34,284 anonymization_service nir: 0 remplacement(s)
+INFO 2025-04-11 00:42:34,285 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-11 00:42:34,285 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-11 00:42:34,285 anonymization_service siret: 1 remplacement(s)
+INFO 2025-04-11 00:42:34,286 anonymization_service siren: 0 remplacement(s)
+INFO 2025-04-11 00:42:34,286 anonymization_service address: 2 remplacement(s)
+INFO 2025-04-11 00:42:34,286 anonymization_service postal_code: 2 remplacement(s)
+INFO 2025-04-11 00:42:34,287 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-11 00:42:34,287 anonymization_service name_pattern: 2 remplacement(s)
+INFO 2025-04-11 00:43:28,405 anonymization_service ssn: 4 remplacement(s)
+INFO 2025-04-11 00:43:28,406 anonymization_service nir: 0 remplacement(s)
+INFO 2025-04-11 00:43:28,406 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-11 00:43:28,407 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-11 00:43:28,407 anonymization_service siret: 4 remplacement(s)
+INFO 2025-04-11 00:43:28,408 anonymization_service siren: 0 remplacement(s)
+INFO 2025-04-11 00:43:28,408 anonymization_service address: 8 remplacement(s)
+INFO 2025-04-11 00:43:28,409 anonymization_service postal_code: 14 remplacement(s)
+INFO 2025-04-11 00:43:28,409 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-11 00:43:28,410 anonymization_service name_pattern: 8 remplacement(s)
+INFO 2025-04-11 00:43:28,678 views Upload de document: user=2, payslip_id=141, filename=payslips/2025/04/SALAIRE_M_FONTAINE_07_ET_08_2018_wZETBrL.pdf
+INFO 2025-04-11 00:43:32,641 anonymization_service ssn: 4 remplacement(s)
+INFO 2025-04-11 00:43:32,642 anonymization_service nir: 0 remplacement(s)
+INFO 2025-04-11 00:43:32,642 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-11 00:43:32,643 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-11 00:43:32,643 anonymization_service siret: 4 remplacement(s)
+INFO 2025-04-11 00:43:32,644 anonymization_service siren: 0 remplacement(s)
+INFO 2025-04-11 00:43:32,644 anonymization_service address: 8 remplacement(s)
+INFO 2025-04-11 00:43:32,645 anonymization_service postal_code: 14 remplacement(s)
+INFO 2025-04-11 00:43:32,646 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-11 00:43:32,646 anonymization_service name_pattern: 8 remplacement(s)
+INFO 2025-04-11 00:48:26,554 anonymization_service ssn: 4 remplacement(s)
+INFO 2025-04-11 00:48:26,554 anonymization_service nir: 0 remplacement(s)
+INFO 2025-04-11 00:48:26,556 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-11 00:48:26,557 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-11 00:48:26,558 anonymization_service siret: 4 remplacement(s)
+INFO 2025-04-11 00:48:26,558 anonymization_service siren: 0 remplacement(s)
+INFO 2025-04-11 00:48:26,559 anonymization_service address: 8 remplacement(s)
+INFO 2025-04-11 00:48:26,559 anonymization_service postal_code: 14 remplacement(s)
+INFO 2025-04-11 00:48:26,560 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-11 00:48:26,560 anonymization_service name_pattern: 8 remplacement(s)
+INFO 2025-04-11 00:48:26,855 views Upload de document: user=2, payslip_id=142, filename=payslips/2025/04/SALAIRE_M_FONTAINE_07_ET_08_2018_TdGpPkl.pdf
+INFO 2025-04-11 00:48:40,365 anonymization_service ssn: 4 remplacement(s)
+INFO 2025-04-11 00:48:40,365 anonymization_service nir: 0 remplacement(s)
+INFO 2025-04-11 00:48:40,366 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-11 00:48:40,367 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-11 00:48:40,367 anonymization_service siret: 4 remplacement(s)
+INFO 2025-04-11 00:48:40,368 anonymization_service siren: 0 remplacement(s)
+INFO 2025-04-11 00:48:40,368 anonymization_service address: 8 remplacement(s)
+INFO 2025-04-11 00:48:40,369 anonymization_service postal_code: 14 remplacement(s)
+INFO 2025-04-11 00:48:40,369 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-11 00:48:40,369 anonymization_service name_pattern: 8 remplacement(s)
+INFO 2025-04-11 00:50:07,425 anonymization_service ssn: 1 remplacement(s)
+INFO 2025-04-11 00:50:07,426 anonymization_service nir: 0 remplacement(s)
+INFO 2025-04-11 00:50:07,426 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-11 00:50:07,427 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-11 00:50:07,427 anonymization_service siret: 1 remplacement(s)
+INFO 2025-04-11 00:50:07,427 anonymization_service siren: 0 remplacement(s)
+INFO 2025-04-11 00:50:07,428 anonymization_service address: 2 remplacement(s)
+INFO 2025-04-11 00:50:07,428 anonymization_service postal_code: 2 remplacement(s)
+INFO 2025-04-11 00:50:07,429 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-11 00:50:07,429 anonymization_service name_pattern: 2 remplacement(s)
+INFO 2025-04-11 00:50:08,207 views Upload de document: user=2, payslip_id=143, filename=payslips/2025/04/avril_24_2_JH4ELM5.pdf
+INFO 2025-04-11 00:50:11,743 anonymization_service ssn: 1 remplacement(s)
+INFO 2025-04-11 00:50:11,743 anonymization_service nir: 0 remplacement(s)
+INFO 2025-04-11 00:50:11,744 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-11 00:50:11,744 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-11 00:50:11,744 anonymization_service siret: 1 remplacement(s)
+INFO 2025-04-11 00:50:11,745 anonymization_service siren: 0 remplacement(s)
+INFO 2025-04-11 00:50:11,746 anonymization_service address: 2 remplacement(s)
+INFO 2025-04-11 00:50:11,747 anonymization_service postal_code: 2 remplacement(s)
+INFO 2025-04-11 00:50:11,747 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-11 00:50:11,748 anonymization_service name_pattern: 2 remplacement(s)
+INFO 2025-04-11 00:59:57,470 anonymization_service ssn: 1 remplacement(s)
+INFO 2025-04-11 00:59:57,471 anonymization_service nir: 0 remplacement(s)
+INFO 2025-04-11 00:59:57,472 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-11 00:59:57,472 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-11 00:59:57,473 anonymization_service siret: 1 remplacement(s)
+INFO 2025-04-11 00:59:57,473 anonymization_service siren: 0 remplacement(s)
+INFO 2025-04-11 00:59:57,474 anonymization_service address: 2 remplacement(s)
+INFO 2025-04-11 00:59:57,475 anonymization_service postal_code: 2 remplacement(s)
+INFO 2025-04-11 00:59:57,475 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-11 00:59:57,475 anonymization_service urssaf: 0 remplacement(s)
+INFO 2025-04-11 00:59:57,476 anonymization_service uppercase_name: 82 remplacement(s)
+INFO 2025-04-11 00:59:59,849 views Upload de document: user=2, payslip_id=144, filename=payslips/2025/04/avril_24_2_qy6WTUe.pdf
+INFO 2025-04-11 01:00:04,046 anonymization_service ssn: 1 remplacement(s)
+INFO 2025-04-11 01:00:04,046 anonymization_service nir: 0 remplacement(s)
+INFO 2025-04-11 01:00:04,047 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-11 01:00:04,047 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-11 01:00:04,047 anonymization_service siret: 1 remplacement(s)
+INFO 2025-04-11 01:00:04,048 anonymization_service siren: 0 remplacement(s)
+INFO 2025-04-11 01:00:04,048 anonymization_service address: 2 remplacement(s)
+INFO 2025-04-11 01:00:04,048 anonymization_service postal_code: 2 remplacement(s)
+INFO 2025-04-11 01:00:04,049 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-11 01:00:04,049 anonymization_service urssaf: 0 remplacement(s)
+INFO 2025-04-11 01:00:04,049 anonymization_service uppercase_name: 82 remplacement(s)
+INFO 2025-04-11 01:08:03,178 anonymization_service ssn: 1 remplacement(s)
+INFO 2025-04-11 01:08:03,179 anonymization_service nir: 0 remplacement(s)
+INFO 2025-04-11 01:08:03,180 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-11 01:08:03,181 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-11 01:08:03,181 anonymization_service siret: 1 remplacement(s)
+INFO 2025-04-11 01:08:03,182 anonymization_service siren: 0 remplacement(s)
+INFO 2025-04-11 01:08:03,183 anonymization_service address: 2 remplacement(s)
+INFO 2025-04-11 01:08:03,183 anonymization_service postal_code: 2 remplacement(s)
+INFO 2025-04-11 01:08:03,184 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-11 01:08:03,184 anonymization_service urssaf: 0 remplacement(s)
+INFO 2025-04-11 01:08:03,185 anonymization_service uppercase_name: 82 remplacement(s)
+INFO 2025-04-11 01:08:05,506 views Upload de document: user=2, payslip_id=145, filename=payslips/2025/04/avril_24_2_9hEYdky.pdf
+INFO 2025-04-11 01:08:17,693 anonymization_service ssn: 1 remplacement(s)
+INFO 2025-04-11 01:08:17,694 anonymization_service nir: 0 remplacement(s)
+INFO 2025-04-11 01:08:17,694 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-11 01:08:17,694 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-11 01:08:17,695 anonymization_service siret: 1 remplacement(s)
+INFO 2025-04-11 01:08:17,695 anonymization_service siren: 0 remplacement(s)
+INFO 2025-04-11 01:08:17,695 anonymization_service address: 2 remplacement(s)
+INFO 2025-04-11 01:08:17,696 anonymization_service postal_code: 2 remplacement(s)
+INFO 2025-04-11 01:08:17,696 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-11 01:08:17,697 anonymization_service urssaf: 0 remplacement(s)
+INFO 2025-04-11 01:08:17,697 anonymization_service uppercase_name: 82 remplacement(s)
+INFO 2025-04-11 01:15:00,947 anonymization_service ssn: 1 remplacement(s)
+INFO 2025-04-11 01:15:00,948 anonymization_service nir: 0 remplacement(s)
+INFO 2025-04-11 01:15:00,949 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-11 01:15:00,949 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-11 01:15:00,950 anonymization_service siret: 0 remplacement(s)
+INFO 2025-04-11 01:15:00,950 anonymization_service siren: 0 remplacement(s)
+INFO 2025-04-11 01:15:00,951 anonymization_service address: 2 remplacement(s)
+INFO 2025-04-11 01:15:00,951 anonymization_service postal_code: 2 remplacement(s)
+INFO 2025-04-11 01:15:00,952 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-11 01:15:00,952 anonymization_service bic: 0 remplacement(s)
+INFO 2025-04-11 01:15:00,954 anonymization_service name: 87 remplacement(s)
+INFO 2025-04-11 01:15:00,954 anonymization_service uppercase_name: 0 remplacement(s)
+INFO 2025-04-11 01:15:05,285 views Upload de document: user=2, payslip_id=146, filename=payslips/2025/04/avril_24_2_vI3wSgS.pdf
+INFO 2025-04-11 01:15:12,057 anonymization_service ssn: 1 remplacement(s)
+INFO 2025-04-11 01:15:12,057 anonymization_service nir: 0 remplacement(s)
+INFO 2025-04-11 01:15:12,057 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-11 01:15:12,058 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-11 01:15:12,058 anonymization_service siret: 0 remplacement(s)
+INFO 2025-04-11 01:15:12,058 anonymization_service siren: 0 remplacement(s)
+INFO 2025-04-11 01:15:12,059 anonymization_service address: 2 remplacement(s)
+INFO 2025-04-11 01:15:12,059 anonymization_service postal_code: 2 remplacement(s)
+INFO 2025-04-11 01:15:12,059 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-11 01:15:12,060 anonymization_service bic: 0 remplacement(s)
+INFO 2025-04-11 01:15:12,060 anonymization_service name: 87 remplacement(s)
+INFO 2025-04-11 01:15:12,061 anonymization_service uppercase_name: 0 remplacement(s)
+INFO 2025-04-11 01:16:11,135 anonymization_service ssn: 1 remplacement(s)
+INFO 2025-04-11 01:16:11,135 anonymization_service nir: 0 remplacement(s)
+INFO 2025-04-11 01:16:11,136 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-11 01:16:11,137 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-11 01:16:11,137 anonymization_service siret: 1 remplacement(s)
+INFO 2025-04-11 01:16:11,138 anonymization_service siren: 0 remplacement(s)
+INFO 2025-04-11 01:16:11,140 anonymization_service address: 2 remplacement(s)
+INFO 2025-04-11 01:16:11,141 anonymization_service postal_code: 2 remplacement(s)
+INFO 2025-04-11 01:16:11,141 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-11 01:16:11,142 anonymization_service name_pattern: 2 remplacement(s)
+INFO 2025-04-11 01:16:11,542 views Upload de document: user=2, payslip_id=147, filename=payslips/2025/04/avril_24_2_yQswMEI.pdf
+INFO 2025-04-11 01:16:15,485 anonymization_service ssn: 1 remplacement(s)
+INFO 2025-04-11 01:16:15,485 anonymization_service nir: 0 remplacement(s)
+INFO 2025-04-11 01:16:15,486 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-11 01:16:15,486 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-11 01:16:15,486 anonymization_service siret: 1 remplacement(s)
+INFO 2025-04-11 01:16:15,487 anonymization_service siren: 0 remplacement(s)
+INFO 2025-04-11 01:16:15,487 anonymization_service address: 2 remplacement(s)
+INFO 2025-04-11 01:16:15,487 anonymization_service postal_code: 2 remplacement(s)
+INFO 2025-04-11 01:16:15,489 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-11 01:16:15,489 anonymization_service name_pattern: 2 remplacement(s)
+INFO 2025-04-11 01:29:21,734 anonymization_service ssn: 1 remplacement(s)
+INFO 2025-04-11 01:29:21,735 anonymization_service name_uppercase: 79 remplacement(s)
+INFO 2025-04-11 01:29:21,736 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-11 01:29:21,737 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-11 01:29:21,737 anonymization_service siret: 0 remplacement(s)
+INFO 2025-04-11 01:29:21,738 anonymization_service address: 0 remplacement(s)
+INFO 2025-04-11 01:29:21,738 anonymization_service postal_code: 2 remplacement(s)
+INFO 2025-04-11 01:29:21,739 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-11 01:29:21,739 anonymization_service urssaf: 0 remplacement(s)
+INFO 2025-04-11 01:29:23,850 views Upload de document: user=2, payslip_id=148, filename=payslips/2025/04/avril_24_2_e2RYQsA.pdf
+INFO 2025-04-11 01:29:31,589 anonymization_service ssn: 1 remplacement(s)
+INFO 2025-04-11 01:29:31,590 anonymization_service name_uppercase: 79 remplacement(s)
+INFO 2025-04-11 01:29:31,591 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-11 01:29:31,591 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-11 01:29:31,591 anonymization_service siret: 0 remplacement(s)
+INFO 2025-04-11 01:29:31,592 anonymization_service address: 0 remplacement(s)
+INFO 2025-04-11 01:29:31,592 anonymization_service postal_code: 2 remplacement(s)
+INFO 2025-04-11 01:29:31,592 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-11 01:29:31,592 anonymization_service urssaf: 0 remplacement(s)
+INFO 2025-04-11 01:29:38,101 anonymization_service ssn: 1 remplacement(s)
+INFO 2025-04-11 01:29:38,102 anonymization_service name_uppercase: 79 remplacement(s)
+INFO 2025-04-11 01:29:38,103 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-11 01:29:38,103 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-11 01:29:38,103 anonymization_service siret: 0 remplacement(s)
+INFO 2025-04-11 01:29:38,104 anonymization_service address: 0 remplacement(s)
+INFO 2025-04-11 01:29:38,104 anonymization_service postal_code: 2 remplacement(s)
+INFO 2025-04-11 01:29:38,104 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-11 01:29:38,105 anonymization_service urssaf: 0 remplacement(s)
+INFO 2025-04-11 01:30:19,881 anonymization_service ssn: 1 remplacement(s)
+INFO 2025-04-11 01:30:19,882 anonymization_service name_uppercase: 79 remplacement(s)
+INFO 2025-04-11 01:30:19,883 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-11 01:30:19,883 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-11 01:30:19,884 anonymization_service siret: 0 remplacement(s)
+INFO 2025-04-11 01:30:19,885 anonymization_service address: 0 remplacement(s)
+INFO 2025-04-11 01:30:19,885 anonymization_service postal_code: 2 remplacement(s)
+INFO 2025-04-11 01:30:19,886 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-11 01:30:19,886 anonymization_service urssaf: 0 remplacement(s)
+INFO 2025-04-11 01:30:19,887 anonymization_service name_pattern: 0 remplacement(s)
+INFO 2025-04-11 01:30:22,021 views Upload de document: user=2, payslip_id=149, filename=payslips/2025/04/avril_24_2_IHGsIVG.pdf
+INFO 2025-04-11 01:30:26,562 anonymization_service ssn: 1 remplacement(s)
+INFO 2025-04-11 01:30:26,563 anonymization_service name_uppercase: 79 remplacement(s)
+INFO 2025-04-11 01:30:26,563 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-11 01:30:26,563 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-11 01:30:26,564 anonymization_service siret: 0 remplacement(s)
+INFO 2025-04-11 01:30:26,564 anonymization_service address: 0 remplacement(s)
+INFO 2025-04-11 01:30:26,564 anonymization_service postal_code: 2 remplacement(s)
+INFO 2025-04-11 01:30:26,565 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-11 01:30:26,566 anonymization_service urssaf: 0 remplacement(s)
+INFO 2025-04-11 01:30:26,566 anonymization_service name_pattern: 0 remplacement(s)
+INFO 2025-04-11 01:35:45,338 anonymization_service Protection: 47 montant(s) financier(s) potentiel(s) protégé(s).
+INFO 2025-04-11 01:35:45,338 anonymization_service Protection: 0 période(s) protégée(s).
+INFO 2025-04-11 01:35:45,339 anonymization_service Anonymisation [NAME_UPPERCASE]: 28 remplacement(s)
+INFO 2025-04-11 01:35:45,341 anonymization_service Anonymisation [SIRET]: 1 remplacement(s)
+INFO 2025-04-11 01:35:45,342 anonymization_service Anonymisation [ADDRESS]: 1 remplacement(s)
+INFO 2025-04-11 01:35:45,343 anonymization_service Anonymisation [POSTAL_CODE_CITY]: 2 remplacement(s)
+INFO 2025-04-11 01:35:45,344 anonymization_service Restauration: 47 élément(s) protégé(s) restauré(s).
+INFO 2025-04-11 01:35:45,344 anonymization_service Anonymisation terminée. Total remplacements directs: 32
+INFO 2025-04-11 01:35:46,472 views Upload de document: user=2, payslip_id=150, filename=payslips/2025/04/avril_24_2_q5As4sO.pdf
+INFO 2025-04-11 01:35:53,746 anonymization_service Protection: 47 montant(s) financier(s) potentiel(s) protégé(s).
+INFO 2025-04-11 01:35:53,747 anonymization_service Protection: 0 période(s) protégée(s).
+INFO 2025-04-11 01:35:53,747 anonymization_service Anonymisation [NAME_UPPERCASE]: 28 remplacement(s)
+INFO 2025-04-11 01:35:53,748 anonymization_service Anonymisation [SIRET]: 1 remplacement(s)
+INFO 2025-04-11 01:35:53,749 anonymization_service Anonymisation [ADDRESS]: 1 remplacement(s)
+INFO 2025-04-11 01:35:53,749 anonymization_service Anonymisation [POSTAL_CODE_CITY]: 2 remplacement(s)
+INFO 2025-04-11 01:35:53,749 anonymization_service Restauration: 47 élément(s) protégé(s) restauré(s).
+INFO 2025-04-11 01:35:53,750 anonymization_service Anonymisation terminée. Total remplacements directs: 32
+INFO 2025-04-11 01:36:50,276 anonymization_service ssn: 1 remplacement(s)
+INFO 2025-04-11 01:36:50,277 anonymization_service name_uppercase: 79 remplacement(s)
+INFO 2025-04-11 01:36:50,278 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-11 01:36:50,278 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-11 01:36:50,279 anonymization_service siret: 0 remplacement(s)
+INFO 2025-04-11 01:36:50,279 anonymization_service address: 0 remplacement(s)
+INFO 2025-04-11 01:36:50,280 anonymization_service postal_code: 2 remplacement(s)
+INFO 2025-04-11 01:36:50,281 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-11 01:36:50,281 anonymization_service urssaf: 0 remplacement(s)
+INFO 2025-04-11 01:36:50,282 anonymization_service name_pattern: 0 remplacement(s)
+INFO 2025-04-11 01:36:52,280 views Upload de document: user=2, payslip_id=151, filename=payslips/2025/04/avril_24_2_CPp2Jrm.pdf
+INFO 2025-04-11 01:36:58,675 anonymization_service ssn: 1 remplacement(s)
+INFO 2025-04-11 01:36:58,675 anonymization_service name_uppercase: 79 remplacement(s)
+INFO 2025-04-11 01:36:58,676 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-11 01:36:58,676 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-11 01:36:58,677 anonymization_service siret: 0 remplacement(s)
+INFO 2025-04-11 01:36:58,677 anonymization_service address: 0 remplacement(s)
+INFO 2025-04-11 01:36:58,677 anonymization_service postal_code: 2 remplacement(s)
+INFO 2025-04-11 01:36:58,678 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-11 01:36:58,678 anonymization_service urssaf: 0 remplacement(s)
+INFO 2025-04-11 01:36:58,678 anonymization_service name_pattern: 0 remplacement(s)
+INFO 2025-04-11 01:45:24,012 anonymization_service ssn: 1 remplacement(s)
+INFO 2025-04-11 01:45:24,014 anonymization_service name_uppercase: 79 remplacement(s)
+INFO 2025-04-11 01:45:24,015 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-11 01:45:24,015 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-11 01:45:24,016 anonymization_service siret: 0 remplacement(s)
+INFO 2025-04-11 01:45:24,016 anonymization_service address: 0 remplacement(s)
+INFO 2025-04-11 01:45:24,017 anonymization_service postal_code: 2 remplacement(s)
+INFO 2025-04-11 01:45:24,019 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-11 01:45:24,021 anonymization_service urssaf: 0 remplacement(s)
+INFO 2025-04-11 01:45:24,021 anonymization_service name_pattern: 0 remplacement(s)
+INFO 2025-04-11 01:45:25,753 views Upload de document: user=2, payslip_id=152, filename=payslips/2025/04/avril_24_2_SHtc7Z9.pdf
+INFO 2025-04-11 01:45:33,998 anonymization_service ssn: 1 remplacement(s)
+INFO 2025-04-11 01:45:33,998 anonymization_service name_uppercase: 79 remplacement(s)
+INFO 2025-04-11 01:45:33,999 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-11 01:45:33,999 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-11 01:45:33,999 anonymization_service siret: 0 remplacement(s)
+INFO 2025-04-11 01:45:34,000 anonymization_service address: 0 remplacement(s)
+INFO 2025-04-11 01:45:34,000 anonymization_service postal_code: 2 remplacement(s)
+INFO 2025-04-11 01:45:34,000 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-11 01:45:34,001 anonymization_service urssaf: 0 remplacement(s)
+INFO 2025-04-11 01:45:34,001 anonymization_service name_pattern: 0 remplacement(s)
+INFO 2025-04-11 01:51:50,830 anonymization_service ssn: 0 remplacement(s)
+INFO 2025-04-11 01:51:50,830 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-11 01:51:50,831 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-11 01:51:50,833 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-11 01:51:50,833 anonymization_service siret: 1 remplacement(s)
+INFO 2025-04-11 01:51:50,834 anonymization_service address: 2 remplacement(s)
+INFO 2025-04-11 01:51:50,834 anonymization_service postal_code: 2 remplacement(s)
+INFO 2025-04-11 01:51:50,835 anonymization_service Noms propres anonymisés : 0
+INFO 2025-04-11 01:51:51,214 views Upload de document: user=2, payslip_id=153, filename=payslips/2025/04/avril_24_2_Bm6hzub.pdf
+INFO 2025-04-11 01:51:56,777 anonymization_service ssn: 0 remplacement(s)
+INFO 2025-04-11 01:51:56,777 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-11 01:51:56,778 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-11 01:51:56,778 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-11 01:51:56,779 anonymization_service siret: 1 remplacement(s)
+INFO 2025-04-11 01:51:56,779 anonymization_service address: 2 remplacement(s)
+INFO 2025-04-11 01:51:56,779 anonymization_service postal_code: 2 remplacement(s)
+INFO 2025-04-11 01:51:56,780 anonymization_service Noms propres anonymisés : 0
+INFO 2025-04-11 01:52:19,934 anonymization_service ssn: 4 remplacement(s)
+INFO 2025-04-11 01:52:19,935 anonymization_service iban: 0 remplacement(s)
+INFO 2025-04-11 01:52:19,936 anonymization_service email: 0 remplacement(s)
+INFO 2025-04-11 01:52:19,936 anonymization_service phone: 0 remplacement(s)
+INFO 2025-04-11 01:52:19,937 anonymization_service siret: 4 remplacement(s)
+INFO 2025-04-11 01:52:19,938 anonymization_service address: 8 remplacement(s)
+INFO 2025-04-11 01:52:19,938 anonymization_service postal_code: 14 remplacement(s)
+INFO 2025-04-11 01:52:19,939 anonymization_service Noms propres anonymisés : 0
+INFO 2025-04-11 01:52:20,108 views Upload de document: user=2, payslip_id=154, filename=payslips/2025/04/SALAIRE_M_FONTAINE_07_ET_08_2018_ynDkocC.pdf
+INFO 2025-04-13 23:53:17,908 analysis_service Conversion du PDF en images: /app/media/payslips/2025/04/SALAIRE_M_FONTAINE_07_ET_08_2018_Eh3eFdh.pdf
+INFO 2025-04-13 23:53:17,908 pdf_service Conversion du PDF en images: /app/media/payslips/2025/04/SALAIRE_M_FONTAINE_07_ET_08_2018_Eh3eFdh.pdf
+INFO 2025-04-13 23:53:18,613 pdf_service Conversion réussie: 2 pages extraites
+INFO 2025-04-13 23:53:18,614 analysis_service Traitement OCR sur 2 pages
+INFO 2025-04-13 23:53:18,614 ocr_service Traitement OCR de la page 1/2
+INFO 2025-04-13 23:53:20,804 ocr_service Traitement OCR de la page 2/2
+INFO 2025-04-13 23:53:22,697 analysis_service Anonymisation du texte extrait
+INFO 2025-04-13 23:53:23,154 analysis_service Extraction des données structurées
+INFO 2025-04-13 23:53:23,156 analysis_service Création du PDF anonymisé
+INFO 2025-04-13 23:53:24,347 pdf_service PDF anonymisé créé: /app/media/payslips/2025/04/SALAIRE_M_FONTAINE_07_ET_08_2018_Eh3eFdh_anonymized.pdf
+INFO 2025-04-13 23:53:24,370 analysis_service Analyse complète pour la fiche 155: 26 données sensibles détectées
+INFO 2025-04-13 23:53:24,370 views Upload de document: user=2, payslip_id=155, filename=payslips/2025/04/SALAIRE_M_FONTAINE_07_ET_08_2018_Eh3eFdh.pdf
+INFO 2025-04-13 23:53:37,653 analysis_service Conversion du PDF en images: /app/media/payslips/2025/04/SALAIRE_M_FONTAINE_07_ET_08_2018_Eh3eFdh.pdf
+INFO 2025-04-13 23:53:37,654 pdf_service Conversion du PDF en images: /app/media/payslips/2025/04/SALAIRE_M_FONTAINE_07_ET_08_2018_Eh3eFdh.pdf
+INFO 2025-04-13 23:53:38,004 pdf_service Conversion réussie: 2 pages extraites
+INFO 2025-04-13 23:53:38,005 analysis_service Traitement OCR sur 2 pages
+INFO 2025-04-13 23:53:38,005 ocr_service Traitement OCR de la page 1/2
+INFO 2025-04-13 23:53:39,922 ocr_service Traitement OCR de la page 2/2
+INFO 2025-04-13 23:53:41,866 analysis_service Anonymisation du texte extrait
+INFO 2025-04-13 23:53:41,940 analysis_service Extraction des données structurées
+INFO 2025-04-13 23:53:41,941 analysis_service Création du PDF anonymisé
+INFO 2025-04-13 23:53:43,095 pdf_service PDF anonymisé créé: /app/media/payslips/2025/04/SALAIRE_M_FONTAINE_07_ET_08_2018_Eh3eFdh_anonymized.pdf
+ERROR 2025-04-13 23:53:43,108 analysis_service Erreur lors de l'analyse de la fiche de paie #155: duplicate key value violates unique constraint "analysis_payslipanalysis_payslip_id_key"
+DETAIL:  Key (payslip_id)=(155) already exists.
+
+ERROR 2025-04-13 23:53:43,114 analysis_service Erreur secondaire lors de l'enregistrement de l'échec: duplicate key value violates unique constraint "analysis_payslipanalysis_payslip_id_key"
+DETAIL:  Key (payslip_id)=(155) already exists.
+
+INFO 2025-04-14 00:20:19,710 views Upload de document: user=2, payslip_id=159, filename=payslips/2025/04/avril_24_2_IEMb6Sx.pdf
+INFO 2025-04-14 00:21:10,028 views Upload de document: user=2, payslip_id=160, filename=payslips/2025/04/SALAIRE_M_FONTAINE_07_ET_08_2018_IB6zHY2.pdf
+INFO 2025-04-14 01:24:24,414 analysis_service Conversion du PDF en images: /app/media/payslips/2025/04/SALAIRE_M_FONTAINE_07_ET_08_2018_xuHVD48.pdf
+INFO 2025-04-14 01:24:24,415 pdf_service Conversion du PDF en images: /app/media/payslips/2025/04/SALAIRE_M_FONTAINE_07_ET_08_2018_xuHVD48.pdf
+INFO 2025-04-14 01:24:24,908 pdf_service Conversion réussie: 2 pages extraites
+INFO 2025-04-14 01:24:24,909 analysis_service Traitement OCR sur 2 pages
+INFO 2025-04-14 01:24:32,625 analysis_service Extraction des métadonnées
+INFO 2025-04-14 01:24:32,629 analysis_service Anonymisation du texte extrait
+INFO 2025-04-14 01:24:32,910 analysis_service Extraction des données structurées
+INFO 2025-04-14 01:24:32,912 analysis_service Création du PDF anonymisé
+INFO 2025-04-14 01:24:34,290 pdf_service PDF anonymisé créé: /app/media/payslips/2025/04/SALAIRE_M_FONTAINE_07_ET_08_2018_xuHVD48_anonymized.pdf
+INFO 2025-04-14 01:24:34,290 analysis_service Analyse du texte anonymisé
+INFO 2025-04-14 01:24:34,312 analysis_service Analyse complète pour la fiche 162: 27 données sensibles détectées
+INFO 2025-04-14 01:24:34,313 views Upload de document: user=2, payslip_id=162, filename=payslips/2025/04/SALAIRE_M_FONTAINE_07_ET_08_2018_xuHVD48.pdf
+INFO 2025-04-14 01:24:44,558 analysis_service Conversion du PDF en images: /app/media/payslips/2025/04/SALAIRE_M_FONTAINE_07_ET_08_2018_xuHVD48.pdf
+INFO 2025-04-14 01:24:44,558 pdf_service Conversion du PDF en images: /app/media/payslips/2025/04/SALAIRE_M_FONTAINE_07_ET_08_2018_xuHVD48.pdf
+INFO 2025-04-14 01:24:44,906 pdf_service Conversion réussie: 2 pages extraites
+INFO 2025-04-14 01:24:44,906 analysis_service Traitement OCR sur 2 pages
+INFO 2025-04-14 01:24:52,263 analysis_service Extraction des métadonnées
+INFO 2025-04-14 01:24:52,264 analysis_service Anonymisation du texte extrait
+INFO 2025-04-14 01:24:52,329 analysis_service Extraction des données structurées
+INFO 2025-04-14 01:24:52,330 analysis_service Création du PDF anonymisé
+INFO 2025-04-14 01:24:53,617 pdf_service PDF anonymisé créé: /app/media/payslips/2025/04/SALAIRE_M_FONTAINE_07_ET_08_2018_xuHVD48_anonymized.pdf
+INFO 2025-04-14 01:24:53,618 analysis_service Analyse du texte anonymisé
+ERROR 2025-04-14 01:24:53,625 analysis_service Erreur lors de l'analyse de la fiche de paie #162: duplicate key value violates unique constraint "analysis_payslipanalysis_payslip_id_key"
+DETAIL:  Key (payslip_id)=(162) already exists.
+
+ERROR 2025-04-14 01:24:53,645 analysis_service Erreur secondaire lors de l'enregistrement de l'échec: duplicate key value violates unique constraint "analysis_payslipanalysis_payslip_id_key"
+DETAIL:  Key (payslip_id)=(162) already exists.
+
+INFO 2025-04-14 01:25:58,904 analysis_service Conversion du PDF en images: /app/media/payslips/2025/04/SALAIRE_M_FONTAINE_07_ET_08_2018_igsRa5t.pdf
+INFO 2025-04-14 01:25:58,904 pdf_service Conversion du PDF en images: /app/media/payslips/2025/04/SALAIRE_M_FONTAINE_07_ET_08_2018_igsRa5t.pdf
+INFO 2025-04-14 01:25:59,264 pdf_service Conversion réussie: 2 pages extraites
+INFO 2025-04-14 01:25:59,264 analysis_service Traitement OCR sur 2 pages
+INFO 2025-04-14 01:26:06,517 analysis_service Extraction des métadonnées
+INFO 2025-04-14 01:26:06,518 analysis_service Anonymisation du texte extrait
+INFO 2025-04-14 01:26:06,581 analysis_service Extraction des données structurées
+INFO 2025-04-14 01:26:06,581 analysis_service Création du PDF anonymisé
+INFO 2025-04-14 01:26:07,959 pdf_service PDF anonymisé créé: /app/media/payslips/2025/04/SALAIRE_M_FONTAINE_07_ET_08_2018_igsRa5t_anonymized.pdf
+INFO 2025-04-14 01:26:07,960 analysis_service Analyse du texte anonymisé
+INFO 2025-04-14 01:26:07,968 analysis_service Analyse complète pour la fiche 163: 27 données sensibles détectées
+INFO 2025-04-14 01:26:07,969 views Upload de document: user=2, payslip_id=163, filename=payslips/2025/04/SALAIRE_M_FONTAINE_07_ET_08_2018_igsRa5t.pdf
+INFO 2025-04-14 01:26:17,132 analysis_service Conversion du PDF en images: /app/media/payslips/2025/04/SALAIRE_M_FONTAINE_07_ET_08_2018_igsRa5t.pdf
+INFO 2025-04-14 01:26:17,133 pdf_service Conversion du PDF en images: /app/media/payslips/2025/04/SALAIRE_M_FONTAINE_07_ET_08_2018_igsRa5t.pdf
+INFO 2025-04-14 01:26:17,475 pdf_service Conversion réussie: 2 pages extraites
+INFO 2025-04-14 01:26:17,475 analysis_service Traitement OCR sur 2 pages
+INFO 2025-04-14 01:26:24,906 analysis_service Extraction des métadonnées
+INFO 2025-04-14 01:26:24,907 analysis_service Anonymisation du texte extrait
+INFO 2025-04-14 01:26:24,970 analysis_service Extraction des données structurées
+INFO 2025-04-14 01:26:24,970 analysis_service Création du PDF anonymisé
+INFO 2025-04-14 01:26:26,291 pdf_service PDF anonymisé créé: /app/media/payslips/2025/04/SALAIRE_M_FONTAINE_07_ET_08_2018_igsRa5t_anonymized.pdf
+INFO 2025-04-14 01:26:26,291 analysis_service Analyse du texte anonymisé
+ERROR 2025-04-14 01:26:26,298 analysis_service Erreur lors de l'analyse de la fiche de paie #163: duplicate key value violates unique constraint "analysis_payslipanalysis_payslip_id_key"
+DETAIL:  Key (payslip_id)=(163) already exists.
+
+ERROR 2025-04-14 01:26:26,302 analysis_service Erreur secondaire lors de l'enregistrement de l'échec: duplicate key value violates unique constraint "analysis_payslipanalysis_payslip_id_key"
+DETAIL:  Key (payslip_id)=(163) already exists.
+
+INFO 2025-04-14 01:30:49,292 analysis_service Conversion du PDF en images: /app/media/payslips/2025/04/SALAIRE_M_FONTAINE_07_ET_08_2018_igsRa5t.pdf
+INFO 2025-04-14 01:30:49,293 pdf_service Conversion du PDF en images: /app/media/payslips/2025/04/SALAIRE_M_FONTAINE_07_ET_08_2018_igsRa5t.pdf
+INFO 2025-04-14 01:30:49,661 pdf_service Conversion réussie: 2 pages extraites
+INFO 2025-04-14 01:30:49,661 analysis_service Traitement OCR sur 2 pages
+INFO 2025-04-14 01:30:57,145 analysis_service Extraction des métadonnées
+INFO 2025-04-14 01:30:57,148 analysis_service Anonymisation du texte extrait
+INFO 2025-04-14 01:30:57,387 analysis_service Extraction des données structurées
+INFO 2025-04-14 01:30:57,388 analysis_service Création du PDF anonymisé
+INFO 2025-04-14 01:30:58,744 pdf_service PDF anonymisé créé: /app/media/payslips/2025/04/SALAIRE_M_FONTAINE_07_ET_08_2018_igsRa5t_anonymized.pdf
+INFO 2025-04-14 01:30:58,744 analysis_service Analyse du texte anonymisé
+ERROR 2025-04-14 01:30:58,770 analysis_service Erreur détaillée: duplicate key value violates unique constraint "analysis_payslipanalysis_payslip_id_key"
+DETAIL:  Key (payslip_id)=(163) already exists.
+
+ERROR 2025-04-14 01:30:58,786 analysis_service Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/site-packages/django/db/backends/utils.py", line 89, in _execute
+    return self.cursor.execute(sql, params)
+psycopg2.errors.UniqueViolation: duplicate key value violates unique constraint "analysis_payslipanalysis_payslip_id_key"
+DETAIL:  Key (payslip_id)=(163) already exists.
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/app/analysis/services/analysis_service.py", line 139, in analyze_payslip
+    analysis = PayslipAnalysis.objects.create(
+  File "/usr/local/lib/python3.9/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/usr/local/lib/python3.9/site-packages/django/db/models/query.py", line 658, in create
+    obj.save(force_insert=True, using=self.db)
+  File "/usr/local/lib/python3.9/site-packages/django/db/models/base.py", line 814, in save
+    self.save_base(
+  File "/usr/local/lib/python3.9/site-packages/django/db/models/base.py", line 877, in save_base
+    updated = self._save_table(
+  File "/usr/local/lib/python3.9/site-packages/django/db/models/base.py", line 1020, in _save_table
+    results = self._do_insert(
+  File "/usr/local/lib/python3.9/site-packages/django/db/models/base.py", line 1061, in _do_insert
+    return manager._insert(
+  File "/usr/local/lib/python3.9/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/usr/local/lib/python3.9/site-packages/django/db/models/query.py", line 1805, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+  File "/usr/local/lib/python3.9/site-packages/django/db/models/sql/compiler.py", line 1822, in execute_sql
+    cursor.execute(sql, params)
+  File "/usr/local/lib/python3.9/site-packages/django/db/backends/utils.py", line 102, in execute
+    return super().execute(sql, params)
+  File "/usr/local/lib/python3.9/site-packages/django/db/backends/utils.py", line 67, in execute
+    return self._execute_with_wrappers(
+  File "/usr/local/lib/python3.9/site-packages/django/db/backends/utils.py", line 80, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/usr/local/lib/python3.9/site-packages/django/db/backends/utils.py", line 89, in _execute
+    return self.cursor.execute(sql, params)
+  File "/usr/local/lib/python3.9/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/usr/local/lib/python3.9/site-packages/django/db/backends/utils.py", line 89, in _execute
+    return self.cursor.execute(sql, params)
+django.db.utils.IntegrityError: duplicate key value violates unique constraint "analysis_payslipanalysis_payslip_id_key"
+DETAIL:  Key (payslip_id)=(163) already exists.
+
+
+ERROR 2025-04-14 01:30:58,816 analysis_service Erreur secondaire: duplicate key value violates unique constraint "analysis_payslipanalysis_payslip_id_key"
+DETAIL:  Key (payslip_id)=(163) already exists.
+

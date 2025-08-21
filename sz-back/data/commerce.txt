@@ -1,0 +1,54 @@
+SYNTHÈSE DE LA CONVENTION COLLECTIVE : COMMERCE DE DÉTAIL ET DE GROS À PRÉDOMINANCE ALIMENTAIRE (IDCC 2216)
+
+SALAIRES MINIMA :
+- Niveau 1A (période d’accueil) : ~1 768,47 € brut/mois (≈ 11,66 €/h)
+- Niveau 1B (après accueil) : ~1 769,99 € brut/mois (≈ 11,67 €/h)
+- Niveau 2A : ~1 773,02 € brut/mois (≈ 11,69 €/h)
+- Niveau 2B : ~1 785,16 € brut/mois (≈ 11,77 €/h)
+- Niveau 3A : ~1 786,67 € brut/mois (≈ 11,78 €/h)
+- Niveau 3B : ~1 806,39 € brut/mois (≈ 11,91 €/h)
+- Niveau 4A : ~1 817,01 € brut/mois (≈ 11,98 €/h)
+- Niveau 4B : ~1 911,04 € brut/mois (≈ 12,60 €/h)
+- Niveau 5 : ~2 017,36 € brut/mois (≈ 13,30 €/h)
+- Niveau 6 : ~2 132,48 € brut/mois (≈ 14,06 €/h)
+- Niveau 7 : ~2 768,28 € brut/mois (≈ 18,25 €/h)
+- Niveau 8 : ~3 720,62 € brut/mois (≈ 24,51 €/h)
+
+PRIMES ET INDEMNITÉS :
+- Prime annuelle (13ème mois) : 100% du salaire mensuel de base de novembre, attribuée après 1 an d’ancienneté (6 mois si ouverture d’établissement en cours d’année).
+- Prime d’ancienneté : facultative selon usage ou accords locaux.
+- Primes spécifiques : travail de nuit, dimanche, responsabilité (chauffeurs-livreurs, encaisseurs), selon activité et accords d’entreprise.
+
+DURÉE DU TRAVAIL ET HEURES SUPPLÉMENTAIRES :
+- Durée légale : 35 h/semaine, soit 151,67 h/mois.
+- Heures supplémentaires : majoration légale (au moins +10%), la convention ne fixe pas de taux spécifiques sauf accords d’entreprise.
+- Contingent annuel maximum légal de 220 h ; récupération possible via repos compensateur ou paiement.
+- Temps de pause : pause rémunérée (5% du temps de travail effectif), applicable indépendamment de la durée de la journée.
+- Travail de nuit : majoration de 5% ou 20% selon horaires et accords d’entreprise.
+
+CONGÉS PAYÉS ET JOURS FÉRIÉS :
+- Congés payés légaux : 2,5 jours ouvrables/mois.
+- Congés supplémentaires selon ancienneté :
+  - +1 jour après 10 ans
+  - +2 jours après 15 ans
+  - +3 jours après 20 ans
+- Événements familiaux (avec ancienneté >1 an) :
+  - Mariage du salarié : 1 semaine
+  - Mariage d’un enfant : 2 jours
+  - Mariage frère/sœur ou baptême/communion : 1 jour
+  - Décès conjoint : 5 jours ; enfants, parents, beaux-parents, grands-parents : 1 à 5 jours selon situation
+
+ARRÊT MALADIE :
+- Ancienneté requise : 1 an pour salarié non-cadre ; cadres sans délai de carence dès 1 an d’ancienneté avec maintien salarial.
+- Délai de carence : 7 jours pour ouvriers, employés, ETAM. Cadres : pas de carence si maintien dès 1er jour.
+- Maintien de salaire :
+  - Employés/ouvriers/livreurs : 100% du brut pendant 30 jours (1–5 ans), puis 90% jusqu’à 45 jours ; évolue avec ancienneté (jusqu’à 90 jours à 100%, puis 90%).
+  - Cadres : maintien à 100% pendant 90 jours sans carence pour 1 an d’ancienneté.
+
+Notes pour l’IA d’analyse :
+- Vérifier que le salaire brut réel respecte au minimum le salaire conventionnel selon le niveau/échelon ou le SMIC si plus favorable.
+- Identifier versement ou absence de prime annuelle (13ème mois) selon ancienneté et date d’embauche.
+- Vérifier application des heures supplémentaires selon droit commun : taux ≥10% et mention du repos ou paiement, respect du contingent annuel.
+- Contrôler mentions spécifiques : pause rémunérée, majorations de nuit si applicables.
+- Contrôler droits aux congés supplémentaires selon ancienneté et événements familiaux.
+- Pour arrêts maladie : vérifier ancienneté, délai de carence, taux et durée de maintien de salaire, différenciation cadres/non-cadres.

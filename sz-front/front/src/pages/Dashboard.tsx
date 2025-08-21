@@ -1,0 +1,257 @@
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { 
+  Plus, 
+  FileText, 
+  AlertTriangle, 
+  CheckCircle, 
+  Eye, 
+  TrendingUp,
+  Calendar,
+  BarChart3,
+  Clock
+} from 'lucide-react';
+
+const Dashboard = () => {
+  const [analyses, setAnalyses] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const run = async () => {
+      try {
+        const { api } = await import('@/lib/api');
+        const payslips = await api.listPayslips();
+        const mapped = (payslips as any[]).map((p) => ({
+          id: p.id,
+          period: p.period || '—',
+          date: new Date(p.upload_date).toLocaleDateString('fr-FR'),
+          status: p.processing_status === 'completed' ? 'success' : (p.processing_status === 'error' ? 'errors' : 'warning'),
+          score: 0,
+          errorsCount: 0,
+          fileName: (p.uploaded_file || '').split('/').pop() || '—',
+        }));
+        setAnalyses(mapped);
+      } catch (e: any) {
+        setError(e?.error?.message || 'Impossible de charger vos analyses');
+      } finally {
+        setLoading(false);
+      }
+    };
+    run();
+  }, []);
+
+  const stats = {
+    totalAnalyses: analyses.length,
+    avgScore: analyses.length > 0 ? (analyses.reduce((sum, a) => sum + (a.score || 0), 0) / Math.max(analyses.length, 1)).toFixed(1) : '0.0',
+    totalErrors: analyses.reduce((sum, a) => sum + (a.errorsCount || 0), 0),
+    lastAnalysis: analyses[0]?.date || '—'
+  };
+
+  const getStatusBadge = (status: string, errorsCount: number) => {
+    switch (status) {
+      case "success":
+        return <Badge className="bg-green-500/20 text-green-700 border-green-500/30">Conforme</Badge>;
+      case "warning":
+        return <Badge className="bg-yellow-500/20 text-yellow-700 border-yellow-500/30">{errorsCount} alertes</Badge>;
+      case "errors":
+        return <Badge className="bg-red-500/20 text-red-700 border-red-500/30">{errorsCount} erreurs</Badge>;
+      default:
+        return <Badge variant="outline">En cours</Badge>;
+    }
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case "success":
+        return <CheckCircle className="w-5 h-5 text-green-500" />;
+      case "warning":
+        return <AlertTriangle className="w-5 h-5 text-yellow-500" />;
+      case "errors":
+        return <AlertTriangle className="w-5 h-5 text-red-500" />;
+      default:
+        return <Clock className="w-5 h-5 text-muted-foreground" />;
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8">Chargement...</div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8">{error}</div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
+          <div className="animate-fade-in-up">
+            <h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-2">
+              Dashboard
+            </h1>
+            <p className="text-muted-foreground">
+              Vue d'ensemble de vos analyses de fiches de paie
+            </p>
+          </div>
+          
+          <Link to="/upload" className="mt-4 sm:mt-0">
+            <Button className="bg-gradient-primary hover:opacity-90 border-0">
+              <Plus className="w-4 h-4 mr-2" />
+              Nouvelle analyse
+            </Button>
+          </Link>
+        </div>
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <Card className="glass-card border-0 hover:scale-105 transition-all duration-300">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Total analyses</p>
+                  <p className="text-2xl font-bold text-foreground">{stats.totalAnalyses}</p>
+                </div>
+                <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center">
+                  <FileText className="w-6 h-6 text-primary-foreground" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="glass-card border-0 hover:scale-105 transition-all duration-300">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Score moyen</p>
+                  <p className="text-2xl font-bold text-foreground">{stats.avgScore}/10</p>
+                </div>
+                <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center">
+                  <TrendingUp className="w-6 h-6 text-primary-foreground" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="glass-card border-0 hover:scale-105 transition-all duration-300">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Erreurs détectées</p>
+                  <p className="text-2xl font-bold text-foreground">{stats.totalErrors}</p>
+                </div>
+                <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center">
+                  <AlertTriangle className="w-6 h-6 text-primary-foreground" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="glass-card border-0 hover:scale-105 transition-all duration-300">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">Dernière analyse</p>
+                  <p className="text-2xl font-bold text-foreground">{stats.lastAnalysis}</p>
+                </div>
+                <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center">
+                  <Calendar className="w-6 h-6 text-primary-foreground" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Analyses List */}
+        <Card className="glass-card border-0">
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <BarChart3 className="w-5 h-5 text-primary" />
+              <span>Historique des analyses</span>
+            </CardTitle>
+            <CardDescription>
+              Retrouvez toutes vos analyses de fiches de paie
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {analyses.length === 0 ? (
+              <div className="text-center py-12">
+                <FileText className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-semibold mb-2">Aucune analyse</h3>
+                <p className="text-muted-foreground mb-6">
+                  Vous n'avez pas encore effectué d'analyse de fiche de paie
+                </p>
+                <Link to="/upload">
+                  <Button className="bg-gradient-primary hover:opacity-90 border-0">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Commencer une analyse
+                  </Button>
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {analyses.map((analysis) => (
+                  <div 
+                    key={analysis.id}
+                    className="glass-card p-6 rounded-xl hover:scale-[1.02] transition-all duration-300"
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-4 sm:space-y-0">
+                      <div className="flex items-center space-x-4">
+                        {getStatusIcon(analysis.status)}
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-foreground mb-1">
+                            Fiche de paie - {analysis.period}
+                          </h3>
+                          <p className="text-sm text-muted-foreground mb-2">
+                            {analysis.fileName}
+                          </p>
+                          <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                            <span>Analysé le {analysis.date}</span>
+                            <span>Score : {analysis.score}/10</span>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center space-x-4">
+                        {getStatusBadge(analysis.status, analysis.errorsCount)}
+                        <Link to={`/analysis/${analysis.id}`}>
+                          <Button variant="outline" size="sm" className="btn-glass">
+                            <Eye className="w-4 h-4 mr-2" />
+                            Voir le détail
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Quick Actions */}
+        <div className="mt-8 text-center">
+          <Link to="/upload">
+            <Button 
+              size="lg" 
+              className="bg-gradient-primary hover:opacity-90 border-0 px-8 py-6 text-lg font-semibold animate-float"
+            >
+              <Plus className="w-5 h-5 mr-2" />
+              Analyser une nouvelle fiche de paie
+            </Button>
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Dashboard;
