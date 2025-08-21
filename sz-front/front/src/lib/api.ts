@@ -154,8 +154,18 @@ class ApiClient {
   }
 
   // Documents
-  public listPayslips<T = any[]>(): Promise<T> {
-    return this.get('/api/payslips/');
+  public listPayslips<T = { results: any[]; count: number; next?: string; previous?: string }>(
+    params?: { limit?: number; offset?: number }
+  ): Promise<T> {
+    const limit = params?.limit ?? 10;
+    const offset = params?.offset ?? 0;
+    const qs = `?limit=${limit}&offset=${offset}`;
+    return this.get(`/api/payslips/${qs}`);
+  }
+
+  public getPayslipsStats<T = { totalAnalyses: number; avgScore: number; avgConformityScore: number; totalErrors: number; lastAnalysis?: string | null }>():
+    Promise<T> {
+    return this.get('/api/payslips/stats/');
   }
 
   public async uploadPayslip<T = any>(params: {

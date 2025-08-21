@@ -18,6 +18,8 @@ import {
 
 const Dashboard = () => {
   const [analyses, setAnalyses] = useState<any[]>([]);
+  const [pageInfo, setPageInfo] = useState<{ count: number; next?: string | null; previous?: string | null; limit: number; offset: number }>({ count: 0, next: null, previous: null, limit: 10, offset: 0 });
+  const [globalStats, setGlobalStats] = useState<{ totalAnalyses: number; avgScore: string; avgConformityScore: string; totalErrors: number; lastAnalysis: string | null }>({ totalAnalyses: 0, avgScore: '0.0', avgConformityScore: '0.0', totalErrors: 0, lastAnalysis: null });
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -25,8 +27,8 @@ const Dashboard = () => {
     const run = async () => {
       try {
         const { api } = await import('@/lib/api');
-        const payslips = await api.listPayslips();
-        const mapped = (payslips as any[]).map((p) => ({
+        const page = await api.listPayslips({ limit: 10, offset: 0 });
+        const mapped = (page.results as any[]).map((p) => ({
           id: p.id,
           period: p.period || '—',
           date: new Date(p.upload_date).toLocaleDateString('fr-FR'),
@@ -37,6 +39,17 @@ const Dashboard = () => {
           fileName: (p.uploaded_file || '').split('/').pop() || '—',
         }));
         setAnalyses(mapped);
+        setPageInfo({ count: page.count || 0, next: page.next, previous: page.previous, limit: 10, offset: 0 });
+
+        // Charger les stats globales indépendamment de la pagination
+        const stats = await api.getPayslipsStats();
+        setGlobalStats({
+          totalAnalyses: stats.totalAnalyses || 0,
+          avgScore: (stats.avgScore ?? 0).toFixed ? (stats.avgScore as any).toFixed(1) : Number(stats.avgScore || 0).toFixed(1),
+          avgConformityScore: (stats.avgConformityScore ?? 0).toFixed ? (stats.avgConformityScore as any).toFixed(1) : Number(stats.avgConformityScore || 0).toFixed(1),
+          totalErrors: stats.totalErrors || 0,
+          lastAnalysis: stats.lastAnalysis ? new Date(stats.lastAnalysis).toLocaleDateString('fr-FR') : null,
+        });
       } catch (e: any) {
         setError(e?.error?.message || 'Impossible de charger vos analyses');
       } finally {
@@ -46,13 +59,12 @@ const Dashboard = () => {
     run();
   }, []);
 
-  const completedAnalyses = analyses.filter(a => a.status === 'success' && a.score > 0);
   const stats = {
-    totalAnalyses: analyses.length,
-    avgScore: completedAnalyses.length > 0 ? (completedAnalyses.reduce((sum, a) => sum + (a.score || 0), 0) / completedAnalyses.length).toFixed(1) : '0.0',
-    avgConformityScore: completedAnalyses.length > 0 ? (completedAnalyses.reduce((sum, a) => sum + (a.conformityScore || 0), 0) / completedAnalyses.length).toFixed(1) : '0.0',
-    totalErrors: analyses.reduce((sum, a) => sum + (a.errorsCount || 0), 0),
-    lastAnalysis: analyses[0]?.date || '—'
+    totalAnalyses: globalStats.totalAnalyses,
+    avgScore: globalStats.avgScore,
+    avgConformityScore: globalStats.avgConformityScore,
+    totalErrors: globalStats.totalErrors,
+    lastAnalysis: globalStats.lastAnalysis || '—',
   };
 
   const getStatusBadge = (status: string, errorsCount: number) => {
@@ -236,6 +248,60 @@ const Dashboard = () => {
                     </div>
                   </div>
                 ))}
+              </div>
+            )}
+            {/* Pagination simple */}
+            {analyses.length > 0 && (
+              <div className="flex justify-between items-center mt-6">
+                <Button
+                  variant="outline"
+                  disabled={!pageInfo.previous}
+                  onClick={async () => {
+                    const { api } = await import('@/lib/api');
+                    const newOffset = Math.max(0, pageInfo.offset - pageInfo.limit);
+                    const page = await api.listPayslips({ limit: pageInfo.limit, offset: newOffset });
+                    const mapped = (page.results as any[]).map((p) => ({
+                      id: p.id,
+                      period: p.period || '—',
+                      date: new Date(p.upload_date).toLocaleDateString('fr-FR'),
+                      status: p.processing_status === 'completed' ? 'success' : (p.processing_status === 'error' ? 'errors' : 'warning'),
+                      score: p.analysis_score || 0,
+                      conformityScore: p.conformity_score || 0,
+                      errorsCount: p.anomalies_count || 0,
+                      fileName: (p.uploaded_file || '').split('/').pop() || '—',
+                    }));
+                    setAnalyses(mapped);
+                    setPageInfo({ count: page.count || 0, next: page.next, previous: page.previous, limit: pageInfo.limit, offset: newOffset });
+                  }}
+                >
+                  Précédent
+                </Button>
+                <div className="text-sm text-muted-foreground">
+                  {Math.min(pageInfo.offset + 1, pageInfo.count)}–{Math.min(pageInfo.offset + pageInfo.limit, pageInfo.count)} sur {pageInfo.count}
+                </div>
+                <Button
+                  variant="outline"
+                  disabled={!pageInfo.next}
+                  onClick={async () => {
+                    const { api } = await import('@/lib/api');
+                    const newOffset = pageInfo.offset + pageInfo.limit;
+                    const page = await api.listPayslips({ limit: pageInfo.limit, offset: newOffset });
+                    const mapped = (page.results as any[]).map((p) => ({
+                      id: p.id,
+                      period: p.period || '—',
+                      date: new Date(p.upload_date).toLocaleDateString('fr-FR'),
+                      status: p.processing_status === 'completed' ? 'success' : (p.processing_status === 'error' ? 'errors' : 'warning'),
+                      score: p.analysis_score || 0,
+                      conformityScore: p.conformity_score || 0,
+                      errorsCount: p.anomalies_count || 0,
+                      fileName: (p.uploaded_file || '').split('/').pop() || '—',
+                    }));
+                    setAnalyses(mapped);
+                    setPageInfo({ count: page.count || 0, next: page.next, previous: page.previous, limit: pageInfo.limit, offset: newOffset });
+                  }}
+                >
+                  Suivant
+                </Button>
               </div>
             )}
           </CardContent>

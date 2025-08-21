@@ -2,6 +2,7 @@ from rest_framework import generics, status, permissions
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from .models import PaySlip
+from analysis.models import PayslipAnalysis
 from .serializers import PaySlipSerializer, PaySlipDashboardSerializer
 from analysis.models import CONVENTION_CHOICES
 from django.http import FileResponse, Http404
@@ -11,6 +12,7 @@ import os
 from rest_framework.throttling import UserRateThrottle
 import logging
 from rest_framework.views import APIView
+from rest_framework.pagination import LimitOffsetPagination
 from .models import PaySlip
 logger = logging.getLogger('salariz.documents')
 
@@ -81,11 +83,22 @@ class PaySlipUploadView(generics.CreateAPIView):
 class PaySlipListView(generics.ListAPIView):
     serializer_class = PaySlipDashboardSerializer
     permission_classes = [permissions.IsAuthenticated]
+    pagination_class = LimitOffsetPagination
     
     def get_queryset(self):
         # Ne retourner que les fiches de paie de l'utilisateur connecté
         # Optimisation: précharger les analyses pour éviter les requêtes N+1
-        return PaySlip.objects.filter(user=self.request.user).select_related('analysis').order_by('-upload_date')
+        return (
+            PaySlip.objects
+            .filter(user=self.request.user)
+            .select_related('user', 'analysis')
+            .only(
+                'id', 'uploaded_file', 'upload_date', 'processing_status',
+                'period', 'net_salary', 'employee_name', 'user__username',
+                'analysis__analysis_details'
+            )
+            .order_by('-upload_date')
+        )
 
 class PaySlipDetailView(generics.RetrieveAPIView):
     serializer_class = PaySlipSerializer
@@ -108,3 +121,56 @@ class PaySlipDeleteView(generics.DestroyAPIView):
     def get_queryset(self):
         # Ne permettre la suppression que des fiches appartenant à l'utilisateur connecté
         return PaySlip.objects.filter(user=self.request.user)
+
+
+class PaySlipStatsView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    def get(self, request):
+        user = request.user
+        qs_payslips = PaySlip.objects.filter(user=user)
+        total_analyses = qs_payslips.count()
+        last_upload_date = qs_payslips.order_by('-upload_date').values_list('upload_date', flat=True).first()
+
+        analyses = (
+            PayslipAnalysis.objects
+            .filter(payslip__user=user)
+            .values_list('analysis_details', 'analysis_status')
+        )
+
+        total_errors = 0
+        score_values = []
+        conformity_values = []
+
+        for analysis_details, analysis_status in analyses:
+            try:
+                details = analysis_details or {}
+                gpt = details.get('gpt_analysis', {}) or {}
+                anomalies = gpt.get('anomalies_potentielles_observees', []) or []
+                total_errors += len(anomalies)
+
+                score = gpt.get('note_globale')
+                if score is not None:
+                    try:
+                        score_values.append(float(str(score).replace(',', '.')))
+                    except Exception:
+                        pass
+
+                conf = gpt.get('note_conformite_legale')
+                if conf is not None:
+                    try:
+                        conformity_values.append(float(str(conf).replace(',', '.')))
+                    except Exception:
+                        pass
+            except Exception:
+                continue
+
+        avg_score = round(sum(score_values) / len(score_values), 1) if score_values else 0.0
+        avg_conf = round(sum(conformity_values) / len(conformity_values), 1) if conformity_values else 0.0
+
+        return Response({
+            'totalAnalyses': total_analyses,
+            'avgScore': avg_score,
+            'avgConformityScore': avg_conf,
+            'totalErrors': total_errors,
+            'lastAnalysis': last_upload_date.isoformat() if last_upload_date else None,
+        })
