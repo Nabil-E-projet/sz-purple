@@ -62,9 +62,20 @@ class PaySlipUploadView(generics.CreateAPIView):
     throttle_classes = [UploadRateThrottle]
     
     def perform_create(self, serializer):
+        # DEBUG: Log des données reçues dans l'upload
+        logger.info(f"=== DEBUG UPLOAD BACKEND ===")
+        logger.info(f"Utilisateur: {self.request.user.username} (ID: {self.request.user.id})")
+        logger.info(f"Fichier reçu: {self.request.FILES.get('uploaded_file')}")
+        logger.info(f"Données POST reçues: {dict(self.request.data)}")
+        logger.info(f"Convention collective: {self.request.data.get('convention_collective')}")
+        logger.info(f"Salaire contractuel: {self.request.data.get('contractual_salary')}")
+        logger.info(f"Détails additionnels: {self.request.data.get('additional_details')}")
+        logger.info(f"Période: {self.request.data.get('period')}")
+        logger.info(f"=== FIN DEBUG UPLOAD BACKEND ===")
+        
         instance = serializer.save(user=self.request.user)
         logger.info(
-            f"Upload de document: user={self.request.user.id}, "
+            f"Fiche de paie créée: user={self.request.user.id}, "
             f"payslip_id={instance.id}, filename={instance.uploaded_file.name}"
         )
 class PaySlipListView(generics.ListAPIView):

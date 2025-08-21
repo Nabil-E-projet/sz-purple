@@ -50,6 +50,15 @@ class GPTVisionService:
         # Construction du prompt principal
         prompt = self._build_analysis_prompt(user_context_prompt, anomaly_detection_guidelines, additional_data)
 
+        # DEBUG: Log de ce qui est envoyé à GPT
+        logger.info(f"=== DEBUG DONNEES ENVOYEES A GPT ===")
+        logger.info(f"Nombre d'images: {len(base64_images)}")
+        logger.info(f"Contexte utilisateur: {user_context_prompt}")
+        logger.info(f"Données additionnelles reçues: {additional_data}")
+        logger.info(f"Taille du prompt final: {len(prompt)} caractères")
+        logger.info(f"Début du prompt: {prompt[:500]}...")
+        logger.info(f"=== FIN DEBUG DONNEES GPT ===")
+
         try:
             # Appel à l'API Vision
             return self.api_client.call_vision_api(prompt, base64_images)

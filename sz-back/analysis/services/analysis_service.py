@@ -29,6 +29,19 @@ class AnalysisService:
         try:
             payslip = PaySlip.objects.get(id=payslip_id)
             logger.info(f"Début de l'analyse pour la fiche de paie {payslip.id}")
+            
+            # DEBUG: Log des données envoyées par l'utilisateur
+            logger.info(f"=== DEBUG DONNEES UTILISATEUR ===")
+            logger.info(f"Fichier uploadé: {payslip.uploaded_file.name if payslip.uploaded_file else 'Aucun'}")
+            logger.info(f"Convention collective: {payslip.convention_collective}")
+            logger.info(f"Salaire contractuel: {payslip.contractual_salary}")
+            logger.info(f"Détails additionnels: {payslip.additional_details}")
+            logger.info(f"Période: {payslip.period}")
+            logger.info(f"Nom employé: {payslip.employee_name}")
+            logger.info(f"Salaire net: {payslip.net_salary}")
+            logger.info(f"Utilisateur: {payslip.user.username}")
+            logger.info(f"Date upload: {payslip.upload_date}")
+            logger.info(f"=== FIN DEBUG DONNEES UTILISATEUR ===")
 
             self._update_payslip_status(payslip, 'processing')
 

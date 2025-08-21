@@ -172,13 +172,25 @@ const UploadPage = () => {
 
 		try {
 			if (selectedFiles.length === 0) return;
-			const uploadRes = await api.uploadPayslip({
+			
+			const uploadData = {
 				file: selectedFiles[0],
 				convention_collective: convention,
 				contractual_salary: salary,
 				additional_details: details,
 				period: selectedDate ? format(selectedDate, 'MMMM yyyy', { locale: fr }) : undefined,
-			});
+			};
+			
+			// DEBUG: Log des données envoyées
+			console.log('=== DEBUG UPLOAD FRONTEND ===');
+			console.log('Fichier:', selectedFiles[0]?.name, '- Taille:', selectedFiles[0]?.size, 'bytes');
+			console.log('Convention collective:', convention);
+			console.log('Salaire contractuel:', salary);
+			console.log('Détails additionnels:', details);
+			console.log('Période:', uploadData.period);
+			console.log('=== FIN DEBUG UPLOAD ===');
+			
+			const uploadRes = await api.uploadPayslip(uploadData);
 			const payslipId = (uploadRes as any)?.id;
 			if (!payslipId) throw new Error('Upload échoué');
 			// L'analyse est désormais déclenchée automatiquement par le backend (signal post_save)

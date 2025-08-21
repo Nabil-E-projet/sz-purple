@@ -31,15 +31,10 @@ const AnalysisDetails = () => {
 				const { api } = await import('@/lib/api');
 				const data = await api.getPayslipAnalysis(Number(id));
 				
-				// DEBUG: Log détaillé des données reçues
-				console.log('=== DEBUG ANALYSE FRONTEND ===');
-				console.log('Données complètes reçues:', data);
-				console.log('Structure details:', data?.details);
-				console.log('GPT Analysis:', data?.details?.gpt_analysis);
-				console.log('Anomalies:', data?.details?.gpt_analysis?.anomalies_potentielles_observees);
-				console.log('Note conformité:', data?.details?.gpt_analysis?.note_conformite_legale);
-				console.log('Note globale:', data?.details?.gpt_analysis?.note_globale);
-				console.log('=== FIN DEBUG FRONTEND ===');
+				// Log simplifié pour vérifier la réception des données
+				if (process.env.NODE_ENV === 'development') {
+					console.log('Analyse reçue - Score:', data?.details?.gpt_analysis?.note_globale, 'Conformité:', data?.details?.gpt_analysis?.note_conformite_legale);
+				}
 				
 				setAnalysis(data);
 			} catch (e: any) {
@@ -140,37 +135,10 @@ const AnalysisDetails = () => {
 							Fiche de paie - {derived.period}
 						</p>
 					</div>
-					<div className="flex space-x-2">
-						<Button className="bg-gradient-primary hover:opacity-90 border-0">
-							<Download className="w-4 h-4 mr-2" />
-							Télécharger le rapport
-						</Button>
-						{process.env.NODE_ENV === 'development' && (
-							<Button 
-								variant="outline" 
-								onClick={async () => {
-									try {
-										const { api } = await import('@/lib/api');
-										const response = await fetch(`http://localhost:8000/api/analysis/payslip/${id}/recalculate-scores/`, {
-											method: 'POST',
-											headers: {
-												'Authorization': `Bearer ${api.getAccessToken()}`,
-												'Content-Type': 'application/json'
-											}
-										});
-										const data = await response.json();
-										console.log('Recalcul des scores:', data);
-										// Recharger la page
-										window.location.reload();
-									} catch (e) {
-										console.error('Erreur recalcul:', e);
-									}
-								}}
-							>
-								🔧 Recalculer scores
-							</Button>
-						)}
-					</div>
+					<Button className="bg-gradient-primary hover:opacity-90 border-0">
+						<Download className="w-4 h-4 mr-2" />
+						Télécharger le rapport
+					</Button>
 				</div>
 
 				<div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -189,16 +157,22 @@ const AnalysisDetails = () => {
 									<div className="text-4xl font-bold text-primary mb-2">
 										{derived.globalScore}/10
 									</div>
-									<p className="text-sm text-muted-foreground">Score global</p>
+									<p className="text-sm text-muted-foreground">Score d'analyse</p>
+									<p className="text-xs text-muted-foreground mt-1">
+										Inclut conformité légale, complétude et clarté
+									</p>
 								</div>
 
 								<div className="space-y-3">
 									<div>
 										<div className="flex justify-between text-sm mb-1">
-											<span>Conformité</span>
+											<span>Conformité légale</span>
 											<span>{derived.conformityPercent}%</span>
 										</div>
 										<Progress value={derived.conformityPercent} className="h-2" />
+										<p className="text-xs text-muted-foreground mt-1">
+											Respect des obligations légales et conventionnelles
+										</p>
 									</div>
 								</div>
 
@@ -212,9 +186,9 @@ const AnalysisDetails = () => {
 										<span className="truncate max-w-[150px]">{derived.fileName}</span>
 									</div>
 									<div className="flex items-center justify-between">
-										<span className="text-muted-foreground">Erreurs trouvées</span>
-										<span className="text-red-500 font-medium">
-											{anomalies.filter((e: any) => e.level === 'critical' || e.gravite === 'haute').length}
+										<span className="text-muted-foreground">Anomalies détectées</span>
+										<span className="text-amber-500 font-medium">
+											{anomalies.filter((e: any) => (e.level || e.gravite) !== 'positive_check').length}
 										</span>
 									</div>
 								</div>
@@ -266,7 +240,7 @@ const AnalysisDetails = () => {
 							<CardHeader>
 								<CardTitle className="flex items-center space-x-2">
 									<AlertTriangle className="w-5 h-5 text-primary" />
-									<span>Erreurs et alertes détectées</span>
+									<span>Anomalies et observations</span>
 								</CardTitle>
 								<CardDescription>
 									{anomalies.length} anomalie(s) identifiée(s)
