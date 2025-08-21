@@ -13,7 +13,8 @@ import {
   Calendar,
   BarChart3,
   Clock,
-  Shield
+  Shield,
+  Trash2
 } from 'lucide-react';
 
 const Dashboard = () => {
@@ -68,16 +69,17 @@ const Dashboard = () => {
   };
 
   const getStatusBadge = (status: string, errorsCount: number) => {
-    switch (status) {
-      case "success":
-        return <Badge className="bg-green-500/20 text-green-700 border-green-500/30">Conforme</Badge>;
-      case "warning":
-        return <Badge className="bg-yellow-500/20 text-yellow-700 border-yellow-500/30">{errorsCount} alertes</Badge>;
-      case "errors":
-        return <Badge className="bg-red-500/20 text-red-700 border-red-500/30">{errorsCount} erreurs</Badge>;
-      default:
-        return <Badge variant="outline">En cours</Badge>;
+    // Statut visuel basé d'abord sur le nombre d'anomalies
+    if (status === 'errors') {
+      return <Badge className="bg-red-500/20 text-red-700 border-red-500/30">Erreurs</Badge>;
     }
+    if (errorsCount > 0) {
+      return <Badge className="bg-yellow-500/20 text-yellow-700 border-yellow-500/30">{errorsCount} anomalie(s)</Badge>;
+    }
+    if (status === 'success') {
+      return <Badge className="bg-green-500/20 text-green-700 border-green-500/30">Conforme</Badge>;
+    }
+    return <Badge variant="outline">En cours</Badge>;
   };
 
   const getStatusIcon = (status: string) => {
@@ -229,9 +231,15 @@ const Dashboard = () => {
                           <p className="text-sm text-muted-foreground mb-2">
                             {analysis.fileName}
                           </p>
-                          <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                          <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
                             <span>Analysé le {analysis.date}</span>
-                            <span>Score : {analysis.score}/10</span>
+                            <span>Score: {analysis.score}/10</span>
+                            <span>Conformité: {analysis.conformityScore}/10</span>
+                            {analysis.errorsCount > 0 ? (
+                              <span className="text-amber-600 font-medium">{analysis.errorsCount} anomalie(s)</span>
+                            ) : (
+                              <span className="text-green-600">0 anomalie</span>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -244,6 +252,26 @@ const Dashboard = () => {
                             Voir le détail
                           </Button>
                         </Link>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          className="border-0"
+                          onClick={async () => {
+                            const yes = window.confirm('Supprimer définitivement cette fiche de paie et son analyse ?');
+                            if (!yes) return;
+                            try {
+                              const { api } = await import('@/lib/api');
+                              await api.deletePayslip(analysis.id);
+                              setAnalyses(prev => prev.filter(a => a.id !== analysis.id));
+                              setPageInfo(p => ({ ...p, count: Math.max(0, (p.count || 1) - 1) }));
+                            } catch (e: any) {
+                              alert(e?.error?.message || 'Suppression impossible');
+                            }
+                          }}
+                        >
+                          <Trash2 className="w-4 h-4 mr-2" />
+                          Supprimer
+                        </Button>
                       </div>
                     </div>
                   </div>

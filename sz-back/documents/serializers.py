@@ -148,21 +148,20 @@ class PaySlipDashboardSerializer(serializers.ModelSerializer):
         return 0
     
     def get_anomalies_count(self, obj):
-        """Compte le nombre d'anomalies détectées."""
+        """Compte les anomalies comme affichées côté front (toutes sauf 'ok/positive_check')."""
         try:
             if hasattr(obj, 'analysis'):
                 analysis_details = obj.analysis.analysis_details
-                gpt_data = analysis_details.get('gpt_analysis', {})
-                anomalies = gpt_data.get('anomalies_potentielles_observees', [])
-                # Ne compter que les anomalies significatives (warning/erreur)
-                def is_significant(a):
+                gpt_data = analysis_details.get('gpt_analysis', {}) or {}
+                anomalies = gpt_data.get('anomalies_potentielles_observees', []) or []
+                def is_countable(a):
                     level = (a or {}).get('level') or (a or {}).get('gravite')
                     if not level:
                         return True
                     l = str(level).lower()
-                    return l in {'warning', 'error', 'haute', 'moyenne'}
-                return len([a for a in anomalies if is_significant(a)])
-        except:
+                    return l not in {'positive_check', 'ok'}
+                return len([a for a in anomalies if is_countable(a)])
+        except Exception:
             pass
         return 0
 

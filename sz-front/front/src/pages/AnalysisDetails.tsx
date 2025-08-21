@@ -56,6 +56,31 @@ const AnalysisDetails = () => {
 		return 'info';
 	};
 
+	const formatAnomalyTitle = (rawType?: string) => {
+		if (!rawType) return 'Anomalie détectée';
+		// Si déjà une phrase lisible (contient un espace ou accent), garder
+		if (/\s/.test(rawType) || /[À-ÿ]/.test(rawType)) return rawType;
+		const map: Record<string, string> = {
+			apprenti_cotisations_salariales_nulles: 'Cotisations apprenti nulles',
+			taux_horaire_inferieur_SMIC: 'Taux horaire inférieur au SMIC',
+			heures_base_vs_duree_mensuelle: 'Incohérence base d’heures / durée mensuelle',
+			prime_vacances_syntec: 'Prime de vacances Syntec',
+			coherence_heures: 'Cohérence des heures',
+			coherence_nets: 'Cohérence des nets (net social vs net à payer)',
+			SMIC_apprenti_verification: 'Vérification SMIC apprenti',
+		};
+		if (map[rawType]) return map[rawType];
+		// Fallback: snake_case -> Titre
+		const words = rawType.replace(/_/g, ' ').toLowerCase().split(' ');
+		const titled = words.map(w => {
+			if (w === 'smic') return 'SMIC';
+			if (w === 'rtt') return 'RTT';
+			if (w.length === 0) return w;
+			return w[0].toUpperCase() + w.slice(1);
+		}).join(' ');
+		return titled;
+	};
+
 	const getErrorIcon = (type: string) => {
 		switch (type) {
 			case "error":
@@ -105,6 +130,11 @@ const AnalysisDetails = () => {
 	const remuneration = gptData?.remuneration || {};
 	const periode = gptData?.periode || {};
 	const recommendations = Array.isArray(gptData?.recommandations_amelioration) ? gptData.recommandations_amelioration : [];
+	const infoGenerales = gptData?.informations_generales || {};
+	const userContext = {
+		employment_status: gptData?.employment_status || analysis?.details?.employment_status || undefined,
+		expected_smic_percent: gptData?.expected_smic_percent || analysis?.details?.expected_smic_percent || undefined,
+	};
 
 	// Générer des recommandations intelligentes basées sur les anomalies
 	const generateSmartRecommendations = () => {
@@ -468,6 +498,8 @@ const AnalysisDetails = () => {
 			netSocial: typeof remuneration?.net_social === 'number' ? remuneration.net_social : (remuneration?.net_social ? parseFloat(remuneration.net_social) : undefined),
 			cotisationsSociales: parseFloat(remuneration?.total_cotisations_salariales) || 0,
 			convention: gptData?.informations_generales?.convention_collective_applicable || '—',
+			employmentStatus: userContext.employment_status,
+			expectedSmicPercent: userContext.expected_smic_percent,
 		},
 	};
 
@@ -543,6 +575,14 @@ const AnalysisDetails = () => {
 										<span className="text-muted-foreground">Fichier</span>
 										<span className="truncate max-w-[150px]">{derived.fileName}</span>
 									</div>
+									{(derived.details.employmentStatus || derived.details.expectedSmicPercent) && (
+										<div className="flex items-center justify-between">
+											<span className="text-muted-foreground">Statut / SMIC</span>
+											<span className="font-medium">
+												{derived.details.employmentStatus || '—'}{derived.details.expectedSmicPercent ? ` • ${Number(derived.details.expectedSmicPercent).toFixed(0)}%` : ''}
+											</span>
+										</div>
+									)}
 									<div className="flex items-center justify-between">
 										<span className="text-muted-foreground">Anomalies détectées</span>
 										<span className="text-amber-500 font-medium">
@@ -660,7 +700,7 @@ const AnalysisDetails = () => {
 													{getErrorIcon(severity)}
 													<div className="flex-1">
 														<div className="flex items-center justify-between mb-2">
-															<h4 className="font-semibold text-foreground">{anomalie.type || 'Anomalie détectée'}</h4>
+															<h4 className="font-semibold text-foreground">{formatAnomalyTitle(anomalie.type) || 'Anomalie détectée'}</h4>
 															{getErrorBadge(severity)}
 														</div>
 														<p className="text-sm text-muted-foreground mb-2">

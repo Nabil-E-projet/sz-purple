@@ -6,7 +6,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Upload, FileText, Calendar as CalendarIcon, Euro, MessageSquare, Sparkles, ArrowRight, ArrowLeft, Check } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Upload, FileText, Calendar as CalendarIcon, Euro, MessageSquare, Sparkles, ArrowRight, ArrowLeft, Check, Info } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
@@ -17,8 +18,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 const UploadPage = () => {
 	// États existants
 	const [selectedDate, setSelectedDate] = useState<Date>();
-	const [calendarDate, setCalendarDate] = useState<Date>(new Date());
-	const [showYearMonthPicker, setShowYearMonthPicker] = useState(false);
 	const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 	const [dragActive, setDragActive] = useState(false);
 	const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -183,13 +182,27 @@ const UploadPage = () => {
 
 		try {
 			if (selectedFiles.length === 0) return;
-			
+
+			// Détection de doublon simple par période si fournie
+			if (selectedDate) {
+				const periodReadable = format(selectedDate, 'MMMM yyyy', { locale: fr });
+				try {
+					const existing = await api.findUserPayslipsByPeriod<any[]>(periodReadable);
+					if (Array.isArray(existing) && existing.length > 0) {
+						const proceed = window.confirm(`Une fiche de paie pour « ${periodReadable} » existe déjà. Voulez-vous continuer ?`);
+						if (!proceed) { setIsAnalyzing(false); return; }
+					}
+				} catch {}
+			}
+
 			const uploadData = {
 				file: selectedFiles[0],
 				convention_collective: convention,
 				contractual_salary: salary,
 				additional_details: details,
+				// period lisible pour affichage éventuel
 				period: selectedDate ? format(selectedDate, 'MMMM yyyy', { locale: fr }) : undefined,
+				// date_paiement machine-readable pour ciblage SMIC serveur
 				date_paiement: selectedDate ? format(selectedDate, 'yyyy-MM-dd') : undefined,
 				employment_status: employmentStatus || undefined,
 				expected_smic_percent: expectedSmicPercent ? Number(expectedSmicPercent) : undefined,
@@ -329,158 +342,79 @@ const UploadPage = () => {
 			case 'period':
 				return (
 					<div className="space-y-8">
-						<Popover>
-							<PopoverTrigger asChild>
-								<Button
-									variant="outline"
-									className={cn(
-										"w-full h-14 text-lg justify-start text-left font-normal glass-card border-glass-border/30",
-										!selectedDate && "text-muted-foreground"
-									)}
-								>
-									<CalendarIcon className="mr-3 h-5 w-5" />
-									{selectedDate ? 
-										format(selectedDate, "MMMM yyyy", { locale: fr }) : 
-										"Cliquez pour sélectionner la période"
-									}
-								</Button>
-							</PopoverTrigger>
-							<PopoverContent className="w-auto p-0 glass-card border-glass-border/30 backdrop-blur-md" align="center">
-								{showYearMonthPicker ? (
-									<div className="p-4 space-y-4">
-										<div className="text-center">
-											<h3 className="font-semibold text-primary mb-4">Sélectionnez une période</h3>
-										</div>
-										<div className="grid grid-cols-2 gap-4">
-											<div>
-												<label className="block text-sm text-muted-foreground mb-2">Année</label>
-												<Select
-													value={calendarDate.getFullYear().toString()}
-													onValueChange={(year) => {
-														const newDate = new Date(calendarDate);
-														newDate.setFullYear(parseInt(year));
-														setCalendarDate(newDate);
-													}}
-												>
-													<SelectTrigger className="h-10">
-														<SelectValue />
-													</SelectTrigger>
-													<SelectContent>
-														{Array.from({ length: 10 }, (_, i) => {
-															const year = new Date().getFullYear() - 5 + i;
-															return (
-																<SelectItem key={year} value={year.toString()}>
-																	{year}
-																</SelectItem>
-															);
-														})}
-													</SelectContent>
-												</Select>
-											</div>
-											<div>
-												<label className="block text-sm text-muted-foreground mb-2">Mois</label>
-												<Select
-													value={calendarDate.getMonth().toString()}
-													onValueChange={(month) => {
-														const newDate = new Date(calendarDate);
-														newDate.setMonth(parseInt(month));
-														setCalendarDate(newDate);
-													}}
-												>
-													<SelectTrigger className="h-10">
-														<SelectValue />
-													</SelectTrigger>
-													<SelectContent>
-														{Array.from({ length: 12 }, (_, i) => (
-															<SelectItem key={i} value={i.toString()}>
-																{format(new Date(2024, i, 1), "MMMM", { locale: fr })}
-															</SelectItem>
-														))}
-													</SelectContent>
-												</Select>
-											</div>
-										</div>
-										<div className="flex gap-2 pt-2">
-											<Button
-												variant="outline"
-												size="sm"
-												onClick={() => setShowYearMonthPicker(false)}
-												className="flex-1"
-											>
-												Retour
-											</Button>
-											<Button
-												size="sm"
-												onClick={() => {
-													setShowYearMonthPicker(false);
-												}}
-												className="flex-1 bg-gradient-primary"
-											>
-												Confirmer
-											</Button>
-										</div>
-									</div>
-								) : (
-									<Calendar
-										mode="single"
-										selected={selectedDate}
-										onSelect={setSelectedDate}
-										month={calendarDate}
-										onMonthChange={setCalendarDate}
-										initialFocus
-										locale={fr}
-										className="p-4 rounded-xl"
-										classNames={{
-											months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
-											month: "space-y-4",
-											caption: "flex justify-center pt-1 relative items-center",
-											caption_label: "text-lg font-semibold text-primary cursor-pointer hover:bg-primary/10 px-3 py-1 rounded-lg transition-colors",
-											nav: "space-x-1 flex items-center",
-											nav_button: "h-8 w-8 bg-transparent p-0 opacity-50 hover:opacity-100 rounded-lg hover:bg-primary/10 transition-colors",
-											nav_button_previous: "absolute left-1",
-											nav_button_next: "absolute right-1",
-											table: "w-full border-collapse space-y-1",
-											head_row: "flex",
-											head_cell: "text-muted-foreground rounded-md w-8 font-medium text-[0.8rem] text-center",
-											row: "flex w-full mt-2",
-											cell: "text-center text-sm p-0 relative [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
-											day: "h-8 w-8 p-0 font-medium aria-selected:opacity-100 rounded-lg hover:bg-primary/10 transition-colors",
-											day_selected: "bg-gradient-primary text-white hover:bg-gradient-primary hover:text-white focus:bg-gradient-primary focus:text-white",
-											day_today: "bg-accent text-accent-foreground font-bold",
-											day_outside: "text-muted-foreground opacity-50",
-											day_disabled: "text-muted-foreground opacity-50",
-											day_range_middle: "aria-selected:bg-accent aria-selected:text-accent-foreground",
-											day_hidden: "invisible",
+						<div className="p-6 glass-card border-glass-border/30 rounded-xl">
+							<div className="text-center mb-6">
+								<h3 className="text-lg font-semibold text-primary mb-2">Sélectionnez la période de votre fiche de paie</h3>
+								<p className="text-sm text-muted-foreground">Mois et année suffisent</p>
+							</div>
+							
+							<div className="grid grid-cols-2 gap-4 mb-6">
+								<div>
+									<label className="block text-sm text-muted-foreground mb-2">Mois</label>
+									<Select
+										value={selectedDate ? selectedDate.getMonth().toString() : new Date().getMonth().toString()}
+										onValueChange={(month) => {
+											const newDate = selectedDate ? new Date(selectedDate) : new Date();
+											newDate.setMonth(parseInt(month));
+											newDate.setDate(1); // Premier jour du mois
+											setSelectedDate(newDate);
 										}}
-										components={{
-											Caption: ({ displayMonth }: any) => (
-												<div className="flex justify-center pt-1 relative items-center">
-													<button
-														onClick={() => setShowYearMonthPicker(true)}
-														className="text-lg font-semibold text-primary cursor-pointer hover:bg-primary/10 px-3 py-1 rounded-lg transition-colors"
-													>
-														{format(displayMonth, "MMMM yyyy", { locale: fr })}
-													</button>
-												</div>
-											)
-										}}
-									/>
-								)}
-							</PopoverContent>
-						</Popover>
-						
-						{selectedDate && (
-							<motion.div 
-								initial={{ opacity: 0, scale: 0.95 }}
-								animate={{ opacity: 1, scale: 1 }}
-								className="text-center"
-							>
-								<div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
-									<Check className="w-6 h-6 text-white" />
+									>
+										<SelectTrigger className="h-12 text-lg">
+											<SelectValue />
+										</SelectTrigger>
+										<SelectContent>
+											{Array.from({ length: 12 }, (_, i) => (
+												<SelectItem key={i} value={i.toString()}>
+													{format(new Date(2024, i, 1), "MMMM", { locale: fr }).charAt(0).toUpperCase() + format(new Date(2024, i, 1), "MMMM", { locale: fr }).slice(1)}
+												</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
 								</div>
-								<p className="text-muted-foreground">Période sélectionnée !</p>
-							</motion.div>
-						)}
+								<div>
+									<label className="block text-sm text-muted-foreground mb-2">Année</label>
+									<Select
+										value={selectedDate ? selectedDate.getFullYear().toString() : new Date().getFullYear().toString()}
+										onValueChange={(year) => {
+											const newDate = selectedDate ? new Date(selectedDate) : new Date();
+											newDate.setFullYear(parseInt(year));
+											newDate.setDate(1); // Premier jour du mois
+											setSelectedDate(newDate);
+										}}
+									>
+										<SelectTrigger className="h-12 text-lg">
+											<SelectValue />
+										</SelectTrigger>
+										<SelectContent>
+											{Array.from({ length: 11 }, (_, i) => { // Changed from 6 to 11 for 10 years back + current year
+												const year = new Date().getFullYear() - 10 + i; // Start 10 years before current year
+												return (
+													<SelectItem key={year} value={year.toString()}>
+														{year}
+													</SelectItem>
+												);
+											})}
+										</SelectContent>
+									</Select>
+								</div>
+							</div>
+							
+							{selectedDate && (
+								<motion.div 
+									initial={{ opacity: 0, scale: 0.95 }}
+									animate={{ opacity: 1, scale: 1 }}
+									className="text-center p-4 bg-green-50/50 rounded-lg border border-green-200/50"
+								>
+									<div className="flex items-center justify-center gap-3">
+										<Check className="w-5 h-5 text-green-600" />
+										<p className="text-green-700 font-medium">
+											Période sélectionnée : {format(selectedDate, "MMMM yyyy", { locale: fr })}
+										</p>
+									</div>
+								</motion.div>
+							)}
+						</div>
 					</div>
 				);
 
@@ -560,6 +494,12 @@ const UploadPage = () => {
 										<SelectItem value="AUTRE">Autre</SelectItem>
 									</SelectContent>
 								</Select>
+								{employmentStatus === 'APPRENTI' && (
+									<p className="text-xs text-muted-foreground mt-2">Astuce: si vous êtes apprenti, renseignez le pourcentage SMIC appliqué (ex: 80%) pour un calcul précis.</p>
+								)}
+								{employmentStatus === 'TEMPS_PARTIEL' && (
+									<p className="text-xs text-muted-foreground mt-2">Astuce: pour un temps partiel, indiquez votre quotité (ex: 0.8) afin d'ajuster le minimum attendu.</p>
+								)}
 							</div>
 							<div>
 								<label className="block text-sm text-muted-foreground mb-2">Pourcentage SMIC attendu (ex: 75 pour 75%)</label>
@@ -573,15 +513,42 @@ const UploadPage = () => {
 								/>
 							</div>
 							<div>
-								<label className="block text-sm text-muted-foreground mb-2">Quotité (ratio temps de travail, ex: 1.0 temps plein, 0.8 pour 80%)</label>
+								                                <label className="block text-sm text-muted-foreground mb-2 flex items-center gap-2">
+                                    Quotité (ratio temps de travail)
+                                    <Popover>
+                                        <PopoverTrigger asChild>
+                                            <Info className="w-4 h-4 text-muted-foreground cursor-pointer hover:text-foreground transition-colors" />
+                                        </PopoverTrigger>
+                                        <PopoverContent className="max-w-sm">
+                                            <div className="space-y-2">
+                                                <h4 className="font-medium">Qu'est-ce que la quotité ?</h4>
+                                                <p className="text-sm text-muted-foreground">
+                                                    Quotité = Temps de travail / Temps plein
+                                                </p>
+                                                <div className="text-sm">
+                                                    <p className="font-medium mb-1">Exemples :</p>
+                                                    <ul className="text-muted-foreground space-y-1">
+                                                        <li>• 1.0 = temps plein (35h/semaine)</li>
+                                                        <li>• 0.8 = 80% (4 jours/semaine)</li>
+                                                        <li>• 0.5 = mi-temps</li>
+                                                    </ul>
+                                                </div>
+                                                <p className="text-xs text-muted-foreground">
+                                                    Laissez vide si vous êtes à temps plein.
+                                                </p>
+                                            </div>
+                                        </PopoverContent>
+                                    </Popover>
+                                </label>
 								<Input
 									type="number"
-									placeholder="1.0"
+									placeholder="1.0 (temps plein)"
 									className="glass-card border-glass-border/30 h-14 text-lg"
 									step="0.01"
 									value={workingTimeRatio}
 									onChange={(e) => setWorkingTimeRatio(e.target.value)}
 								/>
+								<p className="text-xs text-muted-foreground mt-2">Facultatif. Si non renseigné, nous considérons 1.0 (temps plein).</p>
 							</div>
 						</div>
 						{(employmentStatus || expectedSmicPercent || workingTimeRatio) && (
@@ -617,6 +584,24 @@ const UploadPage = () => {
 								<div className="flex items-center justify-between">
 									<span className="text-muted-foreground">Période :</span>
 									<span className="font-medium">{format(selectedDate, "MMMM yyyy", { locale: fr })}</span>
+								</div>
+							)}
+							{employmentStatus && (
+								<div className="flex items-center justify-between">
+									<span className="text-muted-foreground">Statut d'emploi :</span>
+									<span className="font-medium">{employmentStatus}</span>
+								</div>
+							)}
+							{expectedSmicPercent && (
+								<div className="flex items-center justify-between">
+									<span className="text-muted-foreground">Pourcentage SMIC :</span>
+									<span className="font-medium">{Number(expectedSmicPercent).toFixed(0)}%</span>
+								</div>
+							)}
+							{workingTimeRatio && (
+								<div className="flex items-center justify-between">
+									<span className="text-muted-foreground">Quotité :</span>
+									<span className="font-medium">{Number(workingTimeRatio).toFixed(2)}</span>
 								</div>
 							)}
 							{salary && (

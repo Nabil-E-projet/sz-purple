@@ -166,6 +166,27 @@ class AnalysisService:
             payslip.save(update_fields=list(set(updated_fields)))
             logger.info(f"PaySlip {payslip.id} mis à jour. Champs: {list(set(updated_fields))}")
 
+        # Vérification cohérence net_social vs net_a_payer (info)
+        try:
+            rem = gpt_data.get('remuneration') or {}
+            net_payer = rem.get('net_a_payer')
+            net_social = rem.get('net_social')
+            if net_payer is not None and net_social is not None:
+                n1 = float(str(net_payer).replace(',', '.'))
+                n2 = float(str(net_social).replace(',', '.'))
+                if n1 > 0:
+                    ratio = abs(n1 - n2) / n1
+                    if ratio <= 0.02:  # 2%
+                        anomalies = gpt_data.get('anomalies_potentielles_observees') or []
+                        anomalies.append({
+                            'type': 'coherence_nets',
+                            'description': 'Net à payer et Montant net social quasi équivalents (<=2%). Vérifiez les libellés pour éviter toute confusion.',
+                            'level': 'info'
+                        })
+                        gpt_data['anomalies_potentielles_observees'] = anomalies
+        except Exception:
+            pass
+
         # Injecter une trace claire dans les détails pour différencier les nets si présents
         try:
             remu = gpt_data.get('remuneration') or {}

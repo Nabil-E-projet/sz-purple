@@ -217,6 +217,10 @@ class ApiClient {
   public getPayslipAnalysis<T = any>(payslipId: number): Promise<T> {
     return this.get(`/api/analysis/payslip/${payslipId}/results/`);
   }
+
+  public async deletePayslip<T = any>(payslipId: number): Promise<T> {
+    return this.request<T>('DELETE', `/api/payslips/${payslipId}/delete/`, { isJson: true });
+  }
 }
 
 export const api = new ApiClient();
