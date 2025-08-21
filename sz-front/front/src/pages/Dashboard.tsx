@@ -97,13 +97,76 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8">Chargement...</div>
+      <div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col items-center justify-center min-h-[60vh]">
+            {/* Loading animation */}
+            <div className="relative">
+              {/* Outer ring */}
+              <div className="w-16 h-16 border-4 border-primary/20 rounded-full animate-spin border-t-primary"></div>
+              
+              {/* Inner pulsing dot */}
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                <div className="w-3 h-3 bg-primary rounded-full animate-pulse"></div>
+              </div>
+            </div>
+            
+            {/* Loading text */}
+            <div className="mt-6 text-center">
+              <h3 className="text-lg font-semibold text-foreground mb-2">
+                Chargement de vos analyses
+              </h3>
+              <p className="text-sm text-muted-foreground max-w-md">
+                Récupération de vos fiches de paie et calcul des statistiques...
+              </p>
+            </div>
+            
+            {/* Animated dots */}
+            <div className="flex space-x-1 mt-4">
+              <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{animationDelay: '0ms'}}></div>
+              <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{animationDelay: '150ms'}}></div>
+              <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{animationDelay: '300ms'}}></div>
+            </div>
+            
+            {/* Background decoration */}
+            <div className="absolute inset-0 -z-10 overflow-hidden">
+              <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-primary/5 rounded-full blur-xl"></div>
+              <div className="absolute bottom-1/3 right-1/4 w-24 h-24 bg-accent/5 rounded-full blur-xl"></div>
+            </div>
+          </div>
+        </div>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8">{error}</div>
+      <div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col items-center justify-center min-h-[60vh]">
+            <div className="relative">
+              <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center">
+                <AlertTriangle className="w-8 h-8 text-destructive" />
+              </div>
+            </div>
+            
+            <div className="mt-6 text-center">
+              <h3 className="text-lg font-semibold text-foreground mb-2">
+                Erreur de chargement
+              </h3>
+              <p className="text-sm text-muted-foreground max-w-md mb-4">
+                {error}
+              </p>
+              <Button 
+                onClick={() => window.location.reload()} 
+                className="bg-gradient-primary hover:opacity-90"
+              >
+                Réessayer
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
     );
   }
 
@@ -219,35 +282,55 @@ const Dashboard = () => {
                 {analyses.map((analysis) => (
                   <div 
                     key={analysis.id}
-                    className="glass-card p-6 rounded-xl hover:scale-[1.02] transition-all duration-300"
+                    className="glass-card p-4 sm:p-6 rounded-xl hover:scale-[1.02] transition-all duration-300"
                   >
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-4 sm:space-y-0">
-                      <div className="flex items-center space-x-4">
-                        {getStatusIcon(analysis.status)}
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-foreground mb-1">
-                            Fiche de paie - {analysis.period}
-                          </h3>
-                          <p className="text-sm text-muted-foreground mb-2">
-                            {analysis.fileName}
-                          </p>
-                          <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-                            <span>Analysé le {analysis.date}</span>
-                            <span>Score: {analysis.score}/10</span>
-                            <span>Conformité: {analysis.conformityScore}/10</span>
-                            {analysis.errorsCount > 0 ? (
-                              <span className="text-amber-600 font-medium">{analysis.errorsCount} anomalie(s)</span>
-                            ) : (
-                              <span className="text-green-600">0 anomalie</span>
-                            )}
+                    <div className="space-y-4">
+                      {/* Header section with status */}
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center space-x-3 flex-1 min-w-0">
+                          {getStatusIcon(analysis.status)}
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-semibold text-foreground mb-1 text-sm sm:text-base">
+                              Fiche de paie - {analysis.period}
+                            </h3>
+                            <p className="text-xs sm:text-sm text-muted-foreground truncate" title={analysis.fileName}>
+                              {analysis.fileName}
+                            </p>
                           </div>
+                        </div>
+                        <div className="flex-shrink-0">
+                          {getStatusBadge(analysis.status, analysis.errorsCount)}
                         </div>
                       </div>
                       
-                      <div className="flex items-center space-x-4">
-                        {getStatusBadge(analysis.status, analysis.errorsCount)}
-                        <Link to={`/analysis/${analysis.id}`}>
-                          <Button variant="outline" size="sm" className="btn-glass">
+                      {/* Stats section */}
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs sm:text-sm text-muted-foreground">
+                        <div className="col-span-2 sm:col-span-1">
+                          <span className="block">Analysé le</span>
+                          <span className="font-medium text-foreground">{analysis.date}</span>
+                        </div>
+                        <div>
+                          <span className="block">Score</span>
+                          <span className="font-medium text-foreground">{analysis.score}/10</span>
+                        </div>
+                        <div>
+                          <span className="block">Conformité</span>
+                          <span className="font-medium text-foreground">{analysis.conformityScore}/10</span>
+                        </div>
+                        <div className="col-span-2 sm:col-span-1">
+                          <span className="block">Anomalies</span>
+                          {analysis.errorsCount > 0 ? (
+                            <span className="text-amber-600 font-medium">{analysis.errorsCount}</span>
+                          ) : (
+                            <span className="text-green-600 font-medium">0</span>
+                          )}
+                        </div>
+                      </div>
+                      
+                      {/* Actions section */}
+                      <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-2 border-t border-glass-border/20">
+                        <Link to={`/analysis/${analysis.id}`} className="flex-1">
+                          <Button variant="outline" size="sm" className="btn-glass w-full">
                             <Eye className="w-4 h-4 mr-2" />
                             Voir le détail
                           </Button>
@@ -255,7 +338,7 @@ const Dashboard = () => {
                         <Button
                           variant="destructive"
                           size="sm"
-                          className="border-0"
+                          className="border-0 flex-shrink-0"
                           onClick={async () => {
                             const yes = window.confirm('Supprimer définitivement cette fiche de paie et son analyse ?');
                             if (!yes) return;
@@ -280,10 +363,11 @@ const Dashboard = () => {
             )}
             {/* Pagination simple */}
             {analyses.length > 0 && (
-              <div className="flex justify-between items-center mt-6">
+              <div className="flex flex-col sm:flex-row justify-between items-center mt-6 gap-4">
                 <Button
                   variant="outline"
                   disabled={!pageInfo.previous}
+                  className="w-full sm:w-auto order-2 sm:order-1"
                   onClick={async () => {
                     const { api } = await import('@/lib/api');
                     const newOffset = Math.max(0, pageInfo.offset - pageInfo.limit);
@@ -304,12 +388,13 @@ const Dashboard = () => {
                 >
                   Précédent
                 </Button>
-                <div className="text-sm text-muted-foreground">
+                <div className="text-sm text-muted-foreground text-center order-1 sm:order-2">
                   {Math.min(pageInfo.offset + 1, pageInfo.count)}–{Math.min(pageInfo.offset + pageInfo.limit, pageInfo.count)} sur {pageInfo.count}
                 </div>
                 <Button
                   variant="outline"
                   disabled={!pageInfo.next}
+                  className="w-full sm:w-auto order-3"
                   onClick={async () => {
                     const { api } = await import('@/lib/api');
                     const newOffset = pageInfo.offset + pageInfo.limit;

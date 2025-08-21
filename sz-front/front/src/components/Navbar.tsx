@@ -91,7 +91,7 @@ const Navbar = () => {
 
         {/* Mobile Navigation */}
         {isOpen && (
-          <div className="md:hidden absolute top-16 left-0 right-0 glass-card border-t border-glass-border/20 animate-fade-in-up">
+          <div className="md:hidden absolute top-16 left-0 right-0 bg-background border border-border shadow-lg animate-fade-in-up">
             <div className="px-2 pt-2 pb-3 space-y-1">
               {filteredNavItems.map((item) => (
                 <Link
@@ -111,26 +111,41 @@ const Navbar = () => {
                 </Link>
               ))}
               
-              {!isAuthenticated && (
-                <div className="pt-4 border-t border-glass-border/20">
-                  <Link
-                    to="/login"
-                    className="block px-3 py-2 text-base font-medium text-foreground hover:text-primary"
-                    onClick={() => setIsOpen(false)}
+              <div className="pt-4 border-t border-border">
+                {isAuthenticated ? (
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => {
+                      logout();
+                      setIsOpen(false);
+                    }}
+                    className="w-full justify-start px-3 py-2"
                   >
-                    Se connecter
-                  </Link>
-                  <Link
-                    to="/upload"
-                    className="block px-3 py-2 text-base font-medium"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    <Button size="sm" className="w-full bg-gradient-primary hover:opacity-90 border-0">
-                      Commencer
-                    </Button>
-                  </Link>
-                </div>
-              )}
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Déconnexion
+                  </Button>
+                ) : (
+                  <>
+                    <Link
+                      to="/login"
+                      className="block px-3 py-2 text-base font-medium text-foreground hover:text-primary"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Se connecter
+                    </Link>
+                    <Link
+                      to="/upload"
+                      className="block px-3 py-2 text-base font-medium"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <Button size="sm" className="w-full bg-gradient-primary hover:opacity-90 border-0">
+                        Commencer
+                      </Button>
+                    </Link>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         )}

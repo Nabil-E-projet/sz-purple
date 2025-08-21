@@ -176,299 +176,395 @@ const AnalysisDetails = () => {
 
 	const smartRecommendations = generateSmartRecommendations();
 
-	// Fonction de téléchargement de rapport qui PÈTE 🚀💥
+	// Génération d'un rapport PDF moderne et professionnel
 	const downloadReport = () => {
 		try {
 			const significantAnomalies = anomalies.filter((a: any) => normalizeLevel(a?.level || a?.gravite) !== 'ok');
 			
-			// Création du HTML du rapport stylé
-			const reportHTML = `
+			// Création du contenu du rapport minimaliste et professionnel
+			const reportContent = `
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rapport d'Analyse de Paie - ${derived.period}</title>
+    <title>Rapport d'Analyse - ${derived.period}</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            line-height: 1.6; 
-            color: #333;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .container { 
-            max-width: 800px; 
-            margin: 0 auto; 
-            background: white; 
-            border-radius: 20px; 
-            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-            overflow: hidden;
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: #1f2937;
+            background: #ffffff;
+            font-size: 14px;
         }
-        .header { 
-            background: linear-gradient(135deg, #6366f1, #8b5cf6); 
-            color: white; 
-            padding: 30px; 
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+        
+        .header {
             text-align: center;
-            position: relative;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+        
+        .header .period {
+            font-size: 16px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+        
+        .header .date {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-top: 16px;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .summary-card {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .summary-card .value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 4px;
+        }
+        
+        .summary-card .label {
+            font-size: 12px;
+            color: #6b7280;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .section {
+            margin-bottom: 32px;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .financial-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            background: #e5e7eb;
+            border-radius: 8px;
             overflow: hidden;
         }
-        .header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            animation: pulse 3s ease-in-out infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { transform: scale(0.9); opacity: 0.7; }
-            50% { transform: scale(1.1); opacity: 1; }
-        }
-        .header h1 { 
-            font-size: 2.5em; 
-            margin-bottom: 10px;
-            position: relative;
-            z-index: 1;
-        }
-        .header .subtitle { 
-            font-size: 1.2em; 
-            opacity: 0.9;
-            position: relative;
-            z-index: 1;
-        }
-        .content { padding: 30px; }
-        .section { 
-            margin-bottom: 30px; 
-            padding: 20px; 
-            border-radius: 15px; 
-            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
-            border-left: 5px solid #6366f1;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
-        .section h2 { 
-            color: #6366f1; 
-            margin-bottom: 15px; 
-            font-size: 1.8em;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .metric { 
-            display: flex; 
-            justify-content: space-between; 
-            margin: 10px 0; 
-            padding: 10px;
+        
+        .financial-item {
             background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-        .metric strong { color: #1f2937; }
-        .anomaly { 
-            margin: 15px 0; 
-            padding: 15px; 
-            border-radius: 10px; 
-            border-left: 4px solid #f59e0b;
-            background: linear-gradient(135deg, #fef3c7, #fde68a);
-        }
-        .anomaly.error { 
-            border-left-color: #ef4444; 
-            background: linear-gradient(135deg, #fee2e2, #fecaca);
-        }
-        .anomaly.warning { 
-            border-left-color: #f59e0b; 
-            background: linear-gradient(135deg, #fef3c7, #fde68a);
-        }
-        .anomaly.info { 
-            border-left-color: #3b82f6; 
-            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
-        }
-        .anomaly h4 { 
-            font-size: 1.1em; 
-            margin-bottom: 8px;
+            padding: 16px;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 8px;
         }
-        .badge { 
-            padding: 4px 12px; 
-            border-radius: 20px; 
-            font-size: 0.8em; 
-            font-weight: bold;
+        
+        .financial-item .label {
+            color: #6b7280;
+            font-weight: 500;
+        }
+        
+        .financial-item .value {
+            font-weight: 600;
+            color: #111827;
+        }
+        
+        .financial-item.total {
+            background: #f3f4f6;
+            font-weight: 700;
+            border-top: 2px solid #d1d5db;
+        }
+        
+        .anomaly {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+        
+        .anomaly.error {
+            background: #fee2e2;
+            border-color: #ef4444;
+        }
+        
+        .anomaly .anomaly-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .anomaly .anomaly-title {
+            font-weight: 600;
+            color: #111827;
+            flex: 1;
+        }
+        
+        .anomaly .anomaly-badge {
+            background: #f59e0b;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
             text-transform: uppercase;
         }
-        .badge.error { background: #ef4444; color: white; }
-        .badge.warning { background: #f59e0b; color: white; }
-        .badge.info { background: #3b82f6; color: white; }
-        .recommendation { 
-            margin: 10px 0; 
-            padding: 15px; 
-            background: linear-gradient(135deg, #ecfdf5, #d1fae5);
-            border-radius: 10px; 
-            border-left: 4px solid #10b981;
+        
+        .anomaly.error .anomaly-badge {
+            background: #ef4444;
         }
-        .score-big { 
-            font-size: 3em; 
-            font-weight: bold; 
-            color: #6366f1; 
+        
+        .anomaly .anomaly-description {
+            color: #4b5563;
+            font-size: 13px;
+        }
+        
+        .recommendations .recommendation {
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 8px;
+            position: relative;
+            padding-left: 32px;
+        }
+        
+        .recommendations .recommendation::before {
+            content: counter(rec-counter);
+            counter-increment: rec-counter;
+            position: absolute;
+            left: 12px;
+            top: 12px;
+            background: #0ea5e9;
+            color: white;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 600;
+        }
+        
+        .recommendations {
+            counter-reset: rec-counter;
+        }
+        
+        .footer {
             text-align: center;
-            margin: 20px 0;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-        }
-        .footer { 
-            background: #f8fafc; 
-            padding: 20px; 
-            text-align: center; 
-            border-top: 2px solid #e5e7eb;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
             color: #6b7280;
+            font-size: 12px;
         }
-        .highlight { 
-            background: linear-gradient(135deg, #fbbf24, #f59e0b); 
-            color: white; 
-            padding: 15px; 
-            border-radius: 10px; 
+        
+        .no-data {
             text-align: center;
-            margin: 20px 0;
-            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+            color: #6b7280;
+            font-style: italic;
+            padding: 20px;
         }
+        
         @media print {
-            body { background: white; padding: 0; }
-            .container { box-shadow: none; }
-            .header::before { display: none; }
+            body { font-size: 12px; }
+            .container { padding: 20px; }
+            .summary-grid { grid-template-columns: repeat(4, 1fr); }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>📊 RAPPORT D'ANALYSE DE PAIE</h1>
-            <div class="subtitle">${derived.period} • Généré le ${new Date().toLocaleString('fr-FR')}</div>
+            <h1>Rapport d'Analyse de Paie</h1>
+            <div class="period">${derived.period}</div>
+            <div class="date">Généré le ${new Date().toLocaleDateString('fr-FR', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            })}</div>
         </div>
-        
-        <div class="content">
-            <div class="section">
-                <h2>🔍 Résumé Exécutif</h2>
-                <div class="score-big">${derived.globalScore}/10</div>
-                <div class="metric">
-                    <span>Conformité légale</span>
-                    <strong>${derived.conformityPercent}%</strong>
+
+        <div class="summary-grid">
+            <div class="summary-card">
+                <div class="value">${derived.globalScore}/10</div>
+                <div class="label">Score Global</div>
+            </div>
+            <div class="summary-card">
+                <div class="value">${derived.conformityPercent}%</div>
+                <div class="label">Conformité</div>
+            </div>
+            <div class="summary-card">
+                <div class="value">${significantAnomalies.length}</div>
+                <div class="label">Anomalies</div>
+            </div>
+            <div class="summary-card">
+                <div class="value">${derived.details.salaireNet.toFixed(0)}€</div>
+                <div class="label">Salaire Net</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Détails Financiers</h2>
+            <div class="financial-grid">
+                <div class="financial-item">
+                    <span class="label">Salaire brut</span>
+                    <span class="value">${derived.details.salaireBrut.toFixed(2)}€</span>
                 </div>
-                <div class="metric">
-                    <span>Date d'analyse</span>
-                    <strong>${derived.date}</strong>
+                <div class="financial-item">
+                    <span class="label">Cotisations sociales</span>
+                    <span class="value">-${derived.details.cotisationsSociales.toFixed(2)}€</span>
+                </div>
+                <div class="financial-item total">
+                    <span class="label">Salaire net</span>
+                    <span class="value">${derived.details.salaireNet.toFixed(2)}€</span>
+                </div>
+                <div class="financial-item">
+                    <span class="label">Convention</span>
+                    <span class="value">${derived.details.convention}</span>
                 </div>
             </div>
+        </div>
 
-            <div class="section">
-                <h2>💰 Détails Financiers</h2>
-                <div class="metric">
-                    <span>Salaire brut</span>
-                    <strong>${derived.details.salaireBrut.toFixed(2)}€</strong>
+        ${evaluation && (evaluation.attendu_mensuel || evaluation.recu_mensuel) ? `
+        <div class="section">
+            <h2 class="section-title">Évaluation Déterministe</h2>
+            <div class="financial-grid">
+                <div class="financial-item">
+                    <span class="label">Salaire attendu</span>
+                    <span class="value">${Number(evaluation.attendu_mensuel || 0).toFixed(2)}€</span>
                 </div>
-                <div class="metric">
-                    <span>Cotisations sociales</span>
-                    <strong>-${derived.details.cotisationsSociales.toFixed(2)}€</strong>
+                <div class="financial-item">
+                    <span class="label">Salaire reçu</span>
+                    <span class="value">${Number(evaluation.recu_mensuel || 0).toFixed(2)}€</span>
                 </div>
-                <div class="metric">
-                    <span>Salaire net</span>
-                    <strong style="color: #10b981; font-size: 1.2em;">${derived.details.salaireNet.toFixed(2)}€</strong>
-                </div>
-            </div>
-
-            ${evaluation && (evaluation.attendu_mensuel || evaluation.recu_mensuel) ? `
-            <div class="section">
-                <h2>🎯 Évaluation Déterministe</h2>
-                <div class="highlight">
-                    <div style="font-size: 1.4em; margin-bottom: 10px;">
-                        ${Number(evaluation.difference || 0) > 0 ? '⚠️ ÉCART DÉTECTÉ' : '✅ CONFORME'}
-                    </div>
-                    <div style="font-size: 1.8em; font-weight: bold;">
+                <div class="financial-item total">
+                    <span class="label">Différence</span>
+                    <span class="value" style="color: ${Number(evaluation.difference || 0) > 0 ? '#ef4444' : '#10b981'}">
                         ${Number(evaluation.difference || 0) > 0 ? '+' : ''}${Number(evaluation.difference || 0).toFixed(2)}€
-                    </div>
+                    </span>
                 </div>
-                <div class="metric">
-                    <span>Salaire mensuel attendu</span>
-                    <strong>${Number(evaluation.attendu_mensuel || 0).toFixed(2)}€</strong>
+                <div class="financial-item">
+                    <span class="label">Statut</span>
+                    <span class="value">${Number(evaluation.difference || 0) > 0 ? 'Non conforme' : 'Conforme'}</span>
                 </div>
-                <div class="metric">
-                    <span>Salaire reçu</span>
-                    <strong>${Number(evaluation.recu_mensuel || 0).toFixed(2)}€</strong>
-                </div>
-                ${evaluation.explication_montant_du ? `
-                <div style="margin-top: 15px; padding: 10px; background: rgba(255,255,255,0.7); border-radius: 8px; font-size: 0.9em;">
-                    ${evaluation.explication_montant_du}
-                </div>
-                ` : ''}
-            </div>
-            ` : ''}
-
-            <div class="section">
-                <h2>⚠️ Anomalies Détectées (${significantAnomalies.length})</h2>
-                ${significantAnomalies.map((anomalie: any) => {
-                    const severity = normalizeLevel(anomalie.level || anomalie.gravite);
-                    const severityEmoji = severity === 'error' ? '🔴' : severity === 'warning' ? '🟡' : '🔵';
-                    const severityText = severity === 'error' ? 'ERREUR' : severity === 'warning' ? 'ALERTE' : 'INFO';
-                    return `
-                    <div class="anomaly ${severity}">
-                        <h4>${severityEmoji} ${anomalie.type || 'Anomalie détectée'} <span class="badge ${severity}">${severityText}</span></h4>
-                        <p>${anomalie.description || 'Aucune description disponible'}</p>
-                    </div>
-                    `;
-                }).join('')}
-                ${significantAnomalies.length === 0 ? '<div style="text-align: center; padding: 30px; color: #10b981;">✅ Aucune anomalie significative détectée</div>' : ''}
-            </div>
-
-            <div class="section">
-                <h2>✅ Recommandations Prioritaires</h2>
-                ${derived.recommendations.map((rec: string, index: number) => `
-                    <div class="recommendation">
-                        <strong>${index + 1}.</strong> ${rec}
-                    </div>
-                `).join('')}
-                ${derived.recommendations.length === 0 ? '<div style="text-align: center; padding: 30px; color: #6b7280;">Aucune recommandation spécifique</div>' : ''}
             </div>
         </div>
-        
+        ` : ''}
+
+        <div class="section">
+            <h2 class="section-title">Anomalies Détectées</h2>
+            ${significantAnomalies.length > 0 ? significantAnomalies.map((anomalie: any) => {
+                const severity = normalizeLevel(anomalie.level || anomalie.gravite);
+                const severityText = severity === 'error' ? 'ERREUR' : 'ALERTE';
+                return `
+                <div class="anomaly ${severity}">
+                    <div class="anomaly-header">
+                        <div class="anomaly-title">${formatAnomalyTitle(anomalie.type)}</div>
+                        <div class="anomaly-badge">${severityText}</div>
+                    </div>
+                    <div class="anomaly-description">${anomalie.description || 'Aucune description disponible'}</div>
+                </div>
+                `;
+            }).join('') : '<div class="no-data">Aucune anomalie significative détectée</div>'}
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Recommandations</h2>
+            <div class="recommendations">
+                ${derived.recommendations.length > 0 ? derived.recommendations.map((rec: string) => `
+                    <div class="recommendation">${rec}</div>
+                `).join('') : '<div class="no-data">Aucune recommandation spécifique</div>'}
+            </div>
+        </div>
+
         <div class="footer">
-            <p><strong>SalariZ Analytics</strong> • Rapport généré automatiquement</p>
-            <p style="font-size: 0.9em; margin-top: 5px;">Pour toute question, contactez votre service RH</p>
+            <div><strong>SalariZ</strong> - Analyse automatisée de fiche de paie</div>
+            <div>Ce rapport est généré automatiquement et doit être vérifié par un professionnel</div>
         </div>
     </div>
 </body>
 </html>`;
 
-			// Ouvrir le rapport dans un nouvel onglet
-			const newWindow = window.open('', '_blank');
-			if (newWindow) {
-				newWindow.document.write(reportHTML);
-				newWindow.document.close();
-				
-				// Focus sur la nouvelle fenêtre et déclencher l'impression
-				setTimeout(() => {
-					newWindow.focus();
-					newWindow.print();
-				}, 500);
-			}
+			// Créer et télécharger le fichier
+			const blob = new Blob([reportContent], { type: 'text/html;charset=utf-8' });
+			const url = URL.createObjectURL(blob);
+			const link = document.createElement('a');
+			link.href = url;
+			link.download = `rapport-analyse-paie-${derived.period.replace(/[^a-zA-Z0-9]/g, '-')}.html`;
+			document.body.appendChild(link);
+			link.click();
+			document.body.removeChild(link);
+			URL.revokeObjectURL(url);
 
-			// Animation de succès sur le bouton
+			// Animation de succès discrète
 			const buttons = document.querySelectorAll('.download-btn');
 			buttons.forEach(button => {
 				const btnElement = button as HTMLElement;
-				btnElement.style.transform = 'scale(0.95)';
-				btnElement.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+				btnElement.style.transform = 'scale(0.98)';
 				setTimeout(() => {
 					btnElement.style.transform = 'scale(1)';
-					btnElement.style.background = '';
-				}, 200);
+				}, 150);
 			});
 
 		} catch (error) {
 			console.error('Erreur lors de la génération du rapport:', error);
-			alert('🚨 Oups ! Erreur lors de la génération du rapport. Réessayez !');
+			// Notification d'erreur plus discrète
+			const errorDiv = document.createElement('div');
+			errorDiv.textContent = 'Erreur lors de la génération du rapport';
+			errorDiv.style.cssText = `
+				position: fixed; top: 20px; right: 20px; 
+				background: #fee2e2; color: #dc2626; 
+				padding: 12px 16px; border-radius: 8px; 
+				border: 1px solid #fecaca; 
+				font-size: 14px; z-index: 1000;
+				box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+			`;
+			document.body.appendChild(errorDiv);
+			setTimeout(() => document.body.removeChild(errorDiv), 3000);
 		}
 	};
 
@@ -486,7 +582,7 @@ const AnalysisDetails = () => {
 	const derived = {
 		period: (periode?.periode_du && periode?.periode_au) ? `Du ${periode.periode_du} au ${periode.periode_au}` : '—',
 		date: analysis?.date ? new Date(analysis.date).toLocaleString('fr-FR') : '—',
-		fileName: '—',
+		fileName: analysis?.filename || '—',
 		status: analysis?.status || 'success',
 		conformityPercent,
 		globalScore: typeof gptData?.note_globale === 'number' ? gptData.note_globale : 0,
@@ -507,28 +603,27 @@ const AnalysisDetails = () => {
 		<div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8">
 			<div className="max-w-6xl mx-auto">
 				{/* Header */}
-				<div className="flex items-center space-x-4 mb-8">
-					<Link to="/dashboard">
-						<Button variant="outline" size="sm" className="btn-glass">
-							<ArrowLeft className="w-4 h-4 mr-2" />
-							Retour au dashboard
-						</Button>
-					</Link>
-					<div className="flex-1 animate-fade-in-up">
-						<h1 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-							Analyse détaillée
-						</h1>
-						<p className="text-muted-foreground">
-							Fiche de paie - {derived.period}
-						</p>
+				<div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0 mb-8">
+					<div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-4">
+						<Link to="/dashboard">
+							<Button variant="outline" size="sm" className="btn-glass">
+								<ArrowLeft className="w-4 h-4 mr-2" />
+								Retour au dashboard
+							</Button>
+						</Link>
+						<div className="animate-fade-in-up">
+							<h1 className="text-2xl md:text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+								Analyse détaillée
+							</h1>
+							<p className="text-muted-foreground">
+								Fiche de paie - {derived.period}
+							</p>
+						</div>
 					</div>
-					<Button 
-						className="bg-gradient-primary hover:opacity-90 border-0 download-btn transition-transform"
-						onClick={downloadReport}
-					>
-						<Download className="w-4 h-4 mr-2" />
-						Télécharger le rapport
-					</Button>
+					<div className="text-left md:text-right">
+						<div className="text-sm text-muted-foreground">Analysé le</div>
+						<div className="font-medium">{derived.date}</div>
+					</div>
 				</div>
 
 				<div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -573,7 +668,9 @@ const AnalysisDetails = () => {
 									</div>
 									<div className="flex items-center justify-between">
 										<span className="text-muted-foreground">Fichier</span>
-										<span className="truncate max-w-[150px]">{derived.fileName}</span>
+										<span className="truncate max-w-[150px]" title={derived.fileName}>
+											{derived.fileName}
+										</span>
 									</div>
 									{(derived.details.employmentStatus || derived.details.expectedSmicPercent) && (
 										<div className="flex items-center justify-between">
@@ -765,22 +862,44 @@ const AnalysisDetails = () => {
 						</Card>
 
 						{/* Actions */}
-						<div className="flex flex-col sm:flex-row gap-4">
-							<Button 
-								size="lg" 
-								className="bg-gradient-primary hover:opacity-90 border-0 flex-1 download-btn transition-transform"
-								onClick={downloadReport}
-							>
-								<Download className="w-4 h-4 mr-2" />
-								Télécharger le rapport complet
-							</Button>
-							<Link to="/upload" className="flex-1">
-								<Button variant="outline" size="lg" className="btn-glass w-full">
-									<FileText className="w-4 h-4 mr-2" />
-									Nouvelle analyse
-								</Button>
-							</Link>
-						</div>
+						<Card className="glass-card border-0 bg-gradient-to-r from-primary/5 to-accent/5">
+							<CardContent className="p-6">
+								<h3 className="text-lg font-semibold mb-4 text-center">Actions disponibles</h3>
+								<div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+									<Button 
+										size="lg" 
+										className="bg-gradient-primary hover:opacity-90 border-0 download-btn transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+										onClick={downloadReport}
+									>
+										<Download className="w-4 h-4 mr-2" />
+										Exporter le rapport
+									</Button>
+									
+									<Button 
+										variant="outline" 
+										size="lg" 
+										className="btn-glass"
+										onClick={() => window.print()}
+									>
+										<Info className="w-4 h-4 mr-2" />
+										Imprimer la page
+									</Button>
+									
+									<Link to="/upload" className="w-full">
+										<Button variant="outline" size="lg" className="btn-glass w-full">
+											<FileText className="w-4 h-4 mr-2" />
+											Nouvelle analyse
+										</Button>
+									</Link>
+								</div>
+								
+								<div className="mt-4 text-center">
+									<p className="text-sm text-muted-foreground">
+										💡 Tip: Sauvegardez ce rapport pour vos archives RH
+									</p>
+								</div>
+							</CardContent>
+						</Card>
 					</div>
 				</div>
 			</div>

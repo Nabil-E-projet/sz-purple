@@ -348,7 +348,7 @@ const UploadPage = () => {
 								<p className="text-sm text-muted-foreground">Mois et année suffisent</p>
 							</div>
 							
-							<div className="grid grid-cols-2 gap-4 mb-6">
+							<div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
 								<div>
 									<label className="block text-sm text-muted-foreground mb-2">Mois</label>
 									<Select
