@@ -12,6 +12,7 @@ import AnalysisDetails from "./pages/AnalysisDetails";
 import NotFound from "./pages/NotFound";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import WelcomeAnimation from "./components/WelcomeAnimation";
 
 const queryClient = new QueryClient();
 
@@ -20,6 +21,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
+      <WelcomeAnimation />
       <BrowserRouter>
         <AuthProvider>
           <div className="min-h-screen">

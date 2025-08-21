@@ -174,6 +174,10 @@ class ApiClient {
     contractual_salary?: string | number | null;
     additional_details?: string | null;
     period?: string | null;
+    date_paiement?: string | null;
+    employment_status?: string | null;
+    expected_smic_percent?: number | string | null;
+    working_time_ratio?: number | string | null;
   }): Promise<T> {
     const form = new FormData();
     form.append('uploaded_file', params.file);
@@ -183,7 +187,22 @@ class ApiClient {
     }
     if (params.additional_details) form.append('additional_details', params.additional_details);
     if (params.period) form.append('period', params.period);
+    if (params.date_paiement) form.append('date_paiement', params.date_paiement);
+    if (params.employment_status) form.append('employment_status', String(params.employment_status));
+    if (params.expected_smic_percent !== undefined && params.expected_smic_percent !== null && `${params.expected_smic_percent}` !== '') {
+      form.append('expected_smic_percent', String(params.expected_smic_percent));
+    }
+    if (params.working_time_ratio !== undefined && params.working_time_ratio !== null && `${params.working_time_ratio}` !== '') {
+      form.append('working_time_ratio', String(params.working_time_ratio));
+    }
     return this.upload('/api/payslips/upload/', form);
+  }
+
+  public async findUserPayslipsByPeriod<T = any[]>(periodLike: string): Promise<T> {
+    const res = await this.listPayslips<{ results: any[]; count: number }>();
+    const lc = periodLike.toLowerCase();
+    // @ts-ignore
+    return (res?.results || []).filter(p => String(p?.period || '').toLowerCase().includes(lc)) as unknown as T;
   }
 
   public getConventions<T = { value: string; label: string }[]>(): Promise<T> {

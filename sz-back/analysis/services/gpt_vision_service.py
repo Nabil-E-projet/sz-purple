@@ -51,6 +51,41 @@ class GPTVisionService:
         # Construction du prompt principal
         prompt = self._build_analysis_prompt(user_context_prompt, anomaly_detection_guidelines, additional_data)
 
+        # Si une date de paiement est fournie, réduire la table SMIC pour n'inclure que le mois ciblé (+/- 1 mois)
+        try:
+            from datetime import datetime
+            date_str = (additional_data or {}).get('date_paiement')
+            if date_str:
+                dt = None
+                for fmt in ('%Y-%m-%d', '%d/%m/%Y', '%m/%Y'):
+                    try:
+                        if fmt == '%m/%Y':
+                            dt = datetime.strptime(date_str, fmt).date().replace(day=1)
+                        else:
+                            dt = datetime.strptime(date_str, fmt).date()
+                        break
+                    except Exception:
+                        continue
+                if dt:
+                    # Reformer un SMIC context très court centré sur le mois
+                    smic_lines = [ln for ln in self.smic_data_for_prompt.splitlines() if ln.strip()]
+                    header = smic_lines[0] if smic_lines else 'Année,Mois,SMIC_horaire_brut'
+                    month_map = {
+                        1: 'Janvier', 2: 'Février', 3: 'Mars', 4: 'Avril', 5: 'Mai', 6: 'Juin',
+                        7: 'Juillet', 8: 'Août', 9: 'Septembre', 10: 'Octobre', 11: 'Novembre', 12: 'Décembre'
+                    }
+                    target_year = dt.year
+                    target_month = month_map.get(dt.month)
+                    # Garde le mois ciblé; optionnel: on pourrait ajouter +/-1 mois, mais restons minimalistes
+                    filtered = [
+                        line for line in smic_lines[1:]
+                        if (str(target_year) in line and target_month in line)
+                    ]
+                    if filtered:
+                        self.smic_data_for_prompt = "\n".join([header] + filtered)
+        except Exception:
+            pass
+
         # DEBUG: Log de ce qui est envoyé à GPT
         logger.info(f"=== DEBUG DONNEES ENVOYEES A GPT ===")
         logger.info(f"Nombre d'images: {len(base64_images)}")
@@ -154,6 +189,9 @@ class GPTVisionService:
     def _build_analysis_prompt(self, user_context_prompt: str, anomaly_detection_guidelines: str, additional_data: Dict) -> str:
         """Construit le prompt complet pour l'analyse"""
         contractual_salary_context = additional_data.get('contractual_salary', 'NON FOURNI')
+        employment_status = additional_data.get('employment_status')
+        expected_smic_percent = additional_data.get('expected_smic_percent')
+        working_time_ratio = additional_data.get('working_time_ratio')
         # On récupère dynamiquement le texte de la convention depuis les données additionnelles
         convention_collective_text = additional_data.get('convention_collective_text', 'Aucune convention collective spécifiée.')
         # On tronque le texte de la convention pour éviter les prompts trop volumineux
@@ -165,16 +203,33 @@ class GPTVisionService:
         if convention_collective_text and len(convention_collective_text) > max_chars:
             convention_collective_text = convention_collective_text[:max_chars] + "\n[...]"
 
+        status_line = ''
+        if employment_status:
+            status_line += f"- Statut/contrat déclaré: {employment_status}. "
+        if expected_smic_percent is not None:
+            status_line += f"- Pourcentage SMIC attendu: {expected_smic_percent}%. "
+        if working_time_ratio is not None and working_time_ratio != 1:
+            status_line += f"- Quotité de travail: {working_time_ratio*100:.0f}%. "
+
         return f"""
         Tu es un expert en analyse de fiches de paie françaises. Tu vas recevoir plusieurs images représentant les pages consécutives d'UNE SEULE fiche de paie. Analyse l'ensemble des pages.
 
         CONTEXTE IMPORTANT POUR L'ANALYSE (POC):
         {self.smic_data_for_prompt}
         
+        DISTINCTION CRITIQUE ENTRE MONTANTS (NE PAS CONFONDRE):
+        - Salaire brut (brut de base / salaire de base brut): Montant contractuel avant cotisations, hors primes exceptionnelles. Sert aux comparaisons SMIC et conventions.
+        - Salaire brut total: Brut de base + primes/HS éventuelles.
+        - Net imposable: Net fiscal utilisé pour l'impôt (inclut certaines cotisations, diffère du net à payer).
+        - Net à payer (ou net à payer avant acompte): Montant réellement versé au salarié (hors acomptes). C'est le « salaire net » usuel d'affichage.
+        - Montant net social (ou « net social »): Indicateur légal affiché sur les bulletins depuis 2023. À extraire séparément si présent.
+        RÈGLE: N'assigne JAMAIS le net social au champ "net_a_payer". Renseigne chaque champ distinctement. Utilise les libellés exacts de la fiche de paie (synonymes fréquents: « montant net social », « net social », « net imposable », « net à payer », « net à payer avant acompte »).
+
         CONTEXTE SPÉCIFIQUE À LA CONVENTION COLLECTIVE:
         {convention_collective_text}
 
         {user_context_prompt}
+        {status_line}
 
         TÂCHE:
         Extrait les informations clés de cette fiche de paie en te basant sur TOUTES les pages fournies et le contexte ci-dessus. Identifie les anomalies potentielles. Structure ta réponse au format JSON demandé.
@@ -204,6 +259,7 @@ class GPTVisionService:
         6. N'invente AUCUNE information. Base-toi strictement sur le contenu visible et le contexte fourni.
         7. Heures supplémentaires: extraire nombre d'heures et taux de majoration si possible.
         8. Anomalies: sois précis, justifie en te basant sur les règles fournies ou incohérences.
+        9. Pour les calculs SMIC/quotité, utilise STRICTEMENT le salaire de base brut ("salaire_de_base_brut") et jamais un net (net social, net imposable, net à payer).
 
         FORMAT DE RÉPONSE JSON ATTENDU (NE PAS INCLURE LES COMMENTAIRES DANS LE JSON FINAL):
         ```json
@@ -226,6 +282,7 @@ class GPTVisionService:
             "salaire_brut_total": number | null,
             "total_cotisations_salariales": number | null,
             "net_imposable": number | null,
+            "net_social": number | null,
             "impot_preleve_a_la_source": number | null,
             "net_a_payer_avant_acomptes": number | null,
             "net_a_payer": number | null,

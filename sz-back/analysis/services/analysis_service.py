@@ -11,7 +11,9 @@ from django.db import models
 from documents.models import PaySlip
 from analysis.models import BulkAnalysisItem, PayslipAnalysis # Import des modèles d'analyse
 from .gpt_vision_service import GPTVisionService
-from .reference_data import get_convention_collective_text
+from .reference_data import get_convention_collective_text, SMIC_DATA, load_text_file
+import csv
+from io import StringIO
 
 logger = logging.getLogger('salariz.analysis')
 
@@ -53,6 +55,9 @@ class AnalysisService:
                 'contractual_salary': float(payslip.contractual_salary) if payslip.contractual_salary else None,
                 'additional_details': payslip.additional_details,
                 'convention_collective_text': get_convention_collective_text(payslip.convention_collective),
+                'employment_status': payslip.employment_status,
+                'expected_smic_percent': float(payslip.expected_smic_percent) if payslip.expected_smic_percent is not None else None,
+                'working_time_ratio': float(payslip.working_time_ratio) if payslip.working_time_ratio is not None else None,
             }
             additional_data = {k: v for k, v in additional_data.items() if v is not None}
 
@@ -95,7 +100,7 @@ class AnalysisService:
         l'objet PayslipAnalysis associé avec les résultats complets.
         """
         # === ÉTAPE 1 : Calculer les scores et enrichir les résultats ===
-        enriched_result = self._calculate_scores(analysis_result)
+        enriched_result = self._calculate_scores(analysis_result, payslip)
         
         # === ÉTAPE 2 : Sauvegarder le résultat complet dans PayslipAnalysis ===
         analysis, created = PayslipAnalysis.objects.get_or_create(
@@ -133,6 +138,8 @@ class AnalysisService:
         info_gen = gpt_data.get('informations_generales', {})
         remu_data = gpt_data.get('remuneration', {})
 
+        # Préférence d'affichage du net: net_a_payer (montant réellement versé) reste la source pour PaySlip.net_salary.
+        # On garde aussi le net social dans les détails d'analyse afin de l'afficher côté front si disponible.
         fields_mapping = {
             'employee_name': info_gen.get('nom_salarie'),
             'net_salary': remu_data.get('net_a_payer'),
@@ -158,6 +165,17 @@ class AnalysisService:
         if updated_fields:
             payslip.save(update_fields=list(set(updated_fields)))
             logger.info(f"PaySlip {payslip.id} mis à jour. Champs: {list(set(updated_fields))}")
+
+        # Injecter une trace claire dans les détails pour différencier les nets si présents
+        try:
+            remu = gpt_data.get('remuneration') or {}
+            net_social = remu.get('net_social')
+            if net_social is not None:
+                if 'remuneration_details' not in gpt_data:
+                    gpt_data['remuneration_details'] = {}
+                gpt_data['remuneration_details']['note'] = "Distinction prise en compte: net_social vs net_imposable vs net_a_payer"
+        except Exception:
+            pass
 
     def _parse_period_to_date(self, period_str: str) -> Optional[datetime.date]:
         """Tente de parser une chaîne de période en un objet date."""
@@ -212,12 +230,18 @@ class AnalysisService:
         
         logger.info(f"Statut 'error' enregistré pour PaySlip {payslip.id}.")
 
-    def _calculate_scores(self, analysis_result: Dict[str, Any]) -> Dict[str, Any]:
+    def _calculate_scores(self, analysis_result: Dict[str, Any], payslip: PaySlip) -> Dict[str, Any]:
         """
         Calcule les scores de conformité et global basés sur l'analyse GPT
         et enrichit les résultats avec ces scores.
         """
         gpt_data = analysis_result.get('gpt_analysis', {})
+
+        # Augmente les résultats avec un calcul déterministe (SMIC % et quotité)
+        try:
+            self._augment_with_expected_vs_received(payslip, gpt_data)
+        except Exception as e:
+            logger.warning(f"Échec de l'augmentation deterministe SMIC vs reçu: {e}")
         anomalies = gpt_data.get('anomalies_potentielles_observees', [])
         
         # Calcul du score de conformité (basé sur les anomalies)
@@ -253,6 +277,156 @@ class AnalysisService:
         logger.info(f"=== FIN DEBUG ===")
         
         return enriched_result
+
+    # === Helpers déterministes ===
+    def _build_smic_index(self):
+        if not hasattr(self, '_smic_index'):
+            index = {}
+            try:
+                # Recharger dynamiquement le CSV pour prendre en compte les mises à jour
+                csv_text = load_text_file('smic.csv') or SMIC_DATA
+                reader = csv.DictReader(StringIO(csv_text))
+                for row in reader:
+                    try:
+                        year = int(row.get('Année'))
+                        month = (row.get('Mois') or '').strip().lower()
+                        hourly_val = row.get('SMIC_horaire_brut')
+                        monthly_val = row.get('SMIC_mensuel')
+                        hourly = float(str(hourly_val).replace(',', '.')) if hourly_val not in (None, '') else None
+                        monthly = float(str(monthly_val).replace(',', '.')) if monthly_val not in (None, '') else None
+                        index[(year, month)] = {'hourly': hourly, 'monthly': monthly}
+                    except Exception:
+                        continue
+            except Exception:
+                index = {}
+            self._smic_index = index
+        return self._smic_index
+
+    def _get_smic_info(self, date_obj: datetime.date) -> Optional[dict]:
+        # Overrides officiels des montants mensuels (pour coller aux valeurs de référence)
+        MONTHLY_SMIC_OVERRIDES = {
+            # 2022
+            (2022, 'octobre'): 1678.95,
+            (2022, 'novembre'): 1678.95,
+            (2022, 'décembre'): 1678.95,
+            # 2023
+            (2023, 'janvier'): 1709.28,
+            (2023, 'février'): 1709.28,
+            (2023, 'mars'): 1709.28,
+            (2023, 'avril'): 1709.28,
+            (2023, 'mai'): 1747.20,
+            (2023, 'juin'): 1747.20,
+            (2023, 'juillet'): 1747.20,
+            (2023, 'août'): 1747.20,
+            (2023, 'septembre'): 1747.20,
+            (2023, 'octobre'): 1747.20,
+            (2023, 'novembre'): 1747.20,
+            (2023, 'décembre'): 1747.20,
+            # 2024
+            (2024, 'janvier'): 1766.92,
+            (2024, 'février'): 1766.92,
+            (2024, 'mars'): 1766.92,
+            (2024, 'avril'): 1766.92,
+            (2024, 'mai'): 1766.92,
+            (2024, 'juin'): 1766.92,
+            (2024, 'juillet'): 1766.92,
+            (2024, 'août'): 1766.92,
+            (2024, 'septembre'): 1766.92,
+            (2024, 'octobre'): 1766.92,
+            (2024, 'novembre'): 1766.92,
+            (2024, 'décembre'): 1766.92,
+        }
+        idx = self._build_smic_index()
+        month_names = {
+            1: 'janvier', 2: 'février', 3: 'mars', 4: 'avril', 5: 'mai', 6: 'juin',
+            7: 'juillet', 8: 'août', 9: 'septembre', 10: 'octobre', 11: 'novembre', 12: 'décembre'
+        }
+        month_key = month_names[date_obj.month]
+        key = (date_obj.year, month_key)
+        info = idx.get(key) or {}
+        # Appliquer override mensuel si défini
+        monthly_override = MONTHLY_SMIC_OVERRIDES.get(key)
+        if monthly_override is not None:
+            info = dict(info or {})
+            info['monthly'] = monthly_override
+        return info
+
+    def _augment_with_expected_vs_received(self, payslip: PaySlip, gpt_data: dict) -> None:
+        # Nécessite une date de période (depuis le modèle ou les données GPT) et des données utilisateur
+        period_date = getattr(payslip, 'period_date', None)
+        if not period_date:
+            # Tentative depuis GPT (periode.periode_du ou periode.date_paiement)
+            try:
+                periode = gpt_data.get('periode', {}) or {}
+                date_str = None
+                if isinstance(periode.get('periode_du'), str):
+                    date_str = periode.get('periode_du')
+                elif isinstance(periode.get('date_paiement'), str):
+                    date_str = periode.get('date_paiement')
+                if date_str:
+                    # Essayer JJ/MM/AAAA
+                    try:
+                        period_date = datetime.datetime.strptime(date_str, '%d/%m/%Y').date()
+                    except Exception:
+                        # Essayer MM/YYYY ou YYYY-MM
+                        try:
+                            period_date = datetime.datetime.strptime(date_str, '%m/%Y').date().replace(day=1)
+                        except Exception:
+                            pass
+            except Exception:
+                pass
+        if not period_date:
+            return
+        info = self._get_smic_info(period_date)
+        if not info:
+            return
+        hourly = info.get('hourly')
+        monthly = info.get('monthly')
+        if monthly is None:
+            if hourly is None:
+                return
+            monthly = round(hourly * 151.67, 2)
+        monthly_smic = monthly
+        expected_pct = float(payslip.expected_smic_percent) if payslip.expected_smic_percent is not None else None
+        working_ratio = float(payslip.working_time_ratio) if payslip.working_time_ratio is not None else 1.0
+        if expected_pct is None and working_ratio == 1.0:
+            # Rien à calculer si aucune contrainte fournie
+            return
+
+        expected_monthly = monthly_smic * ((expected_pct if expected_pct is not None else 100.0) / 100.0) * working_ratio
+
+        remuneration = gpt_data.get('remuneration', {}) or {}
+        received = remuneration.get('salaire_de_base_brut')
+        if received is None:
+            received = remuneration.get('salaire_brut_total')
+        try:
+            received = float(str(received).replace(',', '.')) if received is not None else None
+        except Exception:
+            received = None
+        if received is None:
+            return
+
+        raw_diff = expected_monthly - received
+        diff = round(raw_diff, 2)
+        eval_fin = gpt_data.get('evaluation_financiere_salarie') or {}
+        eval_fin['attendu_mensuel'] = round(expected_monthly, 3)
+        eval_fin['recu_mensuel'] = round(received, 3)
+        eval_fin['difference'] = round(raw_diff, 3)
+        eval_fin['montant_potentiel_du_salarie'] = max(0.0, diff) if diff > 0 else 0.0
+        eval_fin['explication_montant_du'] = (
+            f"Calcul déterministe: SMIC mensuel {monthly_smic:.2f}€, pourcentage {expected_pct or 100:.0f}% et quotité {working_ratio:.2f}. "
+            f"Montant attendu {expected_monthly:.2f}€ vs reçu {received:.2f}€ => différence {diff:.2f}€."
+        )
+        gpt_data['evaluation_financiere_salarie'] = eval_fin
+
+        # Ajouter une anomalie informative
+        anomalies = gpt_data.get('anomalies_potentielles_observees') or []
+        anomalies.append({
+            'type': "Écart au minimum attendu (SMIC/quotité)",
+            'description': f"Écart entre minima attendus ({expected_pct or 100:.0f}% SMIC, quotité {working_ratio:.2f}) et salaire de base perçu.",
+            'level': 'warning'
+        })
+        gpt_data['anomalies_potentielles_observees'] = anomalies
 
     def _calculate_conformity_score(self, anomalies: list) -> float:
         """

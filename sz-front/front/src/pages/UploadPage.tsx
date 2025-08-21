@@ -17,6 +17,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 const UploadPage = () => {
 	// États existants
 	const [selectedDate, setSelectedDate] = useState<Date>();
+	const [calendarDate, setCalendarDate] = useState<Date>(new Date());
+	const [showYearMonthPicker, setShowYearMonthPicker] = useState(false);
 	const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 	const [dragActive, setDragActive] = useState(false);
 	const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -27,6 +29,9 @@ const UploadPage = () => {
 	const [loadingConventions, setLoadingConventions] = useState<boolean>(false);
 	const [salary, setSalary] = useState<string>('');
 	const [details, setDetails] = useState<string>('');
+	const [employmentStatus, setEmploymentStatus] = useState<string>('');
+	const [expectedSmicPercent, setExpectedSmicPercent] = useState<string>('');
+	const [workingTimeRatio, setWorkingTimeRatio] = useState<string>('');
 
 	// Nouveaux états pour Typeform-like
 	const [currentStep, setCurrentStep] = useState(0);
@@ -55,6 +60,12 @@ const UploadPage = () => {
 			id: 'salary', 
 			title: 'Quel est votre salaire contractuel brut ?', 
 			subtitle: 'Optionnel - cela nous aide à détecter les écarts',
+			required: false 
+		},
+		{ 
+			id: 'status', 
+			title: "Quel est votre statut d'emploi et votre quotité?", 
+			subtitle: "Ex: Apprenti 80% du SMIC, temps partiel 0.8, etc.",
 			required: false 
 		},
 		{ 
@@ -179,6 +190,10 @@ const UploadPage = () => {
 				contractual_salary: salary,
 				additional_details: details,
 				period: selectedDate ? format(selectedDate, 'MMMM yyyy', { locale: fr }) : undefined,
+				date_paiement: selectedDate ? format(selectedDate, 'yyyy-MM-dd') : undefined,
+				employment_status: employmentStatus || undefined,
+				expected_smic_percent: expectedSmicPercent ? Number(expectedSmicPercent) : undefined,
+				working_time_ratio: workingTimeRatio ? Number(workingTimeRatio) : undefined,
 			};
 			
 			// DEBUG: Log des données envoyées
@@ -187,7 +202,7 @@ const UploadPage = () => {
 			console.log('Convention collective:', convention);
 			console.log('Salaire contractuel:', salary);
 			console.log('Détails additionnels:', details);
-			console.log('Période:', uploadData.period);
+			console.log('Période:', uploadData.period, 'date_paiement:', uploadData.date_paiement);
 			console.log('=== FIN DEBUG UPLOAD ===');
 			
 			const uploadRes = await api.uploadPayslip(uploadData);
@@ -330,14 +345,127 @@ const UploadPage = () => {
 									}
 								</Button>
 							</PopoverTrigger>
-							<PopoverContent className="w-auto p-0 glass-card border-glass-border/30" align="center">
-								<Calendar
-									mode="single"
-									selected={selectedDate}
-									onSelect={setSelectedDate}
-									initialFocus
-									className="p-3"
-								/>
+							<PopoverContent className="w-auto p-0 glass-card border-glass-border/30 backdrop-blur-md" align="center">
+								{showYearMonthPicker ? (
+									<div className="p-4 space-y-4">
+										<div className="text-center">
+											<h3 className="font-semibold text-primary mb-4">Sélectionnez une période</h3>
+										</div>
+										<div className="grid grid-cols-2 gap-4">
+											<div>
+												<label className="block text-sm text-muted-foreground mb-2">Année</label>
+												<Select
+													value={calendarDate.getFullYear().toString()}
+													onValueChange={(year) => {
+														const newDate = new Date(calendarDate);
+														newDate.setFullYear(parseInt(year));
+														setCalendarDate(newDate);
+													}}
+												>
+													<SelectTrigger className="h-10">
+														<SelectValue />
+													</SelectTrigger>
+													<SelectContent>
+														{Array.from({ length: 10 }, (_, i) => {
+															const year = new Date().getFullYear() - 5 + i;
+															return (
+																<SelectItem key={year} value={year.toString()}>
+																	{year}
+																</SelectItem>
+															);
+														})}
+													</SelectContent>
+												</Select>
+											</div>
+											<div>
+												<label className="block text-sm text-muted-foreground mb-2">Mois</label>
+												<Select
+													value={calendarDate.getMonth().toString()}
+													onValueChange={(month) => {
+														const newDate = new Date(calendarDate);
+														newDate.setMonth(parseInt(month));
+														setCalendarDate(newDate);
+													}}
+												>
+													<SelectTrigger className="h-10">
+														<SelectValue />
+													</SelectTrigger>
+													<SelectContent>
+														{Array.from({ length: 12 }, (_, i) => (
+															<SelectItem key={i} value={i.toString()}>
+																{format(new Date(2024, i, 1), "MMMM", { locale: fr })}
+															</SelectItem>
+														))}
+													</SelectContent>
+												</Select>
+											</div>
+										</div>
+										<div className="flex gap-2 pt-2">
+											<Button
+												variant="outline"
+												size="sm"
+												onClick={() => setShowYearMonthPicker(false)}
+												className="flex-1"
+											>
+												Retour
+											</Button>
+											<Button
+												size="sm"
+												onClick={() => {
+													setShowYearMonthPicker(false);
+												}}
+												className="flex-1 bg-gradient-primary"
+											>
+												Confirmer
+											</Button>
+										</div>
+									</div>
+								) : (
+									<Calendar
+										mode="single"
+										selected={selectedDate}
+										onSelect={setSelectedDate}
+										month={calendarDate}
+										onMonthChange={setCalendarDate}
+										initialFocus
+										locale={fr}
+										className="p-4 rounded-xl"
+										classNames={{
+											months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
+											month: "space-y-4",
+											caption: "flex justify-center pt-1 relative items-center",
+											caption_label: "text-lg font-semibold text-primary cursor-pointer hover:bg-primary/10 px-3 py-1 rounded-lg transition-colors",
+											nav: "space-x-1 flex items-center",
+											nav_button: "h-8 w-8 bg-transparent p-0 opacity-50 hover:opacity-100 rounded-lg hover:bg-primary/10 transition-colors",
+											nav_button_previous: "absolute left-1",
+											nav_button_next: "absolute right-1",
+											table: "w-full border-collapse space-y-1",
+											head_row: "flex",
+											head_cell: "text-muted-foreground rounded-md w-8 font-medium text-[0.8rem] text-center",
+											row: "flex w-full mt-2",
+											cell: "text-center text-sm p-0 relative [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+											day: "h-8 w-8 p-0 font-medium aria-selected:opacity-100 rounded-lg hover:bg-primary/10 transition-colors",
+											day_selected: "bg-gradient-primary text-white hover:bg-gradient-primary hover:text-white focus:bg-gradient-primary focus:text-white",
+											day_today: "bg-accent text-accent-foreground font-bold",
+											day_outside: "text-muted-foreground opacity-50",
+											day_disabled: "text-muted-foreground opacity-50",
+											day_range_middle: "aria-selected:bg-accent aria-selected:text-accent-foreground",
+											day_hidden: "invisible",
+										}}
+										components={{
+											Caption: ({ displayMonth }: any) => (
+												<div className="flex justify-center pt-1 relative items-center">
+													<button
+														onClick={() => setShowYearMonthPicker(true)}
+														className="text-lg font-semibold text-primary cursor-pointer hover:bg-primary/10 px-3 py-1 rounded-lg transition-colors"
+													>
+														{format(displayMonth, "MMMM yyyy", { locale: fr })}
+													</button>
+												</div>
+											)
+										}}
+									/>
+								)}
 							</PopoverContent>
 						</Popover>
 						
@@ -383,16 +511,7 @@ const UploadPage = () => {
 								<p className="text-muted-foreground">Salaire enregistré : {salary}€</p>
 							</motion.div>
 						)}
-						
-						<div className="text-center">
-							<Button 
-								variant="ghost" 
-								onClick={nextStep}
-								className="text-muted-foreground hover:text-foreground"
-							>
-								Passer cette étape
-							</Button>
-						</div>
+
 					</div>
 				);
 
@@ -418,16 +537,65 @@ const UploadPage = () => {
 								<p className="text-muted-foreground">Détails enregistrés !</p>
 							</motion.div>
 						)}
-						
-						<div className="text-center">
-							<Button 
-								variant="ghost" 
-								onClick={nextStep}
-								className="text-muted-foreground hover:text-foreground"
-							>
-								Passer cette étape
-							</Button>
+
+					</div>
+				);
+
+			case 'status':
+				return (
+					<div className="space-y-8">
+						<div className="grid grid-cols-1 gap-6">
+							<div>
+								<label className="block text-sm text-muted-foreground mb-2">Statut d'emploi</label>
+								<Select onValueChange={(v) => setEmploymentStatus(v)} value={employmentStatus}>
+									<SelectTrigger className="glass-card border-glass-border/30 h-14 text-lg">
+										<SelectValue placeholder="Sélectionnez votre statut" />
+									</SelectTrigger>
+									<SelectContent className="glass-card border-glass-border/30 backdrop-blur-md">
+										<SelectItem value="APPRENTI">Apprenti</SelectItem>
+										<SelectItem value="CDI">CDI</SelectItem>
+										<SelectItem value="CDD">CDD</SelectItem>
+										<SelectItem value="STAGIAIRE">Stagiaire</SelectItem>
+										<SelectItem value="TEMPS_PARTIEL">Temps partiel</SelectItem>
+										<SelectItem value="AUTRE">Autre</SelectItem>
+									</SelectContent>
+								</Select>
+							</div>
+							<div>
+								<label className="block text-sm text-muted-foreground mb-2">Pourcentage SMIC attendu (ex: 75 pour 75%)</label>
+								<Input
+									type="number"
+									placeholder="75"
+									className="glass-card border-glass-border/30 h-14 text-lg"
+									step="0.01"
+									value={expectedSmicPercent}
+									onChange={(e) => setExpectedSmicPercent(e.target.value)}
+								/>
+							</div>
+							<div>
+								<label className="block text-sm text-muted-foreground mb-2">Quotité (ratio temps de travail, ex: 1.0 temps plein, 0.8 pour 80%)</label>
+								<Input
+									type="number"
+									placeholder="1.0"
+									className="glass-card border-glass-border/30 h-14 text-lg"
+									step="0.01"
+									value={workingTimeRatio}
+									onChange={(e) => setWorkingTimeRatio(e.target.value)}
+								/>
+							</div>
 						</div>
+						{(employmentStatus || expectedSmicPercent || workingTimeRatio) && (
+							<motion.div 
+								initial={{ opacity: 0, scale: 0.95 }}
+								animate={{ opacity: 1, scale: 1 }}
+								className="text-center"
+							>
+								<div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+									<Check className="w-6 h-6 text-white" />
+								</div>
+								<p className="text-muted-foreground">Contexte enregistré !</p>
+							</motion.div>
+						)}
 					</div>
 				);
 

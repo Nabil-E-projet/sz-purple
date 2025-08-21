@@ -44,6 +44,9 @@ class PaySlipSerializer(serializers.ModelSerializer):
             'contractual_salary',
             'additional_details',
             'convention_collective',
+            'employment_status',
+            'expected_smic_percent',
+            'working_time_ratio',
             # Nouveaux champs
             'period',
             'net_salary',
@@ -74,6 +77,28 @@ class PaySlipSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(serializers.as_serializer_error(e))
         payslip.save()
         return payslip
+
+    def validate(self, attrs):
+        expected = attrs.get('expected_smic_percent')
+        ratio = attrs.get('working_time_ratio')
+        errors = {}
+        if expected is not None:
+            try:
+                val = float(expected)
+                if val < 0 or val > 200:
+                    errors['expected_smic_percent'] = 'Doit être entre 0 et 200.'
+            except Exception:
+                errors['expected_smic_percent'] = 'Valeur numérique invalide.'
+        if ratio is not None:
+            try:
+                val = float(ratio)
+                if val <= 0 or val > 2:
+                    errors['working_time_ratio'] = 'Doit être > 0 et ≤ 2.0.'
+            except Exception:
+                errors['working_time_ratio'] = 'Valeur numérique invalide.'
+        if errors:
+            raise serializers.ValidationError(errors)
+        return attrs
 
 
 # --- Sérialiseur étendu pour le Dashboard avec scores ---
@@ -129,7 +154,14 @@ class PaySlipDashboardSerializer(serializers.ModelSerializer):
                 analysis_details = obj.analysis.analysis_details
                 gpt_data = analysis_details.get('gpt_analysis', {})
                 anomalies = gpt_data.get('anomalies_potentielles_observees', [])
-                return len(anomalies)
+                # Ne compter que les anomalies significatives (warning/erreur)
+                def is_significant(a):
+                    level = (a or {}).get('level') or (a or {}).get('gravite')
+                    if not level:
+                        return True
+                    l = str(level).lower()
+                    return l in {'warning', 'error', 'haute', 'moyenne'}
+                return len([a for a in anomalies if is_significant(a)])
         except:
             pass
         return 0

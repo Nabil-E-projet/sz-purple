@@ -62,6 +62,40 @@ class PaySlip(models.Model):
         verbose_name=_('Convention collective')
     )
     
+    # Contexte optionnel pour améliorer l'analyse et permettre des calculs déterministes
+    EMPLOYMENT_STATUS_CHOICES = [
+        ('APPRENTI', _('Apprenti')), 
+        ('CDI', 'CDI'),
+        ('CDD', 'CDD'),
+        ('STAGIAIRE', _('Stagiaire')),
+        ('TEMPS_PARTIEL', _('Temps partiel')),
+        ('AUTRE', _('Autre')),
+    ]
+    employment_status = models.CharField(
+        max_length=20,
+        choices=EMPLOYMENT_STATUS_CHOICES,
+        null=True,
+        blank=True,
+        verbose_name=_('Statut d\'emploi')
+    )
+    expected_smic_percent = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text=_('Pourcentage du SMIC attendu pour cette période (ex: 75 pour 75%)'),
+        verbose_name=_('Pourcentage SMIC attendu')
+    )
+    working_time_ratio = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        default=1.00,
+        help_text=_('Ratio temps de travail (1.00 = temps plein, 0.80 = 80%)'),
+        verbose_name=_('Ratio temps de travail')
+    )
+    
     # NOUVEAUX CHAMPS extraits par l'analyse GPT
     period = models.CharField(
         max_length=100,
