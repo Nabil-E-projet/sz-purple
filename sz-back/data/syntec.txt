@@ -16,26 +16,26 @@ Les salaires minimaux hiérarchiques sont examinés une fois par an par la CPPNI
 Article 7.2 – Grilles des salaires minimaux mensuels bruts  
 ETAM  
 Position | Coefficient | Salaire minimum  
-1.1 240 1 815 €  
-1.2 250 1 845 €  
-2.1 275 1 875 €  
-2.2 310 1 905 €  
-2.3 355 2 045 €  
-3.1 400 2 185 €  
-3.2 450 2 340 €  
-3.3 500 2 490 €  
+1.1	240	1 815 €  
+1.2	250	1 845 €  
+2.1	275	1 875 €  
+2.2	310	1 905 €  
+2.3	355	2 045 €  
+3.1	400	2 185 €  
+3.2	450	2 340 €  
+3.3	500	2 490 €  
 
 Ingénieurs & cadres  
 Position | Coefficient | Salaire minimum  
-1.1 95 2 135 €  
-1.2 100 2 240 €  
-2.1 105 2 315 €  
-2.1 115 2 530 €  
-2.2 130 2 850 €  
-2.3 150 3 275 €  
-3.1 170 3 650 €  
-3.2 210 4 495 €  
-3.3 270 5 755 €  
+1.1	95	2 135 €  
+1.2	100	2 240 €  
+2.1	105	2 315 €  
+2.1	115	2 530 €  
+2.2	130	2 850 €  
+2.3	150	3 275 €  
+3.1	170	3 650 €  
+3.2	210	4 495 €  
+3.3	270	5 755 €  
 
 Article 7.3 – Prime de vacances  
 L’employeur réserve chaque année l’équivalent d’au moins 10 % de la masse globale des indemnités de congés payés acquis pour le paiement d’une prime de vacances à tous les salariés.  

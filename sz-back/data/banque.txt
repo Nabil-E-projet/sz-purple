@@ -1,25 +1,65 @@
+Article 7.1 – Généralités  
+Le salaire est basé sur la durée légale ou conventionnelle du travail.  
+Les salaires minimaux hiérarchiques excluent :  
+  • les primes d’assiduité, de participation et d’intéressement  
+  • les primes et gratifications de caractère exceptionnel  
+  • les remboursements de frais  
+  • les indemnités en cas de déplacement ou détachement  
+  • la rémunération des heures supplémentaires et complémentaires  
+  • l’indemnité compensatrice de congés payés  
+Les salaires minimaux hiérarchiques incluent les avantages en nature évalués d’un commun accord et mentionnés dans le contrat de travail.  
+Pour établir si le salarié reçoit au moins le minimum le concernant, les avantages prévus ci-dessus doivent être intégrés dans la rémunération annuelle dont le douzième (1/12) ne doit, en aucun cas, être inférieur à ce minimum.  
+La rémunération mensuelle ne sera pas inférieure à 95 % du salaire minimal hiérarchique mensuel ou à 92 % en cas d’existence d’un treizième (13ᵉ) mois.  
+En cas de départ en cours d’année d’un salarié ayant une rémunération mensuelle inférieure au salaire minimal hiérarchique, l’entreprise complétera la rémunération perçue afin qu’elle corresponde au moins au minimum hiérarchique sur la période de présence.  
+Les salaires minimaux hiérarchiques sont examinés une fois par an par la CPPNI de la branche, au plus tard le 30 juin, précédée de l’envoi des informations aux organisations syndicales quinze jours avant.
 
-SYNTHÈSE DE LA CONVENTION COLLECTIVE : BANQUE (IDCC 2120)
+Article 7.2 – Grilles des salaires minimaux mensuels bruts  
+ETAM  
+Position | Coefficient | Salaire minimum  
+1.1	240	1 815 €  
+1.2	250	1 845 €  
+2.1	275	1 875 €  
+2.2	310	1 905 €  
+2.3	355	2 045 €  
+3.1	400	2 185 €  
+3.2	450	2 340 €  
+3.3	500	2 490 €  
 
-SALAIRES MINIMA :
-- Les salariés des banques sont classés par niveaux et échelons (employés, techniciens, cadres). La convention ne publie pas une grille unique ; chaque établissement fixe ses minima en négociation avec les partenaires sociaux. Aucune rémunération ne peut être inférieure au SMIC et aux minima de branche.
-- Les banques versent en général un 13ᵉ mois (souvent appelé gratification annuelle) mais celui‑ci relève d’un usage ou d’accord d’entreprise.
+Ingénieurs & cadres  
+Position | Coefficient | Salaire minimum  
+1.1	95	2 135 €  
+1.2	100	2 240 €  
+2.1	105	2 315 €  
+2.1	115	2 530 €  
+2.2	130	2 850 €  
+2.3	150	3 275 €  
+3.1	170	3 650 €  
+3.2	210	4 495 €  
+3.3	270	5 755 €  
 
-PRIMES ET INDEMNITÉS :
-- Prime d’ancienneté : appliquée dans certaines banques, elle est calculée en pourcentage du salaire de base et augmente par paliers (ex. : 3 % après 3 ans, 6 % après 6 ans, etc.).
-- Primes spécifiques : prime de participation, prime de résultat, prime de vacances ou prime de fonction selon l’établissement.
+Article 7.3 – Prime de vacances  
+L’employeur réserve chaque année l’équivalent d’au moins 10 % de la masse globale des indemnités de congés payés acquis pour le paiement d’une prime de vacances à tous les salariés.  
+Période de versement : du 1ᵉʳ mai au 31 octobre.  
+Répartition au choix de l’entreprise ou par accord :  
+  • égalitaire entre les salariés  
+  • au prorata du salaire (avec majoration enfant à charge)  
+  • majoration de 10 % de l’indemnité de congés payés versée  
+  • prorata du temps de présence (CDD ou mouvement en cours d’année)  
+Ne peuvent se substituer :  
+  • le treizième mois  
+  • l’indemnité de précarité des vacataires (article 53 annexe 4)  
+  • une prime d’objectifs contractuelle  
 
-DURÉE DU TRAVAIL ET HEURES SUPPLÉMENTAIRES :
-- Durée légale : 35 h/semaine. Des accords d’aménagement du temps de travail peuvent prévoir une annualisation. Les heures supplémentaires sont rémunérées avec une majoration de 25 % pour les huit premières heures puis de 50 % au‑delà.
-
-CONGÉS PAYÉS ET ÉVÉNEMENTS FAMILIAUX :
-- Les salariés bénéficient de 2,5 jours ouvrables par mois (30 jours par an). Des congés supplémentaires peuvent être accordés après 10, 15 et 20 ans d’ancienneté.
-- Congés pour événements familiaux : mariage du salarié : 5 jours ; mariage d’un enfant : 2 jours ; déménagement : 2 jours ; naissance ou adoption : 3 jours ; décès du conjoint ou d’un enfant : 5 jours ; décès d’un parent proche : 3 jourshttps://www.cse-guide.fr/convention-collective-banque/#:~:text=Mariage%20ou%20PACS%20%3A%205,jours.
-
-ARRÊT MALADIE :
-- Selon l’ancienneté, l’employeur complète les indemnités de la Sécurité sociale : pour 1 à 5 ans d’ancienneté, 100 % du salaire est maintenu pendant 2 mois puis 50 % pendant 2 mois ; de 5 à 10 ans, 3 mois à 100 % puis 3 mois à 50 % ; au‑delà de 20 ans, 6 mois à 100 % puis 6 mois à 50 %https://www.cse-guide.fr/convention-collective-banque/#:~:text=Mariage%20ou%20PACS%20%3A%205,jours.
-
-Notes pour l’IA d’analyse :
-- Vérifier la rémunération par rapport aux minima d’établissement et au SMIC et l’existence d’un 13ᵉ mois.
-- Contrôler les congés pour événements familiaux et les majorations des heures supplémentaires.
-- En cas d’arrêt maladie, appliquer la durée de maintien de salaire en fonction de l’ancienneté et du statut.
+Article 7.4 – Bulletin de paie  
+Le bulletin de paie doit comporter :  
+  • le nom ou la raison sociale et l’adresse de l’employeur  
+  • le numéro SIRET de l’établissement  
+  • le code APE  
+  • la référence de l’organisme de Sécurité sociale et le numéro d’immatriculation  
+  • le nom, le prénom et l’emploi du salarié  
+  • la classification professionnelle et le coefficient hiérarchique  
+  • le montant du salaire mensuel de base  
+  • la période et le nombre d’heures (normal, majoré, taux appliqués)  
+  • la nature et le volume du forfait (hebdomadaire, mensuel, annuel en heures ou en jours)  
+  • l’intitulé de la convention collective applicable  
+  • la mention incitant à conserver le bulletin sans limitation de durée  
