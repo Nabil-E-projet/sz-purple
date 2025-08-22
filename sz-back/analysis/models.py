@@ -6,10 +6,41 @@ from decimal import Decimal, InvalidOperation
 
 # On définit les choix de convention ici pour être indépendant
 CONVENTION_CHOICES = [
+    # Existantes
     ('SYNTEC', 'Syntec'),
     ('HCR', 'Hôtels, Cafés, Restaurants (HCR)'),
     ('METALLURGIE', 'Métallurgie'),
     ('COMMERCE', 'Commerce de détail et de gros'),
+
+    # Nouvelles conventions ajoutées (codes = noms de fichiers sans extension)
+    ('transports_routiers', 'Transports routiers et activités auxiliaires du transport'),
+    ('proprete', 'Entreprises de propreté'),
+    ('automobile', 'Services de l’automobile'),
+    ('ccn66', 'CCN 66 (établissements et services pour personnes handicapées)'),
+    ('ouvriers_btp_moins_10', 'Ouvriers du bâtiment (–10 salariés)'),
+    ('commerce_gros', 'Commerce de gros'),
+    ('fehap', 'FEHAP (établissements privés de soins – CCN 51)'),
+    ('ouvriers_btp_plus_10', 'Ouvriers du bâtiment (+10 salariés)'),
+    ('restauration_rapide', 'Restauration rapide'),
+    ('fhp', 'Hospitalisation privée (FHP)'),
+    ('btp_etam', 'BTP ETAM (employés, techniciens, agents de maîtrise)'),
+    ('chimie', 'Industries chimiques'),
+    ('services_personne', 'Entreprises de services à la personne'),
+    ('banque', 'Banque'),
+    ('eclat', 'ECLAT (éducation, culture, loisirs et animation)'),
+    ('securite', 'Prévention et sécurité'),
+    ('prestataires', 'Secteur tertiaire – Prestataires de services'),
+    ('aide_domicile', 'Aide, accompagnement, soins et services à domicile'),
+    ('immobilier', 'Immobilier'),
+    ('experts_comptables', 'Cabinets d’experts‑comptables et commissaires aux comptes'),
+    ('boulangerie', 'Boulangerie‑pâtisserie artisanale'),
+    ('travaux_publics', 'Ouvriers des travaux publics'),
+    ('sport', 'Sport'),
+    ('ferroviaire', 'Ferroviaire'),
+    ('assurances', 'Sociétés d’assurances'),
+    ('codena', 'Commerce de détail non alimentaire (Codena)'),
+
+    # Valeur par défaut
     ('AUTRE', 'Autre / Non spécifiée'),
 ]
 

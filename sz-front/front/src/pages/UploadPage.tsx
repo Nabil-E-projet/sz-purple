@@ -88,7 +88,13 @@ const UploadPage = () => {
 			setLoadingConventions(true);
 			try {
 				const data = await api.getConventions<{ value: string; label: string }[]>();
-				setConventions(data || []);
+				// Trier par ordre alphabétique du label, en plaçant "AUTRE" à la fin
+				const sortedData = (data || []).sort((a, b) => {
+					if (a.value === 'AUTRE') return 1; // 'a' va après 'b'
+					if (b.value === 'AUTRE') return -1; // 'b' va après 'a'
+					return a.label.localeCompare(b.label, 'fr', { sensitivity: 'base' });
+				});
+				setConventions(sortedData);
 			} catch (e: any) {
 				toast({ title: 'Erreur', description: 'Impossible de charger les conventions collectives' });
 			} finally {

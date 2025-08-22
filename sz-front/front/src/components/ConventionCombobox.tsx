@@ -51,11 +51,25 @@ export function ConventionCombobox({
     }
   }, [open])
   
-  // Filtrer les conventions selon l'entrée utilisateur
-  const filteredConventions = conventions.filter((convention) =>
-    convention.label.toLowerCase().includes(inputValue.toLowerCase()) ||
-    convention.value.toLowerCase().includes(inputValue.toLowerCase())
-  )
+  // Helper de normalisation pour une recherche robuste (accents + minuscules)
+  const normalize = (s: string) =>
+    (s || "")
+      .toString()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '') // supprimer diacritiques
+      .toLowerCase()
+      .trim()
+
+  // Filtrer les conventions selon l'entrée utilisateur (label et value)
+  const filteredConventions = conventions.filter((convention) => {
+    if (!inputValue.trim()) return true
+    
+    const query = normalize(inputValue)
+    const label = normalize(convention.label)
+    const value = normalize(convention.value)
+    
+    return label.includes(query) || value.includes(query)
+  })
 
   // Vérifier si la valeur actuelle correspond à une convention existante
   const selectedConvention = conventions.find((convention) => convention.value === value)
@@ -109,7 +123,18 @@ export function ConventionCombobox({
         align="start"
         sideOffset={4}
       >
-        <Command>
+        <Command
+          filter={(value, search) => {
+            const normalize = (s: string) => 
+              s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+
+            const normalizedSearch = normalize(search);
+            // La `value` ici est un composite `label` + `value` que j'ai créé plus bas
+            const normalizedValue = normalize(value);
+
+            return normalizedValue.includes(normalizedSearch) ? 1 : 0;
+          }}
+        >
           <CommandInput 
             placeholder="Rechercher une convention..." 
             value={inputValue}
@@ -141,10 +166,11 @@ export function ConventionCombobox({
           </CommandEmpty>
           {!loading && (
             <CommandGroup className="max-h-64 overflow-y-auto">
-              {filteredConventions.map((convention) => (
+              {conventions.map((convention) => (
                 <CommandItem
                   key={convention.value}
-                  value={convention.value}
+                  // On fournit une valeur composite pour la recherche
+                  value={`${convention.label} ${convention.value}`}
                   onSelect={() => handleSelect(convention.value)}
                   className="cursor-pointer flex items-center gap-2 py-3"
                 >
@@ -156,9 +182,9 @@ export function ConventionCombobox({
                   />
                   <div className="flex flex-col items-start">
                     <span className="font-medium">{convention.label}</span>
-                    {convention.value !== convention.label && (
+                    {/* {convention.value !== convention.label && (
                       <span className="text-xs text-muted-foreground">{convention.value}</span>
-                    )}
+                    )} */}
                   </div>
                 </CommandItem>
               ))}
