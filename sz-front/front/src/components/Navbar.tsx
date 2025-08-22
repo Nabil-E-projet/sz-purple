@@ -9,6 +9,13 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const { isAuthenticated, logout } = useAuth();
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } finally {
+      window.dispatchEvent(new CustomEvent('creditsUpdated'));
+    }
+  };
   const [credits, setCredits] = useState<number | null>(null);
 
   useEffect(() => {
@@ -88,7 +95,7 @@ const Navbar = () => {
                 <div className="w-8 h-8 rounded-full bg-gradient-primary flex items-center justify-center">
                   <User className="w-4 h-4 text-primary-foreground" />
                 </div>
-                <Button variant="ghost" size="sm" onClick={() => logout()}>
+                <Button variant="ghost" size="sm" onClick={handleLogout}>
                   <LogOut className="w-4 h-4 mr-2" />
                   Déconnexion
                 </Button>
@@ -98,11 +105,6 @@ const Navbar = () => {
                 <Link to="/login">
                   <Button variant="ghost" size="sm">
                     Se connecter
-                  </Button>
-                </Link>
-                <Link to="/upload">
-                  <Button size="sm" className="bg-gradient-primary hover:opacity-90 border-0">
-                    Commencer
                   </Button>
                 </Link>
               </div>
@@ -149,8 +151,8 @@ const Navbar = () => {
                   <Button 
                     variant="ghost" 
                     size="sm" 
-                    onClick={() => {
-                      logout();
+                    onClick={async () => {
+                      await handleLogout();
                       setIsOpen(false);
                     }}
                     className="w-full justify-start px-3 py-2"
@@ -166,15 +168,6 @@ const Navbar = () => {
                       onClick={() => setIsOpen(false)}
                     >
                       Se connecter
-                    </Link>
-                    <Link
-                      to="/upload"
-                      className="block px-3 py-2 text-base font-medium"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      <Button size="sm" className="w-full bg-gradient-primary hover:opacity-90 border-0">
-                        Commencer
-                      </Button>
                     </Link>
                   </>
                 )}

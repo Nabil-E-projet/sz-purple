@@ -50,33 +50,37 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-16">
+    <div className="min-h-screen relative">
       <div className="absolute inset-0 bg-gradient-hero opacity-10"></div>
       
-      <div className="relative w-full max-w-md">
-        {/* Back button */}
+      {/* Enhanced back button - positioned below navbar */}
+      <div className="absolute top-20 left-6 z-50">
         <Link 
           to="/" 
-          className="inline-flex items-center text-muted-foreground hover:text-foreground mb-8 transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card border-glass-border/30 text-foreground hover:text-primary hover:bg-primary/5 transition-all duration-200 group backdrop-blur-sm shadow-lg"
         >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Retour à l'accueil
+          <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+          <span className="font-medium">Accueil</span>
         </Link>
+      </div>
+      
+      <div className="min-h-screen flex items-center justify-center px-4 pt-24 pb-16">
+        <div className="relative w-full max-w-md">
 
-        <Card className="glass-card border-0 animate-fade-in-up">
-          <CardHeader className="text-center">
-            <div className="flex justify-center mb-4">
-              <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center">
-                <FileText className="w-6 h-6 text-primary-foreground" />
+          <Card className="glass-card border-0 animate-fade-in-up">
+            <CardHeader className="text-center">
+              <div className="flex justify-center mb-4">
+                <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center">
+                  <FileText className="w-6 h-6 text-primary-foreground" />
+                </div>
               </div>
-            </div>
-            <CardTitle className="text-2xl bg-gradient-primary bg-clip-text text-transparent">
-              Salariz
-            </CardTitle>
-            <CardDescription>
-              Connectez-vous pour accéder à vos analyses
-            </CardDescription>
-          </CardHeader>
+              <CardTitle className="text-2xl bg-gradient-primary bg-clip-text text-transparent">
+                Salariz
+              </CardTitle>
+              <CardDescription>
+                Connectez-vous pour accéder à vos analyses
+              </CardDescription>
+            </CardHeader>
 
           <CardContent>
             <Tabs defaultValue="login" className="w-full">
@@ -222,6 +226,7 @@ const LoginPage = () => {
             </div>
           </CardContent>
         </Card>
+        </div>
       </div>
     </div>
   );

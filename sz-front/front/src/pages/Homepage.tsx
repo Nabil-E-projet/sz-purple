@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { useAuth } from '@/context/AuthContext';
 import { 
   FileText, 
   Shield, 
@@ -14,6 +15,7 @@ import {
 } from 'lucide-react';
 
 const Homepage = () => {
+  const { isAuthenticated } = useAuth();
   const features = [
     {
       icon: Shield,
@@ -70,17 +72,20 @@ const Homepage = () => {
               des recommandations personnalisées pour vos fiches de paie.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/upload">
-                <Button size="lg" className="bg-gradient-primary hover:opacity-90 border-0 px-8 py-6 text-lg font-semibold">
-                  Commencer l'analyse
-                  <FileText className="ml-2 w-5 h-5" />
-                </Button>
-              </Link>
-              <Link to="/login">
-                <Button variant="outline" size="lg" className="btn-glass px-8 py-6 text-lg">
-                  Se connecter
-                </Button>
-              </Link>
+              {isAuthenticated ? (
+                <Link to="/upload">
+                  <Button size="lg" className="bg-gradient-primary hover:opacity-90 border-0 px-8 py-6 text-lg font-semibold">
+                    Commencer l'analyse
+                    <FileText className="ml-2 w-5 h-5" />
+                  </Button>
+                </Link>
+              ) : (
+                <Link to="/login">
+                  <Button variant="outline" size="lg" className="btn-glass px-8 py-6 text-lg">
+                    Se connecter
+                  </Button>
+                </Link>
+              )}
             </div>
           </div>
 
@@ -183,9 +188,9 @@ const Homepage = () => {
           </div>
 
           <div className="text-center mt-12">
-            <Link to="/upload">
+            <Link to={isAuthenticated ? "/upload" : "/login"}>
               <Button size="lg" className="bg-gradient-primary hover:opacity-90 border-0 px-8 py-6 text-lg font-semibold">
-                Essayer maintenant
+                {isAuthenticated ? 'Essayer maintenant' : 'Se connecter pour essayer'}
                 <FileText className="ml-2 w-5 h-5" />
               </Button>
             </Link>

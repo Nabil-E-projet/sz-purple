@@ -221,6 +221,8 @@ const UploadPage = () => {
 			const uploadRes = await api.uploadPayslip(uploadData);
 			const payslipId = (uploadRes as any)?.id;
 			if (!payslipId) throw new Error('Upload échoué');
+			// Rafraîchir immédiatement l'affichage des crédits dans la navbar
+			window.dispatchEvent(new CustomEvent('creditsUpdated'));
 			// L'analyse est désormais déclenchée automatiquement par le backend (signal post_save)
 			toast({ title: 'Upload terminé', description: 'Analyse lancée automatiquement' });
 			navigate('/dashboard');
