@@ -8,6 +8,7 @@ class PaySlip(models.Model):
     """
     STATUS_CHOICES = [
         ('pending', _('En attente')),
+        ('payment_required', _('Paiement requis')),
         ('processing', _('En cours de traitement')),
         ('completed', _('Traitement terminé')),
         ('error', _('Erreur de traitement')),

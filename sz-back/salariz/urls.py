@@ -24,6 +24,8 @@ urlpatterns = [
     path('api/payslips/', include('documents.urls')),
     # Analysis endpoints
     path('api/analysis/', include('analysis.urls')),
+    # Billing endpoints
+    path('api/billing/', include('billing.urls')),
     # Nouvel endpoint de health check
     path('health/', health_check, name='health_check'),
 

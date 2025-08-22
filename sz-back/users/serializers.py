@@ -21,10 +21,16 @@ class UserCreateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data.pop('password_confirm')
         user = User.objects.create_user(**validated_data)
+        try:
+            if hasattr(user, 'credits'):
+                user.credits = 1  # 1 crédit offert à l'inscription
+                user.save(update_fields=['credits'])
+        except Exception:
+            pass
         return user
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'is_email_verified')
-        read_only_fields = ('id', 'is_email_verified')
+        fields = ('id', 'username', 'email', 'is_email_verified', 'credits')
+        read_only_fields = ('id', 'is_email_verified', 'credits')

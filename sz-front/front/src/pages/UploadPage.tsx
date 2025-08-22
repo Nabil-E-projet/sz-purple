@@ -225,6 +225,11 @@ const UploadPage = () => {
 			toast({ title: 'Upload terminé', description: 'Analyse lancée automatiquement' });
 			navigate('/dashboard');
 		} catch (err: any) {
+			if (err?.status === 402 || err?.error?.code === 'payment_required') {
+				toast({ title: 'Crédits insuffisants', description: "Veuillez acheter des crédits pour lancer l'analyse." });
+				navigate('/buy-credits');
+				return;
+			}
 			const msg = err?.error || err?.message || 'Erreur lors de l\'analyse';
 			toast({ title: 'Erreur', description: typeof msg === 'string' ? msg : JSON.stringify(msg) });
 		} finally {

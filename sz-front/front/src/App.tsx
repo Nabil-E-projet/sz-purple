@@ -10,6 +10,8 @@ import UploadPage from "./pages/UploadPage";
 import Dashboard from "./pages/Dashboard";
 import AnalysisDetails from "./pages/AnalysisDetails";
 import NotFound from "./pages/NotFound";
+import BuyCredits from "./pages/BuyCredits";
+import PaymentSuccess from "./pages/PaymentSuccess";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import WelcomeAnimation from "./components/WelcomeAnimation";
@@ -27,7 +29,8 @@ const App = () => (
           <div className="min-h-screen">
             <Navbar />
             <Routes>
-              <Route path="/" element={<Homepage />} />
+              <Route path="/" element={<PaymentSuccess />} />
+              <Route path="/home" element={<Homepage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route
                 path="/upload"
@@ -42,6 +45,14 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/buy-credits"
+                element={
+                  <ProtectedRoute>
+                    <BuyCredits />
                   </ProtectedRoute>
                 }
               />

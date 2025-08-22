@@ -153,6 +153,31 @@ class ApiClient {
     return this.get('/api/profile/');
   }
 
+  // Billing
+  public getMyCredits<T = { credits: number }>(): Promise<T> {
+    return this.get('/api/billing/me/credits/');
+  }
+
+  public createCheckoutSession<T = { checkout_url: string }>(pack: 'single' | 'pack_5' | 'pack_20' = 'pack_5'): Promise<T> {
+    return this.post('/api/billing/create-checkout-session/', { pack });
+  }
+
+  public getBillingStatus<T = any>(): Promise<T> {
+    return this.get('/api/billing/status/');
+  }
+
+  public getFreeCreditsDailyBonus<T = any>(): Promise<T> {
+    return this.post('/api/billing/free-credits/', { credits: 1, reason: 'Bonus quotidien' });
+  }
+
+  public simulatePayment<T = any>(pack: string): Promise<T> {
+    return this.post('/api/billing/manual/', { pack, simulate_success: true });
+  }
+
+  public checkPaymentStatus<T = any>(): Promise<T> {
+    return this.post('/api/billing/check-payment-status/', {});
+  }
+
   // Documents
   public listPayslips<T = { results: any[]; count: number; next?: string; previous?: string }>(
     params?: { limit?: number; offset?: number }
@@ -195,7 +220,14 @@ class ApiClient {
     if (params.working_time_ratio !== undefined && params.working_time_ratio !== null && `${params.working_time_ratio}` !== '') {
       form.append('working_time_ratio', String(params.working_time_ratio));
     }
-    return this.upload('/api/payslips/upload/', form);
+    try {
+      return await this.upload('/api/payslips/upload/', form);
+    } catch (e: any) {
+      if (e?.status === 402) {
+        throw { status: 402, error: { code: 'payment_required', message: 'Paiement requis' } };
+      }
+      throw e;
+    }
   }
 
   public async findUserPayslipsByPeriod<T = any[]>(periodLike: string): Promise<T> {

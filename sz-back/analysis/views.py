@@ -41,6 +41,20 @@ class PayslipAnalysisView(APIView):
             payslip = PaySlip.objects.get(id=payslip_id, user=request.user)
             logger.debug(f"Fiche de paie {payslip_id} trouvée pour l'utilisateur {request.user.id}.")
 
+            # Gate by credits if needed
+            if getattr(payslip, 'processing_status', 'pending') == 'payment_required':
+                # Try to consume a credit now (user may have just purchased)
+                user = request.user
+                if hasattr(user, 'try_consume_credits') and user.try_consume_credits(1):
+                    payslip.processing_status = 'pending'
+                    payslip.save(update_fields=['processing_status'])
+                else:
+                    return Response({
+                        "message": "Crédits insuffisants",
+                        "error": "Paiement requis pour lancer l'analyse.",
+                        "code": "payment_required"
+                    }, status=status.HTTP_402_PAYMENT_REQUIRED)
+
             # Lancer l'analyse (qui utilise maintenant les données supplémentaires stockées dans le modèle PaySlip)
             analysis_result = self.analysis_service.analyze_payslip(payslip_id) # Retourne un PaySlip ou None
 

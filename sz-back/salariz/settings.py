@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'users',
     'documents',
     'analysis',
+    'billing',
     'salariz.apps.SalarizConfig'
 ]
 
@@ -227,6 +228,11 @@ try:
     OPENAI_TEMPERATURE = float(os.environ.get('OPENAI_TEMPERATURE', '1.0'))
 except ValueError:
     OPENAI_TEMPERATURE = 1.0
+# Stripe settings
+STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', '')
+STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY', '')
+STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET', '')
+
 
 # Prompt size guards
 try:
