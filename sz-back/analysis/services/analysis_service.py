@@ -427,27 +427,40 @@ class AnalysisService:
         if received is None:
             return
 
+        # Différence attendue vs reçue (arrondie 2 décimales pour l'affichage)
         raw_diff = expected_monthly - received
         diff = round(raw_diff, 2)
+        EPSILON = 0.01  # Seuil de tolérance (1 centime) pour éviter faux positifs
         eval_fin = gpt_data.get('evaluation_financiere_salarie') or {}
         eval_fin['attendu_mensuel'] = round(expected_monthly, 3)
         eval_fin['recu_mensuel'] = round(received, 3)
         eval_fin['difference'] = round(raw_diff, 3)
-        eval_fin['montant_potentiel_du_salarie'] = max(0.0, diff) if diff > 0 else 0.0
+        # Montant dû uniquement si l'écart est réellement positif et significatif
+        eval_fin['montant_potentiel_du_salarie'] = diff if diff >= EPSILON else 0.0
+        # Statut texte utile côté front
+        try:
+            from math import fabs
+            abs_diff_ok = fabs(diff) < EPSILON
+        except Exception:
+            abs_diff_ok = abs(diff) < EPSILON
+        eval_fin['conclusion_statut'] = (
+            'conforme' if abs_diff_ok else ('non_conforme' if diff > 0 else 'au_dessus_minimum')
+        )
         eval_fin['explication_montant_du'] = (
             f"Calcul déterministe: SMIC mensuel {monthly_smic:.2f}€, pourcentage {expected_pct or 100:.0f}% et quotité {working_ratio:.2f}. "
             f"Montant attendu {expected_monthly:.2f}€ vs reçu {received:.2f}€ => différence {diff:.2f}€."
         )
         gpt_data['evaluation_financiere_salarie'] = eval_fin
 
-        # Ajouter une anomalie informative
-        anomalies = gpt_data.get('anomalies_potentielles_observees') or []
-        anomalies.append({
-            'type': "Écart au minimum attendu (SMIC/quotité)",
-            'description': f"Écart entre minima attendus ({expected_pct or 100:.0f}% SMIC, quotité {working_ratio:.2f}) et salaire de base perçu.",
-            'level': 'warning'
-        })
-        gpt_data['anomalies_potentielles_observees'] = anomalies
+        # Ajouter une anomalie uniquement si l'écart est significatif
+        if diff > EPSILON:
+            anomalies = gpt_data.get('anomalies_potentielles_observees') or []
+            anomalies.append({
+                'type': "Écart au minimum attendu (SMIC/quotité)",
+                'description': f"Écart entre minima attendus ({expected_pct or 100:.0f}% SMIC, quotité {working_ratio:.2f}) et salaire de base perçu.",
+                'level': 'warning'
+            })
+            gpt_data['anomalies_potentielles_observees'] = anomalies
 
     def _calculate_conformity_score(self, anomalies: list) -> float:
         """

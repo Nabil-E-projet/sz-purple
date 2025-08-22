@@ -136,13 +136,19 @@ const AnalysisDetails = () => {
 		expected_smic_percent: gptData?.expected_smic_percent || analysis?.details?.expected_smic_percent || undefined,
 	};
 
+	// Seuil d'affichage pour l'évaluation déterministe
+	const epsilon = 0.01;
+	const diffValue = Number(evaluation?.difference ?? 0);
+	const showDeterministic = Math.abs(diffValue) >= epsilon;
+
 	// Générer des recommandations intelligentes basées sur les anomalies
 	const generateSmartRecommendations = () => {
 		const recs: string[] = [];
 		
-		// Recommandation pour écart SMIC
-		if (evaluation?.difference && Number(evaluation.difference) > 0) {
-			recs.push(`Régulariser le salaire : Un montant de ${Number(evaluation.difference).toFixed(2)}€ est dû au salarié selon le calcul SMIC/quotité. Contacter la paie pour effectuer un rappel de salaire.`);
+		// Recommandation pour écart SMIC: utiliser le montant dû réel (avec seuil)
+		const montantDu = Number(evaluation?.montant_potentiel_du_salarie || 0);
+		if (montantDu >= 0.01) {
+			recs.push(`Régulariser le salaire : Un montant de ${montantDu.toFixed(2)}€ est dû au salarié selon le calcul SMIC/quotité. Contacter la paie pour effectuer un rappel de salaire.`);
 		}
 		
 		// Recommandations basées sur les anomalies
@@ -163,8 +169,11 @@ const AnalysisDetails = () => {
 			}
 		});
 		
-		// Recommandations générales si des anomalies significatives
-		const significantAnomalies = anomalies.filter((a: any) => normalizeLevel(a?.level || a?.gravite) !== 'ok').length;
+		// Recommandations générales uniquement si erreurs/alertes (pas pour les infos)
+		const significantAnomalies = anomalies.filter((a: any) => {
+			const lvl = normalizeLevel(a?.level || a?.gravite);
+			return lvl === 'error' || lvl === 'warning';
+		}).length;
 		if (significantAnomalies > 0) {
 			recs.push('Documentation : Conserver tous les justificatifs de paie et contrats pour d\'éventuels contrôles administratifs.');
 			recs.push('Suivi mensuel : Mettre en place une vérification systématique des bulletins de paie pour éviter la répétition d\'erreurs.');
@@ -599,6 +608,18 @@ const AnalysisDetails = () => {
 		},
 	};
 
+	// Normalisation des montants financiers pour l'affichage
+	const financeBrut = Number(derived.details.salaireBrut) || 0;
+	const financeCotis = Math.abs(Number(derived.details.cotisationsSociales) || 0);
+	let financeNet = Number(derived.details.salaireNet) || 0;
+	if (!(financeNet > 0)) {
+		financeNet = Math.max(0, financeBrut - financeCotis);
+	}
+	if (financeCotis === 0 && Math.abs(financeNet - financeBrut) > 0.01) {
+		financeNet = financeBrut;
+	}
+	const cotisDisplay = financeCotis === 0 ? '0.00€' : `-${financeCotis.toFixed(2)}€`;
+
 	return (
 		<div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8">
 			<div className="max-w-6xl mx-auto">
@@ -701,15 +722,15 @@ const AnalysisDetails = () => {
 							<CardContent className="space-y-3 text-sm">
 								<div className="flex justify-between">
 									<span className="text-muted-foreground">Salaire brut</span>
-									<span className="font-medium">{derived.details.salaireBrut.toFixed(2)}€</span>
+									<span className="font-medium">{financeBrut.toFixed(2)}€</span>
 								</div>
 								<div className="flex justify-between">
 									<span className="text-muted-foreground">Cotisations sociales</span>
-									<span className="font-medium">-{derived.details.cotisationsSociales.toFixed(2)}€</span>
+									<span className="font-medium">{cotisDisplay}</span>
 								</div>
 								<div className="flex justify-between border-t border-glass-border/20 pt-3">
 									<span className="text-muted-foreground">Salaire net</span>
-									<span className="font-bold text-lg">{derived.details.salaireNet.toFixed(2)}€</span>
+									<span className="font-bold text-lg">{financeNet.toFixed(2)}€</span>
 								</div>
 								{derived.details.netSocial !== undefined && (
 									<div className="flex justify-between">
@@ -739,7 +760,7 @@ const AnalysisDetails = () => {
 					{/* Right Column - Errors and Recommendations */}
 					<div className="lg:col-span-2 space-y-6">
 						{/* Évaluation financière déterministe */}
-						{evaluation && (evaluation.attendu_mensuel || evaluation.recu_mensuel) && (
+						{showDeterministic && evaluation && (evaluation.attendu_mensuel || evaluation.recu_mensuel) && (
 							<Card className="glass-card border-0 border-l-4 border-l-amber-500">
 								<CardHeader>
 									<CardTitle className="flex items-center space-x-2">
@@ -772,6 +793,35 @@ const AnalysisDetails = () => {
 											</p>
 										</div>
 									)}
+								</CardContent>
+							</Card>
+						)}
+
+						{/* État conforme quand aucun écart */}
+						{!showDeterministic && evaluation && (evaluation.attendu_mensuel || evaluation.recu_mensuel) && (
+							<Card className="glass-card border-0 border-l-4 border-l-emerald-500">
+								<CardHeader>
+									<CardTitle className="flex items-center space-x-2">
+										<CheckCircle className="w-5 h-5 text-emerald-500" />
+										<span>Salaire conforme au minimum attendu</span>
+									</CardTitle>
+									<CardDescription>
+										Aucun écart détecté entre le salaire attendu et le salaire perçu
+									</CardDescription>
+								</CardHeader>
+								<CardContent className="space-y-3 text-sm">
+									<div className="flex justify-between">
+										<span className="text-muted-foreground">Salaire mensuel attendu</span>
+										<span className="font-medium">{Number(evaluation.attendu_mensuel || 0).toFixed(2)}€</span>
+									</div>
+									<div className="flex justify-between">
+										<span className="text-muted-foreground">Salaire de base brut reçu</span>
+										<span className="font-medium">{Number(evaluation.recu_mensuel || 0).toFixed(2)}€</span>
+									</div>
+									<div className="flex justify-between border-t border-glass-border/20 pt-3">
+										<span className="text-muted-foreground">Écart</span>
+										<span className="font-bold text-lg text-emerald-600">Aucun écart</span>
+									</div>
 								</CardContent>
 							</Card>
 						)}
