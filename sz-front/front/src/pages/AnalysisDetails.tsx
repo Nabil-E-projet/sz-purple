@@ -591,7 +591,7 @@ const AnalysisDetails = () => {
 	const derived = {
 		period: (periode?.periode_du && periode?.periode_au) ? `Du ${periode.periode_du} au ${periode.periode_au}` : '—',
 		date: analysis?.date ? new Date(analysis.date).toLocaleString('fr-FR') : '—',
-		fileName: analysis?.filename || '—',
+		fileName: analysis?.filename || analysis?.original_filename || '—',
 		status: analysis?.status || 'success',
 		conformityPercent,
 		globalScore: typeof gptData?.note_globale === 'number' ? gptData.note_globale : 0,

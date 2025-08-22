@@ -28,6 +28,8 @@ class PaySlipSerializer(serializers.ModelSerializer):
         validators=[validate_file_extension, validate_file],
         # write_only=True # Optionnel: si tu ne veux pas renvoyer le champ fichier dans les réponses GET
     )
+    original_filename = serializers.CharField(read_only=True)
+    file_deleted = serializers.BooleanField(read_only=True)
     # Optionnel: Rendre le nom d'utilisateur lisible
     user_username = serializers.CharField(source='user.username', read_only=True)
 
@@ -39,6 +41,8 @@ class PaySlipSerializer(serializers.ModelSerializer):
             'user',                 # ID de l'utilisateur
             'user_username',        # Nom d'utilisateur (lecture seule)
             'uploaded_file',        # Pour l'upload
+            'original_filename',
+            'file_deleted',
             'upload_date',
             'processing_status',
             'contractual_salary',
@@ -57,6 +61,8 @@ class PaySlipSerializer(serializers.ModelSerializer):
             'upload_date', 
             'processing_status', 
             'user',
+            'original_filename',
+            'file_deleted',
             # Les nouveaux champs sont en lecture seule car ils sont remplis par l'analyse
             'period',
             'net_salary',
@@ -108,13 +114,20 @@ class PaySlipDashboardSerializer(serializers.ModelSerializer):
     analysis_score = serializers.SerializerMethodField()
     conformity_score = serializers.SerializerMethodField()
     anomalies_count = serializers.SerializerMethodField()
+    filename = serializers.SerializerMethodField()
     
+    original_filename = serializers.CharField(read_only=True)
+    file_deleted = serializers.BooleanField(read_only=True)
+
     class Meta:
         model = PaySlip
         fields = (
             'id',
             'user_username',
             'uploaded_file',
+            'original_filename',
+            'file_deleted',
+            'filename',
             'upload_date',
             'processing_status',
             'period',
@@ -164,6 +177,16 @@ class PaySlipDashboardSerializer(serializers.ModelSerializer):
         except Exception:
             pass
         return 0
+
+    def get_filename(self, obj):
+        try:
+            if obj.original_filename:
+                return obj.original_filename
+            if obj.uploaded_file:
+                return str(obj.uploaded_file.name).split('/')[-1]
+        except Exception:
+            pass
+        return None
 
     # Optionnel: Ajouter une méthode update si tu permets la modification
     # def update(self, instance, validated_data):

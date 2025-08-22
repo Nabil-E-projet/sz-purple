@@ -23,8 +23,17 @@ class PaySlip(models.Model):
     
     uploaded_file = models.FileField(
         upload_to='payslips/',
-        verbose_name=_('Fichier téléchargé')
+        verbose_name=_('Fichier téléchargé'),
+        null=True,
+        blank=True
     )
+    original_filename = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        verbose_name=_('Nom de fichier d\'origine')
+    )
+    file_deleted = models.BooleanField(default=False, verbose_name=_('Fichier supprimé après analyse'))
     
     upload_date = models.DateTimeField(
         auto_now_add=True,

@@ -162,7 +162,8 @@ class FullAnalysisResultView(APIView):
                 "analysis_id": analysis.id,
                 "status": analysis.analysis_status,
                 "date": analysis.analysis_date,
-                "filename": payslip.uploaded_file.name.split('/')[-1] if payslip.uploaded_file else None,
+                "filename": (payslip.original_filename or (payslip.uploaded_file.name.split('/')[-1] if payslip.uploaded_file else None)),
+                "file_deleted": getattr(payslip, 'file_deleted', False),
                 "details": analysis.analysis_details # Contient tout ce qui a été sauvegardé par AnalysisService
             }, status=status.HTTP_200_OK)
 

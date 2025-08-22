@@ -50,6 +50,15 @@ class AnalysisService:
             if not payslip.uploaded_file or not hasattr(payslip.uploaded_file, 'path'):
                 raise ValueError("Fichier PDF manquant ou chemin invalide")
             pdf_path = payslip.uploaded_file.path
+            # Conserver le nom original pour l'affichage futur même si le fichier est supprimé
+            try:
+                from os.path import basename
+                original_name = basename(pdf_path)
+                if payslip.original_filename != original_name:
+                    payslip.original_filename = original_name
+                    payslip.save(update_fields=['original_filename'])
+            except Exception:
+                pass
 
             additional_data = {
                 'contractual_salary': float(payslip.contractual_salary) if payslip.contractual_salary else None,
@@ -81,6 +90,26 @@ class AnalysisService:
             if group_item:
                 logger.info(f"PaySlip {payslip.id} fait partie du groupe {group_item.group.id}. Mise à jour de la progression.")
                 group_item.group.update_progress()
+
+            # Suppression optionnelle du fichier après analyse pour confidentialité
+            try:
+                from django.conf import settings as dj_settings
+                delete_after = getattr(dj_settings, 'DELETE_PAYSLIP_FILE_AFTER_ANALYSIS', True)
+            except Exception:
+                delete_after = True
+            if delete_after:
+                try:
+                    if payslip.uploaded_file and hasattr(payslip.uploaded_file, 'path'):
+                        import os
+                        if os.path.exists(payslip.uploaded_file.path):
+                            os.remove(payslip.uploaded_file.path)
+                            logger.info(f"Fichier supprimé après analyse pour PaySlip {payslip.id} : {payslip.uploaded_file.name}")
+                            # Ne garde que le nom pour historique mais vide le champ fichier
+                            payslip.uploaded_file.delete(save=False)
+                            payslip.file_deleted = True
+                            payslip.save(update_fields=['uploaded_file', 'file_deleted'])
+                except Exception as del_err:
+                    logger.warning(f"Échec suppression fichier PaySlip {payslip.id}: {del_err}")
 
             return payslip
 

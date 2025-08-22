@@ -63,6 +63,22 @@ class PaySlipUploadView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     throttle_classes = [UploadRateThrottle]
     
+    def create(self, request, *args, **kwargs):
+        """Empêche l'upload si crédits insuffisants pour éviter de stocker des fichiers inutiles."""
+        try:
+            user = request.user
+            credits = getattr(user, 'credits', 0)
+            if credits is not None and credits < 1:
+                return Response(
+                    {"error": "payment_required", "code": "payment_required", "detail": "Crédits insuffisants"},
+                    status=status.HTTP_402_PAYMENT_REQUIRED,
+                )
+        except Exception:
+            # En cas d'imprévu, on laisse l'upload continuer pour ne pas bloquer
+            pass
+
+        return super().create(request, *args, **kwargs)
+
     def perform_create(self, serializer):
         # DEBUG: Log des données reçues dans l'upload
         logger.info(f"=== DEBUG UPLOAD BACKEND ===")
@@ -76,6 +92,17 @@ class PaySlipUploadView(generics.CreateAPIView):
         logger.info(f"=== FIN DEBUG UPLOAD BACKEND ===")
         
         instance = serializer.save(user=self.request.user)
+        
+        # Sauvegarder le nom de fichier original pour l'affichage futur
+        if instance.uploaded_file and hasattr(instance.uploaded_file, 'name'):
+            try:
+                import os
+                original_name = os.path.basename(instance.uploaded_file.name)
+                if original_name and not instance.original_filename:
+                    instance.original_filename = original_name
+                    instance.save(update_fields=['original_filename'])
+            except Exception:
+                pass
         logger.info(
             f"Fiche de paie créée: user={self.request.user.id}, "
             f"payslip_id={instance.id}, filename={instance.uploaded_file.name}"

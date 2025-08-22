@@ -37,7 +37,7 @@ const Dashboard = () => {
           score: p.analysis_score || 0,
           conformityScore: p.conformity_score || 0,
           errorsCount: p.anomalies_count || 0,
-          fileName: (p.uploaded_file || '').split('/').pop() || '—',
+          fileName: p.filename || p.original_filename || ((p.uploaded_file || '').split('/').pop()) || '—',
         }));
         setAnalyses(mapped);
         setPageInfo({ count: page.count || 0, next: page.next, previous: page.previous, limit: 10, offset: 0 });
@@ -380,7 +380,7 @@ const Dashboard = () => {
                       score: p.analysis_score || 0,
                       conformityScore: p.conformity_score || 0,
                       errorsCount: p.anomalies_count || 0,
-                      fileName: (p.uploaded_file || '').split('/').pop() || '—',
+                      fileName: p.filename || p.original_filename || ((p.uploaded_file || '').split('/').pop()) || '—',
                     }));
                     setAnalyses(mapped);
                     setPageInfo({ count: page.count || 0, next: page.next, previous: page.previous, limit: pageInfo.limit, offset: newOffset });
@@ -407,7 +407,7 @@ const Dashboard = () => {
                       score: p.analysis_score || 0,
                       conformityScore: p.conformity_score || 0,
                       errorsCount: p.anomalies_count || 0,
-                      fileName: (p.uploaded_file || '').split('/').pop() || '—',
+                      fileName: p.filename || p.original_filename || ((p.uploaded_file || '').split('/').pop()) || '—',
                     }));
                     setAnalyses(mapped);
                     setPageInfo({ count: page.count || 0, next: page.next, previous: page.previous, limit: pageInfo.limit, offset: newOffset });
