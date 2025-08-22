@@ -1,0 +1,26 @@
+
+SYNTHÈSE DE LA CONVENTION COLLECTIVE : EMPLOYÉS, TECHNICIENS ET AGENTS DE MAÎTRISE DU BÂTIMENT (IDCC 2609)
+
+SALAIRES MINIMA :
+- La grille 2025 fixe les minima mensuels pour 35 h : niveau A (coeff 150) : 1 801,80 € ; niveau B (170) : 1 865,13 € ; niveau C (200) : 2 010,08 € ; niveau D (250) : 2 179,64 € ; niveau E (300) : 2 378,19 € ; niveau F (400) : 2 884,85 €https://factorial.fr/blog/grille-salaire-btp/#:~:text=La%20grille%20de%20salaire%20des,ETAM%20BTP%C2%A02025. Ces montants s’appliquent aux ETAM de la branche bâtiment.
+- Pour les cadres, les minima annuels vont de 33 756 € (niveau A1) à 58 456 € (niveau C2)https://factorial.fr/blog/grille-salaire-btp/#:~:text=La%20grille%20de%20salaire%20des,ETAM%20BTP%C2%A02025.
+
+PRIMES ET INDEMNITÉS :
+- Prime de panier et indemnités de déplacement : versement d’une indemnité forfaitaire pour le repas et les grands déplacements ; son montant varie selon les régionshttps://factorial.fr/blog/grille-salaire-btp/#:~:text=En%20plus%20du%20salaire%20de,et%20les%20conditions%20de%20travail.
+- Prime d’intempéries et prime de rendement : prévues par les accords régionaux pour compenser les arrêts dus aux intempéries et encourager la productivitéhttps://factorial.fr/blog/grille-salaire-btp/#:~:text=En%20plus%20du%20salaire%20de,et%20les%20conditions%20de%20travail.
+- Prime de vacances : versement par la caisse des congés payés BTP d’une prime égale à 30 % de l’indemnité de congés payés pour les salariés justifiant d’au moins 1 675 heures travailléesravail-emploi.gouv.fr/sites/travail-emploi/files/files-spip/pdf/fiche_conventions_collectives_-_ouvriers_des_travaux_publics.pdf#:~:text=Primes%20et%20indemnit%C3%A9s%20%3A%20Prime,8%29.
+
+DURÉE DU TRAVAIL ET HEURES SUPPLÉMENTAIRES :
+- Durée légale : 35 h/semaine. Les heures supplémentaires sont majorées de 25 % de la 36ᵉ à la 43ᵉ heure et de 50 % au‑delà, avec un contingent annuel de 180 heures (145 heures en cas d’annualisation)ravail-emploi.gouv.fr/sites/travail-emploi/files/files-spip/pdf/fiche_conventions_collectives_-_ouvriers_des_travaux_publics.pdf#:~:text=Majorations%20pour%20heures%20suppl%C3%A9mentaires%2C%20heures,partir%20de%20la%2044%C3%A8me%20heure.
+
+CONGÉS PAYÉS ET ÉVÉNEMENTS FAMILIAUX :
+- Les salariés acquièrent 30 jours de congés payés par an. Des jours supplémentaires sont accordés en fonction de l’ancienneté (2 jours après 20 ans, 4 jours après 25 ans, 6 jours après 30 ans)ravail-emploi.gouv.fr/sites/travail-emploi/files/files-spip/pdf/fiche_conventions_collectives_-_ouvriers_des_travaux_publics.pdf#:~:text=30%20jours%20ouvrables.
+- Jours pour événements familiaux : mariage du salarié : 4 jours ; mariage d’un enfant : 1 jour ; naissance ou adoption : 3 jours ; décès d’un enfant : 5 jours ; décès du conjoint ou d’un parent : 3 jours ; décès d’un grand‑parent : 1 jour ; décès d’un frère ou d’une sœur : 3 jours ; décès d’un beau‑parent : 1 jourravail-emploi.gouv.fr/sites/travail-emploi/files/files-spip/pdf/fiche_conventions_collectives_-_ouvriers_des_travaux_publics.pdf#:~:text=%C3%89V%C3%89NEMENT%20OUVRIERS%20Mariage%20ou%20union,Mariage%20d%27un%20enfant%201%20jour.
+
+ARRÊT MALADIE :
+- Après un an d’ancienneté, maintien de salaire à 100 % pendant 30 jours puis à 80 % pendant 30 jours supplémentaires ; la durée d’indemnisation augmente avec l’ancienneté. Les cadres bénéficient en général d’un maintien de 100 % pendant 90 jours.
+
+Notes pour l’IA d’analyse :
+- Vérifier l’application des minima de niveau selon la classification (A à F) et le respect du SMIC.
+- Contrôler le versement des indemnités de panier et des primes d’intempéries.
+- Examiner l’octroi de jours supplémentaires pour ancienneté et les congés liés aux événements familiaux.

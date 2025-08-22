@@ -1,0 +1,28 @@
+
+SYNTHÈSE DE LA CONVENTION COLLECTIVE : INDUSTRIES CHIMIQUES (IDCC 44)
+
+SALAIRES MINIMA :
+- Les minima sont calculés via la formule : salaire = (salaire de référence + (coefficient K − 100) × valeur de référence) × coefficient de calcul. En 2025, le salaire de référence est de 1 826,77 € et la valeur de référence de 8,74 €https://www.abacus-conseil.fr/salaires-janvier-2025-industries-chimiques/#:~:text=Coefficient%20hi%C3%A9rarchique%20du%20salari%C3%A9%20Coefficient,880%200%2C89%207%20675%2C85%20%E2%82%AC. Par exemple : pour le coefficient 130, le salaire minimum est d’environ 1 855,01 € ; pour le coefficient 250, il est de 2 218,40 € ; pour le coefficient 460, 4 018,32 €https://www.abacus-conseil.fr/salaires-janvier-2025-industries-chimiques/#:~:text=Coefficient%20hi%C3%A9rarchique%20du%20salari%C3%A9%20Coefficient,880%200%2C89%207%20675%2C85%20%E2%82%AC.
+- Les salaires sont revus annuellement et doivent être au moins égaux au SMIC.
+
+PRIMES ET INDEMNITÉS :
+- Prime d’ancienneté : accordée aux ouvriers et techniciens après 3 ans de service. Elle représente 3 % du salaire minimum après 3 ans, 6 % après 6 ans, 9 % après 9 ans, 12 % après 12 ans et 15 % après 15 anshttps://code.travail.gouv.fr/contribution/44-quand-le-salarie-a-t-il-droit-a-une-prime-danciennete-quel-est-son-montant#:~:text=,8%2C79%20%E2%82%AC.
+- Prime de tutorat et prime pour travail le dimanche ou la nuit : prévues par la convention ; le montant est fixé par l’entreprisehttps://www.coover.fr/conventions-collectives/chimie#:~:text=Maintien%20du%20salaire%20apr%C3%A8s%20un,dans%20les%20conditions%20suivantes.
+- Indemnités diverses : prime de transport, prime d’habillage et prime de panier selon les posteshttps://www.coover.fr/conventions-collectives/chimie#:~:text=Maintien%20du%20salaire%20apr%C3%A8s%20un,dans%20les%20conditions%20suivantes.
+
+DURÉE DU TRAVAIL ET HEURES SUPPLÉMENTAIRES :
+- Durée légale : 35 h/semaine. Le contingent annuel d’heures supplémentaires est de 130 heures. Les heures supplémentaires sont majorées de 25 % pour les 8 premières heures et de 50 % au‑delàhttps://www.coover.fr/conventions-collectives/chimie#:~:text=Maintien%20du%20salaire%20apr%C3%A8s%20un,dans%20les%20conditions%20suivantes.
+- Une pause rémunérée de 30 minutes est prévue pour tout poste dépassant 6 heureshttps://www.coover.fr/conventions-collectives/chimie#:~:text=Cong%C3%A9s%20pay%C3%A9s%2C%20RTT%20et%20convention,chimie%20Les%20salari%C3%A9s%20b%C3%A9n%C3%A9ficient.
+
+CONGÉS PAYÉS ET ÉVÉNEMENTS FAMILIAUX :
+- Congés payés : 2,5 jours ouvrables par mois (30 jours par an). Une semaine supplémentaire est accordée à partir de 59 ans et deux semaines supplémentaires l’année du départ en retraitehttps://www.coover.fr/conventions-collectives/chimie#:~:text=Cong%C3%A9s%20pay%C3%A9s%2C%20RTT%20et%20convention,chimie%20Les%20salari%C3%A9s%20b%C3%A9n%C3%A9ficient.
+- Jours pour événements familiaux : mariage ou PACS : 4 jours ; mariage d’un enfant : 1 jour ; naissance ou adoption : 3 jours ; décès d’un enfant : 5 jours ; décès du conjoint ou des parents : 3 jours ; maladie ou hospitalisation d’un enfant : 3 jours non rémunéréshttps://www.coover.fr/conventions-collectives/chimie#:~:text=Maintien%20du%20salaire%20apr%C3%A8s%20un,dans%20les%20conditions%20suivantes.
+
+ARRÊT MALADIE :
+- Après un an d’ancienneté, maintien du salaire : ouvriers et techniciens : 100 % pendant 2 mois puis 50 % pendant 2 mois ; agents de maîtrise et techniciens : 100 % pendant 1 mois et demi puis 50 % pendant 1 mois et demi ; cadres : 100 % pendant 42 jours puis 50 % pendant 4 mois, avec prolongation selon l’anciennetéhttps://www.coover.fr/conventions-collectives/chimie#:~:text=Maintien%20du%20salaire%20apr%C3%A8s%20un,dans%20les%20conditions%20suivantes.
+
+Notes pour l’IA d’analyse :
+- Vérifier le coefficient et les éléments de calcul du salaire (valeur et salaire de référence) pour s’assurer que la rémunération dépasse le minimum.
+- Contrôler l’application de la prime d’ancienneté et des primes spécifiques (tutorat, dimanche, nuit).
+- Examiner le respect du contingent annuel d’heures supplémentaires et des pauses rémunérées.
+- Vérifier l’octroi de congés supplémentaires pour l’âge et les événements familiaux.

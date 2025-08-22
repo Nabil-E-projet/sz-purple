@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { ConventionCombobox } from '@/components/ConventionCombobox';
 import { Upload, FileText, Calendar as CalendarIcon, Euro, MessageSquare, Sparkles, ArrowRight, ArrowLeft, Check, Info } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -318,20 +319,16 @@ const UploadPage = () => {
 			case 'convention':
 				return (
 					<div className="space-y-8">
-						<Select disabled={loadingConventions} onValueChange={(v) => setConvention(v)} value={convention}>
-							<SelectTrigger className="glass-card border-glass-border/30 h-14 text-lg">
-								<SelectValue placeholder="Sélectionnez votre convention collective" />
-							</SelectTrigger>
-							<SelectContent className="glass-card border-glass-border/30 backdrop-blur-md">
-								{conventions.map((c, index) => (
-									<SelectItem key={index} value={c.value} className="py-3">
-										{c.label}
-									</SelectItem>
-								))}
-							</SelectContent>
-						</Select>
+						<ConventionCombobox
+							value={convention || ''}
+							onChange={(value) => setConvention(value)}
+							placeholder="Sélectionnez ou saisissez votre convention collective"
+							conventions={conventions}
+							loading={loadingConventions}
+							disabled={loadingConventions}
+						/>
 						
-						{convention && (
+						{convention && !loadingConventions && (
 							<motion.div 
 								initial={{ opacity: 0, scale: 0.95 }}
 								animate={{ opacity: 1, scale: 1 }}
@@ -341,6 +338,9 @@ const UploadPage = () => {
 									<Check className="w-6 h-6 text-white" />
 								</div>
 								<p className="text-muted-foreground">Convention sélectionnée !</p>
+								<p className="text-sm text-muted-foreground/70 mt-1">
+									{conventions.find(c => c.value === convention)?.label || convention}
+								</p>
 							</motion.div>
 						)}
 					</div>
@@ -508,17 +508,19 @@ const UploadPage = () => {
 									<p className="text-xs text-muted-foreground mt-2">Astuce: pour un temps partiel, indiquez votre quotité (ex: 0.8) afin d'ajuster le minimum attendu.</p>
 								)}
 							</div>
-							<div>
-								<label className="block text-sm text-muted-foreground mb-2">Pourcentage SMIC attendu (ex: 75 pour 75%)</label>
-								<Input
-									type="number"
-									placeholder="75"
-									className="glass-card border-glass-border/30 h-14 text-lg"
-									step="0.01"
-									value={expectedSmicPercent}
-									onChange={(e) => setExpectedSmicPercent(e.target.value)}
-								/>
-							</div>
+							{employmentStatus === 'APPRENTI' && (
+								<div>
+									<label className="block text-sm text-muted-foreground mb-2">Pourcentage SMIC attendu (ex: 75 pour 75%)</label>
+									<Input
+										type="number"
+										placeholder="75"
+										className="glass-card border-glass-border/30 h-14 text-lg"
+										step="0.01"
+										value={expectedSmicPercent}
+										onChange={(e) => setExpectedSmicPercent(e.target.value)}
+									/>
+								</div>
+							)}
 							<div>
 								                                <label className="block text-sm text-muted-foreground mb-2 flex items-center gap-2">
                                     Quotité (ratio temps de travail)
