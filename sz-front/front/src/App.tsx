@@ -16,6 +16,8 @@ import PaymentSuccess from "./pages/PaymentSuccess";
 import Profile from "./pages/Profile";
 import EmailVerification from "./pages/EmailVerification";
 import EmailVerificationResult from "./pages/EmailVerificationResult";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import WelcomeAnimation from "./components/WelcomeAnimation";
@@ -39,6 +41,8 @@ const App = () => (
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/email-verification" element={<EmailVerification />} />
                 <Route path="/verify-email" element={<EmailVerificationResult />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
                 <Route
                   path="/upload"
                   element={

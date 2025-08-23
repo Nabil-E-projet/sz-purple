@@ -165,7 +165,9 @@ const LoginPage = () => {
                   </Button>
 
                   <div className="text-center">
-                    <span className="text-sm text-muted-foreground">Mot de passe oublié ? Contactez l'assistance.</span>
+                    <Link to="/forgot-password" className="text-sm text-primary hover:underline font-medium">
+                      Mot de passe oublié ?
+                    </Link>
                   </div>
                 </form>
               </TabsContent>
