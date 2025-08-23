@@ -2,16 +2,25 @@ import logging
 import traceback
 import datetime
 import json
-from typing import Optional, Dict, Any
+import os
+from typing import Optional, Dict, Any, List
 from decimal import Decimal, InvalidOperation
 
 from django.db import models
+from django.conf import settings as dj_settings
 
 # On importe les modèles des bonnes applications
 from documents.models import PaySlip
 from analysis.models import BulkAnalysisItem, PayslipAnalysis # Import des modèles d'analyse
 from .gpt_vision_service import GPTVisionService
 from .reference_data import get_convention_collective_text, SMIC_DATA, load_text_file
+
+# Imports pour le pipeline PII
+from ..ingestion.pdf_ingestor import ingest_pdf
+from ..pii.pipeline import detect_pii, pseudonymize, create_pii_report
+from ..redaction.pdf_redactor import redact_pdf, results_to_spans
+from ..extraction.minimal_extract import build_minimal_extract
+
 import csv
 from io import StringIO
 
@@ -60,6 +69,55 @@ class AnalysisService:
             except Exception:
                 pass
 
+            # =================================================================
+            # NOUVEAU PIPELINE PII-COMPLIANT
+            # =================================================================
+            logger.info("=== DÉBUT PIPELINE PII ===")
+            
+            # 1. Ingestion du PDF (extraction texte + positions)
+            logger.info("Étape 1: Ingestion PDF")
+            ingest_result = ingest_pdf(pdf_path, use_ocr=getattr(dj_settings, 'FEATURE_USE_TESSERACT', False))
+            raw_text = "\n".join(ingest_result.pages)
+            
+            # 2. Détection PII
+            logger.info("Étape 2: Détection PII")
+            pii_results = detect_pii(raw_text)
+            
+            # 3. Création du rapport PII (sans valeurs sensibles)
+            logger.info("Étape 3: Création rapport PII")
+            pii_report = create_pii_report(pii_results, ingest_result.pages)
+            
+            # 4. Pseudonymisation du texte
+            logger.info("Étape 4: Pseudonymisation")
+            pseudonymized_text = pseudonymize(raw_text, pii_results, ingest_result.doc_sha256)
+            pseudonymized_pages = pseudonymized_text.split("\n")
+            
+            # 5. Création de l'extraction minimale (sans PII)
+            logger.info("Étape 5: Extraction minimale")
+            minimal_extract = build_minimal_extract(pseudonymized_pages)
+            minimal_extract["extraction_date"] = datetime.datetime.now().isoformat()
+            
+            # 6. Redaction PDF (masquage visuel)
+            logger.info("Étape 6: Redaction PDF")
+            import os  # Import local si besoin
+            artifacts_dir = os.path.join(getattr(dj_settings, 'ARTIFACTS_BASE_PATH', './artifacts'), f"payslip_{payslip.id}")
+            os.makedirs(artifacts_dir, exist_ok=True)
+            redacted_pdf_path = os.path.join(artifacts_dir, f"redacted_{payslip.id}.pdf")
+            
+            spans = results_to_spans(ingest_result.tokens, pii_results, ingest_result.pages)
+            if spans:
+                redact_pdf(pdf_path, redacted_pdf_path, spans)
+            else:
+                # Aucune redaction nécessaire, copier le fichier original
+                import shutil
+                shutil.copy2(pdf_path, redacted_pdf_path)
+            
+            logger.info(f"=== FIN PIPELINE PII - {len(pii_results)} entités détectées ===")
+            
+            # =================================================================
+            # ANALYSE AVEC OU SANS LLM DISTANT
+            # =================================================================
+            
             additional_data = {
                 'contractual_salary': float(payslip.contractual_salary) if payslip.contractual_salary else None,
                 'additional_details': payslip.additional_details,
@@ -70,17 +128,24 @@ class AnalysisService:
             }
             additional_data = {k: v for k, v in additional_data.items() if v is not None}
 
-            result = self.gpt_vision_service.analyze_pdf(
-                pdf_path=pdf_path,
-                additional_data=additional_data
-            )
+            if getattr(dj_settings, 'ANALYSIS_USE_REMOTE_LLM', False):
+                # Mode sécurisé: envoyer seulement l'extraction minimale + contexte métier
+                logger.info("Mode LLM distant activé - utilisation extraction minimale")
+                result = self.gpt_vision_service.analyze_minimal_extract(
+                    minimal_extract=minimal_extract,
+                    additional_data=additional_data
+                )
+            else:
+                # Mode local uniquement: utiliser les données locales pour l'analyse
+                logger.info("Mode local uniquement - pas d'appel LLM distant")
+                result = self._analyze_local_only(minimal_extract, additional_data)
 
             if not result or 'error' in result:
                 msg = result.get('details', result.get('error', 'Erreur inconnue'))
                 raise RuntimeError(f"Erreur GPT Vision: {msg}")
 
             # Mise à jour du PaySlip ET de son analyse associée
-            self._update_payslip_from_analysis(payslip, result)
+            self._update_payslip_from_analysis(payslip, result, pii_report, minimal_extract, redacted_pdf_path)
             
             self._update_payslip_status(payslip, 'completed')
             logger.info(f"Analyse terminée avec succès pour PaySlip {payslip.id}")
@@ -93,7 +158,6 @@ class AnalysisService:
 
             # Suppression optionnelle du fichier après analyse pour confidentialité
             try:
-                from django.conf import settings as dj_settings
                 delete_after = getattr(dj_settings, 'DELETE_PAYSLIP_FILE_AFTER_ANALYSIS', True)
             except Exception:
                 delete_after = True
@@ -123,7 +187,47 @@ class AnalysisService:
                 self._handle_analysis_exception(e, payslip)
             return None
 
-    def _update_payslip_from_analysis(self, payslip: PaySlip, analysis_result: Dict[str, Any]):
+    def _analyze_local_only(self, minimal_extract: Dict[str, Any], additional_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Analyse locale sans utiliser de LLM distant.
+        Utilise uniquement les données minimales extraites et les référentiels locaux.
+        """
+        logger.info("Analyse locale - traitement des données minimales")
+        
+        # Structure de résultat compatible avec le format GPT existant
+        local_analysis = {
+            "gpt_analysis": {
+                "informations_generales": {
+                    "nom_salarie": "[ANONYMISÉ]",  # Toujours anonymisé en local
+                },
+                "periode": {
+                    "periode_du": minimal_extract.get("periode", {}).get("mois"),
+                    "periode_au": minimal_extract.get("periode", {}).get("mois"),
+                },
+                "remuneration": {
+                    "salaire_de_base_brut": minimal_extract.get("remuneration", {}).get("salaire_base"),
+                    "salaire_brut_total": minimal_extract.get("remuneration", {}).get("brut_total"),
+                    "net_imposable": minimal_extract.get("remuneration", {}).get("net_imposable"),
+                    "net_a_payer": minimal_extract.get("remuneration", {}).get("net_a_payer"),
+                },
+                "details_salaire": {
+                    "salaire_brut": minimal_extract.get("remuneration", {}).get("brut_total"),
+                    "heures_base": minimal_extract.get("heures", {}).get("heures_base"),
+                    "taux_horaire": minimal_extract.get("taux", {}).get("taux_horaire"),
+                },
+                "cotisations_sociales": minimal_extract.get("cotisations", {}),
+                "convention_collective_detectee": minimal_extract.get("convention", {}).get("type_detecte"),
+                "anomalies_potentielles_observees": [],
+                "source": "analyse_locale"
+            }
+        }
+        
+        return local_analysis
+
+    def _update_payslip_from_analysis(self, payslip: PaySlip, analysis_result: Dict[str, Any], 
+                                      pii_report: List[Dict[str, Any]] = None, 
+                                      minimal_extract: Dict[str, Any] = None,
+                                      redacted_pdf_path: str = None):
         """
         Met à jour le modèle PaySlip avec les données extraites ET crée/met à jour
         l'objet PayslipAnalysis associé avec les résultats complets.
@@ -136,12 +240,18 @@ class AnalysisService:
             payslip=payslip,
             defaults={
                 'analysis_status': 'success',
-                'analysis_details': enriched_result
+                'analysis_details': enriched_result,
+                'pii_report': pii_report,
+                'minimal_extract': minimal_extract,
+                'redacted_pdf_path': redacted_pdf_path
             }
         )
         if not created:
             analysis.analysis_status = 'success'
             analysis.analysis_details = enriched_result
+            analysis.pii_report = pii_report
+            analysis.minimal_extract = minimal_extract
+            analysis.redacted_pdf_path = redacted_pdf_path
             analysis.save()
         
         # === ÉTAPE 3 : Mettre à jour les champs clés sur le PaySlip lui-même ===

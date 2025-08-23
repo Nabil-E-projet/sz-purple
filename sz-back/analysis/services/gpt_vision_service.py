@@ -12,6 +12,7 @@ from .pdf_converter import convert_pdf_to_images
 from .vision_api_client import OpenAIVisionClient
 # On importe seulement SMIC_DATA, SYNTEC_TEXT est maintenant géré dynamiquement
 from .reference_data import SMIC_DATA
+from ..utils.exceptions import SecurityError
 
 logger = logging.getLogger('salariz.gpt_vision')
 
@@ -30,10 +31,64 @@ class GPTVisionService:
         self.smic_data_for_prompt = self._prepare_smic_excerpt(SMIC_DATA)
         self.api_client = OpenAIVisionClient(self.api_key) if self.api_key else None
 
+    def analyze_minimal_extract(self, minimal_extract: Dict[str, Any], additional_data: Dict = None) -> Dict[str, Any]:
+        """
+        MÉTHODE SÉCURISÉE: Analyse basée uniquement sur l'extraction minimale (sans PII).
+        Cette méthode peut être appelée même quand ANALYSIS_USE_REMOTE_LLM=True.
+        """
+        if not self.api_key:
+            logger.error("Clé API OpenAI manquante.")
+            return {"error": "Clé API OpenAI non configurée"}
+        
+        logger.info("Analyse sécurisée via extraction minimale")
+        
+        # Construction du prompt avec données minimales seulement
+        user_context_details = self._build_context_from_additional_data(additional_data)
+        user_context_prompt = "\nCONTEXTE UTILISATEUR:\n" + "\n".join(user_context_details) if user_context_details else ""
+        
+        minimal_data_prompt = self._build_minimal_data_prompt(minimal_extract)
+        anomaly_detection_guidelines = self._build_anomaly_detection_guidelines(additional_data)
+        
+        prompt = f"""Tu es un expert en paie français. Analyse ces données ANONYMISÉES de fiche de paie et détecte les anomalies.
+
+DONNÉES MINIMALES (ANONYMISÉES):
+{minimal_data_prompt}
+{user_context_prompt}
+
+CONSIGNES DÉTECTION D'ANOMALIES:
+{anomaly_detection_guidelines}
+
+RÉPONDS EXACTEMENT en JSON selon ce format:
+{{
+    "informations_generales": {{"nom_salarie": "[ANONYMISÉ]"}},
+    "periode": {{"periode_du": "...", "periode_au": "..."}},
+    "remuneration": {{"salaire_de_base_brut": "...", "net_a_payer": "..."}},
+    "details_salaire": {{"salaire_brut": "...", "heures_base": "..."}},
+    "cotisations_sociales": {{}},
+    "convention_collective_detectee": "...",
+    "anomalies_potentielles_observees": [
+        {{"type": "...", "description": "...", "level": "haute|moyenne|basse"}}
+    ]
+}}"""
+
+        try:
+            response = self.api_client.send_text_only_request(prompt)
+            return {"gpt_analysis": response}
+        except Exception as e:
+            logger.error(f"Erreur analyse minimale: {e}")
+            return {"error": str(e)}
+
     def analyze_multiple_images(self, base64_images: List[str], additional_data: Dict = None) -> Dict[str, Any]:
         """
         Analyse plusieurs images de fiche de paie avec GPT Vision.
+        
+        ATTENTION: Cette méthode ne doit PAS être utilisée si ANALYSIS_USE_REMOTE_LLM=False
+        car elle peut envoyer des données brutes (potentiellement avec PII).
         """
+        # Vérification de sécurité RGPD
+        if not getattr(settings, 'ANALYSIS_USE_REMOTE_LLM', False):
+            raise SecurityError("INTERDIT: Tentative d'envoi de données brutes vers LLM distant alors que ANALYSIS_USE_REMOTE_LLM=False")
+            
         if not self.api_key:
             logger.error("Clé API OpenAI manquante.")
             return {"error": "Clé API OpenAI non configurée"}
@@ -106,7 +161,13 @@ class GPTVisionService:
     def analyze_pdf(self, pdf_path: str, max_pages: Optional[int] = None, additional_data: Dict = None) -> Dict[str, Any]:
         """
         Convertit un PDF en images et l'analyse avec GPT Vision.
+        
+        ATTENTION: Cette méthode ne doit PAS être utilisée si ANALYSIS_USE_REMOTE_LLM=False
+        car elle peut envoyer des données brutes (potentiellement avec PII).
         """
+        # Vérification de sécurité RGPD
+        if not getattr(settings, 'ANALYSIS_USE_REMOTE_LLM', False):
+            raise SecurityError("INTERDIT: Tentative d'envoi de PDF brut vers LLM distant alors que ANALYSIS_USE_REMOTE_LLM=False")
         if not os.path.exists(pdf_path):
             logger.error(f"Le fichier PDF n'existe pas: {pdf_path}")
             return {"error": "Fichier PDF non trouvé"}
@@ -135,6 +196,40 @@ class GPTVisionService:
                 "error": f"Erreur de conversion/analyse PDF: {e}",
                 "traceback": traceback.format_exc()
             }
+
+    def _build_minimal_data_prompt(self, minimal_extract: Dict[str, Any]) -> str:
+        """
+        Construit un prompt à partir de l'extraction minimale (sans PII).
+        """
+        lines = []
+        
+        if minimal_extract.get("periode"):
+            periode = minimal_extract["periode"]
+            if periode.get("mois"):
+                lines.append(f"Période: {periode['mois']}")
+        
+        if minimal_extract.get("heures"):
+            heures = minimal_extract["heures"]
+            if heures.get("heures_base"):
+                lines.append(f"Heures de base: {heures['heures_base']}")
+            if heures.get("heures_sup"):
+                lines.append(f"Heures supplémentaires: {heures['heures_sup']}")
+        
+        if minimal_extract.get("remuneration"):
+            remu = minimal_extract["remuneration"]
+            if remu.get("salaire_base"):
+                lines.append(f"Salaire de base brut: {remu['salaire_base']}")
+            if remu.get("brut_total"):
+                lines.append(f"Salaire brut total: {remu['brut_total']}")
+            if remu.get("net_a_payer"):
+                lines.append(f"Net à payer: {remu['net_a_payer']}")
+        
+        if minimal_extract.get("convention"):
+            conv = minimal_extract["convention"]
+            if conv.get("type_detecte"):
+                lines.append(f"Convention collective: {conv['type_detecte']}")
+        
+        return "\n".join(lines) if lines else "Aucune donnée minimale disponible"
 
     def analyze_document_image(self, image_path: str, additional_data: Dict = None) -> Dict[str, Any]:
         """

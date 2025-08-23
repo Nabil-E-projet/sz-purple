@@ -29,6 +29,17 @@ social-auth-core==4.5.6
 cryptography==44.0.2   # Dépendance pour la sécurité (souvent requise par d'autres libs)
 pytz==2025.1           # Gestion des fuseaux horaires
 
+# --- PII Detection & PDF Processing ---
+presidio-analyzer==2.2.354
+presidio-anonymizer==2.2.354
+spacy>=3.7
+pdfplumber==1.0.1
+pdfminer.six==20240706
+pytesseract==0.3.10      # OCR optionnel
+PyMuPDF==1.24.1          # pour dessiner les rectangles (fitz)
+python-stdnum==1.20      # IBAN/SIREN/SIRET validations
+pydantic-settings==2.2.1
+
 # --- Documentation DRF Interactive (Optionnel - retirez si non utilisé) ---
 coreapi==2.3.3
 coreschema==0.0.4

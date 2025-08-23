@@ -289,3 +289,101 @@ class BulkAnalysisResultView(APIView):
             })
         
         return Response(response_data)
+
+# ============================================================================
+# NOUVEAUX ENDPOINTS RGPD-COMPLIANT
+# ============================================================================
+
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from django.http import FileResponse
+import os
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def payslip_pii_report(request, payslip_id):
+    """
+    Endpoint pour récupérer le rapport PII d'une fiche de paie (sans valeurs sensibles).
+    """
+    payslip = get_object_or_404(PaySlip, id=payslip_id, user=request.user)
+    
+    try:
+        analysis = payslip.analysis
+        if not analysis or not analysis.pii_report:
+            return Response(
+                {"error": "Aucun rapport PII disponible pour cette fiche de paie"}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        return Response({
+            "payslip_id": payslip_id,
+            "pii_entities_detected": len(analysis.pii_report),
+            "pii_report": analysis.pii_report,
+            "processed_date": analysis.analysis_date.isoformat() if analysis.analysis_date else None
+        })
+        
+    except PayslipAnalysis.DoesNotExist:
+        return Response(
+            {"error": "Analyse non trouvée pour cette fiche de paie"}, 
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def payslip_minimal_extract(request, payslip_id):
+    """
+    Endpoint pour récupérer l'extraction minimale d'une fiche de paie (sans PII).
+    """
+    payslip = get_object_or_404(PaySlip, id=payslip_id, user=request.user)
+    
+    try:
+        analysis = payslip.analysis
+        if not analysis or not analysis.minimal_extract:
+            return Response(
+                {"error": "Aucune extraction minimale disponible pour cette fiche de paie"}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        return Response(analysis.minimal_extract)
+        
+    except PayslipAnalysis.DoesNotExist:
+        return Response(
+            {"error": "Analyse non trouvée pour cette fiche de paie"}, 
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def payslip_redacted_pdf(request, payslip_id):
+    """
+    Endpoint pour télécharger le PDF masqué d'une fiche de paie.
+    """
+    payslip = get_object_or_404(PaySlip, id=payslip_id, user=request.user)
+    
+    try:
+        analysis = payslip.analysis
+        if not analysis or not analysis.redacted_pdf_path:
+            return Response(
+                {"error": "Aucun PDF masqué disponible pour cette fiche de paie"}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        pdf_path = analysis.redacted_pdf_path
+        if not os.path.exists(pdf_path):
+            return Response(
+                {"error": "Fichier PDF masqué introuvable sur le serveur"}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        # Servir le fichier PDF masqué
+        return FileResponse(
+            open(pdf_path, 'rb'),
+            content_type='application/pdf',
+            filename=f'payslip_{payslip_id}_redacted.pdf'
+        )
+        
+    except PayslipAnalysis.DoesNotExist:
+        return Response(
+            {"error": "Analyse non trouvée pour cette fiche de paie"}, 
+            status=status.HTTP_404_NOT_FOUND
+        )

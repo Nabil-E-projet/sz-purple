@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
+from salariz.env import get_settings
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,6 +24,14 @@ def _env_bool(name: str, default: bool) -> bool:
 DEBUG = _env_bool('DEBUG', True)
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost').split(',')
+
+# Configuration PII/RGPD
+app_settings = get_settings()
+ANALYSIS_USE_REMOTE_LLM = app_settings.ANALYSIS_USE_REMOTE_LLM
+FEATURE_USE_TESSERACT = app_settings.FEATURE_USE_TESSERACT
+PII_SECRET = app_settings.PII_SECRET
+PII_PERSON_SCOPE = app_settings.PII_PERSON_SCOPE
+ARTIFACTS_BASE_PATH = app_settings.ARTIFACTS_BASE_PATH
 
 
 # Application definition

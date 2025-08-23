@@ -96,6 +96,11 @@ class PayslipAnalysis(models.Model):
         verbose_name=_('Statut de l\'analyse')
     )
     analysis_details = models.JSONField(default=dict, blank=True, verbose_name=_('Détails de l\'analyse'))
+    
+    # Nouveaux champs pour la conformité RGPD
+    pii_report = models.JSONField(null=True, blank=True, verbose_name=_('Rapport PII (sans valeurs)'))
+    minimal_extract = models.JSONField(null=True, blank=True, verbose_name=_('Extraction minimale'))
+    redacted_pdf_path = models.CharField(max_length=512, null=True, blank=True, verbose_name=_('Chemin PDF masqué'))
 
     class Meta:
         verbose_name = "Analyse de fiche de paie"

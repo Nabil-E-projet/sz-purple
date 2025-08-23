@@ -311,3 +311,49 @@ class OpenAIVisionClient:
         else:
             logger.info(f"Aucun tarif défini pour le modèle {model}. Tokens: prompt={prompt_tokens}, completion={completion_tokens}")
             return None
+
+    def send_text_only_request(self, prompt: str) -> dict:
+        """
+        Envoie une requête texte uniquement (sans images) à l'API OpenAI.
+        Utilisé pour l'analyse sécurisée d'extractions minimales.
+        """
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.api_key}"
+        }
+        
+        payload = {
+            "model": "gpt-4o",
+            "messages": [
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+            "response_format": {"type": "json_object"},
+            "max_tokens": 4000,
+            "temperature": 0.1
+        }
+        
+        try:
+            response = requests.post(
+                "https://api.openai.com/v1/chat/completions",
+                headers=headers,
+                json=payload,
+                timeout=60
+            )
+            response.raise_for_status()
+            
+            result = response.json()
+            content = result["choices"][0]["message"]["content"]
+            return json.loads(content)
+            
+        except json.JSONDecodeError as e:
+            logger.error(f"Erreur parsing JSON de la réponse OpenAI: {e}")
+            return {"error": f"Réponse OpenAI invalide: {e}"}
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Erreur requête OpenAI: {e}")
+            return {"error": str(e)}
+        except Exception as e:
+            logger.error(f"Erreur requête texte OpenAI: {e}")
+            return {"error": str(e)}
