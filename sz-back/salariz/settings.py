@@ -216,6 +216,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 PRIVATE_MEDIA_URL = '/private-media/'
 PRIVATE_MEDIA_ROOT = os.path.join(BASE_DIR, 'private_media')
 
+# Privacy: deletion of uploaded payslip files
+# If True, remove the uploaded file from disk after analysis completes successfully
+DELETE_PAYSLIP_FILE_AFTER_ANALYSIS = _env_bool('DELETE_PAYSLIP_FILE_AFTER_ANALYSIS', True)
+# If True, also remove the file when analysis ends in error (disables re-try with the same file)
+DELETE_PAYSLIP_FILE_ON_ERROR = _env_bool('DELETE_PAYSLIP_FILE_ON_ERROR', False)
+
 # OpenAI API key
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 if not OPENAI_API_KEY and not DEBUG:

@@ -22,11 +22,32 @@ class PaySlipFileView(generics.RetrieveAPIView):
     def get(self, request, pk):
         try:
             payslip = PaySlip.objects.get(pk=pk, user=request.user)
+            # Si le fichier a été supprimé pour des raisons de confidentialité, retourner 410
+            if getattr(payslip, 'file_deleted', False):
+                return Response({
+                    "error": "file_deleted",
+                    "message": "Le fichier a été supprimé après analyse pour des raisons de confidentialité.",
+                    "filename": payslip.original_filename,
+                }, status=status.HTTP_410_GONE)
+
             file_path = payslip.uploaded_file.path
             
             # Vérification supplémentaire
             if not os.path.exists(file_path):
-                raise Http404("Fichier non trouvé")
+                # Mettre à jour l'état si le fichier a disparu
+                try:
+                    payslip.file_deleted = True
+                    # Conserver un nom affichable
+                    if not payslip.original_filename and payslip.uploaded_file:
+                        payslip.original_filename = os.path.basename(payslip.uploaded_file.name)
+                    payslip.save(update_fields=['file_deleted', 'original_filename'])
+                except Exception:
+                    pass
+                return Response({
+                    "error": "file_missing",
+                    "message": "Le fichier source n'est plus disponible sur le serveur.",
+                    "filename": payslip.original_filename,
+                }, status=status.HTTP_410_GONE)
                 
             # Vérifier le type de fichier
             content_type, encoding = mimetypes.guess_type(file_path)

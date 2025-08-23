@@ -278,6 +278,33 @@ class AnalysisService:
         if group_item:
             group_item.group.update_progress()
         
+        # Suppression optionnelle du fichier même en cas d'erreur (confidentialité)
+        try:
+            from django.conf import settings as dj_settings
+            delete_on_error = getattr(dj_settings, 'DELETE_PAYSLIP_FILE_ON_ERROR', False)
+        except Exception:
+            delete_on_error = False
+        if delete_on_error:
+            try:
+                if payslip.uploaded_file and hasattr(payslip.uploaded_file, 'path'):
+                    import os
+                    # Conserver le nom original si pas encore défini
+                    try:
+                        from os.path import basename
+                        if not payslip.original_filename and hasattr(payslip.uploaded_file, 'path'):
+                            payslip.original_filename = basename(payslip.uploaded_file.path)
+                    except Exception:
+                        pass
+                    if os.path.exists(payslip.uploaded_file.path):
+                        os.remove(payslip.uploaded_file.path)
+                    # Vider le FileField sans sauvegarder tout l'objet
+                    payslip.uploaded_file.delete(save=False)
+                    payslip.file_deleted = True
+                    payslip.save(update_fields=['uploaded_file', 'file_deleted', 'original_filename'])
+                    logger.info(f"Fichier supprimé après erreur pour PaySlip {payslip.id}")
+            except Exception as del_err:
+                logger.warning(f"Échec suppression fichier PaySlip {payslip.id} après erreur: {del_err}")
+        
         logger.info(f"Statut 'error' enregistré pour PaySlip {payslip.id}.")
 
     def _calculate_scores(self, analysis_result: Dict[str, Any], payslip: PaySlip) -> Dict[str, Any]:
