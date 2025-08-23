@@ -33,6 +33,11 @@ const ResetPassword = () => {
     }
   }, [token, navigate, toast]);
 
+  // Don't render anything if no token (during redirect)
+  if (!token) {
+    return null;
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
