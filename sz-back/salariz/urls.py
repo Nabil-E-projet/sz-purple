@@ -30,6 +30,7 @@ urlpatterns = [
     # Billing endpoints
     path('api/billing/', include('billing.urls')),
     # Nouvel endpoint de health check
+    path('', health_check, name='root'),
     path('health/', health_check, name='health_check'),
 
 
