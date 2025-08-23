@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 
@@ -26,6 +26,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const navigate = useNavigate();
+  const location = useLocation();
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -69,11 +70,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       await api.register({ username, email, password, password_confirm });
     },
     logout: async () => {
-      await api.logout();
-      // Clear all cached queries to avoid showing stale authenticated data
-      try { queryClient.clear(); } catch { /* no-op */ }
+      // Clear user state and token immediately
       setUser(null);
-      navigate('/login', { replace: true });
+      api.setAccessToken(null);
+      
+      // Clear all cached queries
+      try { queryClient.clear(); } catch { /* no-op */ }
+      
+      // Call backend logout but don't wait for it
+      api.logout().catch(() => {});
+      
+      // Force immediate redirect to homepage - this happens NOW
+      window.location.href = '/home';
     },
     refresh: async () => {
       const refreshed = await api.refreshAccessToken();

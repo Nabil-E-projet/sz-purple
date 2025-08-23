@@ -9,12 +9,11 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const { isAuthenticated, logout } = useAuth();
-  const handleLogout = async () => {
-    try {
-      await logout();
-    } finally {
-      window.dispatchEvent(new CustomEvent('creditsUpdated'));
-    }
+  const handleLogout = () => {
+    // Clear token immediately
+    localStorage.removeItem('accessToken');
+    // Force immediate redirect - don't wait for anything
+    window.location.href = '/home';
   };
   const [credits, setCredits] = useState<number | null>(null);
 
@@ -171,9 +170,8 @@ const Navbar = () => {
                     <Button 
                       variant="ghost" 
                       size="sm" 
-                      onClick={async () => {
-                        await handleLogout();
-                        setIsOpen(false);
+                      onClick={() => {
+                        handleLogout();
                       }}
                       className="w-full justify-start px-3 py-2"
                     >

@@ -789,6 +789,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
                     samesite='Lax',
                     # En développement, on peut mettre secure=False
                     secure=False,  # Mettre à True en production (HTTPS)
+                    path='/',
                     max_age=24 * 60 * 60  # 1 jour
                 )
                 # Supprimer le refresh token de la réponse JSON
@@ -814,6 +815,7 @@ class CookieTokenRefreshView(TokenRefreshView):
                 httponly=True,
                 samesite='Lax',
                 secure=False,  # Mettre à True en production
+                path='/',
                 max_age=24 * 60 * 60
             )
             # On ne renvoie pas le refresh token dans la réponse JSON
@@ -823,7 +825,7 @@ class CookieTokenRefreshView(TokenRefreshView):
     
 
 class LogoutView(APIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
     
     def post(self, request):
         try:
@@ -838,7 +840,7 @@ class LogoutView(APIView):
             # Préparer la réponse
             response = Response({"message": "Déconnexion réussie"}, status=status.HTTP_205_RESET_CONTENT)
             # Supprimer le cookie
-            response.delete_cookie('refresh_token')
+            response.delete_cookie('refresh_token', path='/', samesite='Lax', secure=False)
             return response
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
