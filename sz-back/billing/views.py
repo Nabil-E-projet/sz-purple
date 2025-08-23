@@ -22,10 +22,8 @@ class CreateCheckoutSessionView(APIView):
             return Response({"error": "Stripe non configuré"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Détecter automatiquement l'URL frontend depuis le Referer
-        referer = request.META.get('HTTP_REFERER', 'http://localhost:8080')
-        frontend_base = referer.split('?')[0].split('#')[0].rstrip('/')
-        if not frontend_base.startswith('http'):
-            frontend_base = 'http://localhost:8080'
+        referer = request.META.get('HTTP_REFERER')
+        frontend_base = (referer or settings.FRONTEND_URL).split('?')[0].split('#')[0].rstrip('/')
 
         # Simple pricing: pack of 5 credits for 4.90€
         pack = request.data.get('pack', 'pack_5')

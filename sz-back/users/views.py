@@ -57,7 +57,7 @@ class RegisterView(generics.CreateAPIView):
         signer = TimestampSigner()
         token = signer.sign(user.pk)
         # URL qui pointe directement vers le frontend avec redirection automatique
-        verification_url = f"http://localhost:8080/verify-email?redirect_token={token}"
+        verification_url = f"{settings.FRONTEND_URL}/verify-email?redirect_token={token}"
         
         # Nom à afficher dans l'email
         display_name = (user.get_full_name() or user.username or user.email)
@@ -427,7 +427,7 @@ class ResendVerificationView(APIView):
             # Renvoyer l'email de vérification
             signer = TimestampSigner()
             token = signer.sign(user.pk)
-            verification_url = f"http://localhost:8080/verify-email?redirect_token={token}"
+            verification_url = f"{settings.FRONTEND_URL}/verify-email?redirect_token={token}"
             
             # Nom à afficher dans l'email
             display_name = (user.get_full_name() or user.username or user.email)
@@ -763,7 +763,6 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user
-    
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
@@ -782,13 +781,15 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             # Stocker le refresh token dans un cookie httpOnly
             if response.data.get('refresh'):
                 refresh_token = response.data['refresh']
+                # En production (DEBUG=False), il faut SameSite=None + Secure=True pour autoriser l'envoi cross-site
+                secure_cookie = not settings.DEBUG
+                samesite_policy = 'None' if secure_cookie else 'Lax'
                 response.set_cookie(
                     'refresh_token',
                     refresh_token,
                     httponly=True,
-                    samesite='Lax',
-                    # En développement, on peut mettre secure=False
-                    secure=False,  # Mettre à True en production (HTTPS)
+                    samesite=samesite_policy,
+                    secure=secure_cookie,
                     max_age=24 * 60 * 60  # 1 jour
                 )
                 # Supprimer le refresh token de la réponse JSON
@@ -804,16 +805,17 @@ class CookieTokenRefreshView(TokenRefreshView):
             request.data['refresh'] = refresh_token
         
         response = super().post(request, *args, **kwargs)
-        
         # Avec ROTATE_REFRESH_TOKENS=True, on reçoit un nouveau refresh token
         if response.status_code == 200 and response.data.get('refresh'):
             new_refresh_token = response.data['refresh']
+            secure_cookie = not settings.DEBUG
+            samesite_policy = 'None' if secure_cookie else 'Lax'
             response.set_cookie(
                 'refresh_token',
                 new_refresh_token,
                 httponly=True,
-                samesite='Lax',
-                secure=False,  # Mettre à True en production
+                samesite=samesite_policy,
+                secure=secure_cookie,
                 max_age=24 * 60 * 60
             )
             # On ne renvoie pas le refresh token dans la réponse JSON
@@ -823,6 +825,7 @@ class CookieTokenRefreshView(TokenRefreshView):
     
 
 class LogoutView(APIView):
+    # ... (rest of the code remains the same)
     permission_classes = (IsAuthenticated,)
     
     def post(self, request):
@@ -863,7 +866,7 @@ class RequestPasswordResetView(APIView):
             token = signer.sign(user.pk)
             
             # URL qui pointe vers le frontend
-            reset_url = f"http://localhost:8080/reset-password?token={token}"
+            reset_url = f"{settings.FRONTEND_URL}/reset-password?token={token}"
             
             # Nom à afficher dans l'email
             display_name = (user.get_full_name() or user.username or user.email)
