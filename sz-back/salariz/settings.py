@@ -24,6 +24,9 @@ DEBUG = _env_bool('DEBUG', True)
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost').split(',')
 
+# Frontend base URL used for building verification/reset links and payment return URLs
+# Example: https://sz-purple.onrender.com
+FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:8080').rstrip('/')
 
 # Application definition
 

@@ -57,7 +57,7 @@ class RegisterView(generics.CreateAPIView):
         signer = TimestampSigner()
         token = signer.sign(user.pk)
         # URL qui pointe directement vers le frontend avec redirection automatique
-        verification_url = f"http://localhost:8080/verify-email?redirect_token={token}"
+        verification_url = f"{settings.FRONTEND_URL}/verify-email?redirect_token={token}"
         
         # Nom à afficher dans l'email
         display_name = (user.get_full_name() or user.username or user.email)
@@ -427,7 +427,7 @@ class ResendVerificationView(APIView):
             # Renvoyer l'email de vérification
             signer = TimestampSigner()
             token = signer.sign(user.pk)
-            verification_url = f"http://localhost:8080/verify-email?redirect_token={token}"
+            verification_url = f"{settings.FRONTEND_URL}/verify-email?redirect_token={token}"
             
             # Nom à afficher dans l'email
             display_name = (user.get_full_name() or user.username or user.email)
@@ -863,7 +863,7 @@ class RequestPasswordResetView(APIView):
             token = signer.sign(user.pk)
             
             # URL qui pointe vers le frontend
-            reset_url = f"http://localhost:8080/reset-password?token={token}"
+            reset_url = f"{settings.FRONTEND_URL}/reset-password?token={token}"
             
             # Nom à afficher dans l'email
             display_name = (user.get_full_name() or user.username or user.email)
