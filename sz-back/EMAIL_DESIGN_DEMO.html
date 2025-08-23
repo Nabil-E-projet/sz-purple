@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎯 Nouveau Design Email Salariz - Démonstration</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8fafc;
+        }
+        .demo-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+        .demo-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 30px;
+            text-align: center;
+            color: white;
+        }
+        .demo-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .demo-subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            margin: 0;
+        }
+        .demo-content {
+            padding: 40px 30px;
+        }
+        .demo-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background-color: #f8fafc;
+        }
+        .demo-section h3 {
+            color: #2d3748;
+            margin-top: 0;
+        }
+        .email-preview {
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .email-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px 20px;
+            text-align: center;
+            color: white;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .email-logo {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .email-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .email-content {
+            padding: 20px;
+        }
+        .email-greeting {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
+        .email-message {
+            font-size: 14px;
+            color: #4a5568;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        .email-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            margin: 15px 0;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+        .email-info-box {
+            background-color: #f7fafc;
+            border-left: 3px solid #667eea;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 6px 6px 0;
+        }
+        .email-info-title {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        .email-info-text {
+            color: #4a5568;
+            margin: 0;
+            font-size: 13px;
+        }
+        .email-footer {
+            background-color: #f8fafc;
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid #e2e8f0;
+            margin-top: 20px;
+        }
+        .email-footer-text {
+            color: #718096;
+            font-size: 12px;
+            margin: 0;
+        }
+        .features-list {
+            list-style: none;
+            padding: 0;
+        }
+        .features-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .features-list li:last-child {
+            border-bottom: none;
+        }
+        .feature-icon {
+            margin-right: 10px;
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="demo-header">
+            <div class="demo-title">🎯 Nouveau Design Email Salariz</div>
+            <div class="demo-subtitle">Emails professionnels et modernes pour vos utilisateurs</div>
+        </div>
+        
+        <div class="demo-content">
+            <div class="demo-section">
+                <h3>✨ Améliorations apportées</h3>
+                <ul class="features-list">
+                    <li><span class="feature-icon">🎨</span> Design HTML moderne et responsive</li>
+                    <li><span class="feature-icon">📱</span> Compatible mobile et desktop</li>
+                    <li><span class="feature-icon">🎯</span> Bouton d'action clair et visible</li>
+                    <li><span class="feature-icon">🎯</span> Mise en avant de l'analyse intelligente</li>
+                    <li><span class="feature-icon">⏰</span> Informations claires sur la validité</li>
+                    <li><span class="feature-icon">📧</span> Fallback texte brut pour compatibilité</li>
+                </ul>
+            </div>
+
+            <div class="demo-section">
+                <h3>📧 Aperçu de l'email de vérification</h3>
+                <div class="email-preview">
+                    <div class="email-header">
+                        <div class="email-logo">🎯 Salariz</div>
+                        <div class="email-subtitle">Analyse intelligente de fiches de paie</div>
+                    </div>
+                    
+                    <div class="email-content">
+                        <div class="email-greeting">Bonjour ! 👋</div>
+                        
+                        <div class="email-message">
+                            <p>Nous sommes ravis de vous accueillir sur <strong>Salariz</strong> !</p>
+                            <p>Votre compte a été créé avec succès. Pour commencer à analyser vos fiches de paie et détecter automatiquement les anomalies, vous devez d'abord vérifier votre adresse email.</p>
+                        </div>
+                        
+                        <div style="text-align: center;">
+                            <a href="#" class="email-button">✅ Vérifier mon email</a>
+                        </div>
+                        
+                        <div class="email-info-box">
+                            <div class="email-info-title">🎯 Analyse intelligente</div>
+                            <div class="email-info-text">
+                                Salariz analyse vos fiches de paie avec une IA avancée pour détecter automatiquement 
+                                les anomalies et assurer la conformité avec les conventions collectives.
+                            </div>
+                        </div>
+                        
+                        <div class="email-info-box">
+                            <div class="email-info-title">⏰ Lien de vérification</div>
+                            <div class="email-info-text">
+                                Ce lien est valable <strong>24 heures</strong>. 
+                                Si vous ne pouvez pas cliquer sur le bouton, copiez cette URL dans votre navigateur :
+                            </div>
+                            <div style="background: #f1f5f9; padding: 10px; border-radius: 4px; margin-top: 8px; font-family: monospace; font-size: 12px; word-break: break-all; color: #475569;">
+                                http://localhost:8080/verify-email?redirect_token=example-token
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="email-footer">
+                        <div class="email-footer-text">
+                            <p>Merci de faire confiance à Salariz pour l'analyse de vos fiches de paie.</p>
+                            <p>© 2025 Salariz - Tous droits réservés</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="demo-section">
+                <h3>🔄 Email de renvoi de vérification</h3>
+                <p>Un design similaire mais adapté pour les utilisateurs qui demandent un nouveau lien de vérification.</p>
+                <ul class="features-list">
+                    <li><span class="feature-icon">🔄</span> Titre adapté : "Nouveau lien de vérification"</li>
+                    <li><span class="feature-icon">✅</span> Bouton : "Activer mon compte"</li>
+                    <li><span class="feature-icon">📝</span> Message personnalisé pour le renvoi</li>
+                </ul>
+            </div>
+
+            <div class="demo-section">
+                <h3>🚀 Avantages techniques</h3>
+                <ul class="features-list">
+                    <li><span class="feature-icon">📧</span> Utilise <code>EmailMultiAlternatives</code> pour HTML + texte</li>
+                    <li><span class="feature-icon">🔄</span> Fallback automatique vers l'ancien système si erreur</li>
+                                    <li><span class="feature-icon">🎨</span> CSS inline pour compatibilité maximale des clients mail</li>
+                <li><span class="feature-icon">📱</span> Design responsive avec media queries</li>
+                <li><span class="feature-icon">🔗</span> URLs correctes pointant vers le frontend (localhost:8080)</li>
+                <li><span class="feature-icon">✨</span> Style cohérent inspiré de la page d'analyse</li>
+                </ul>
+            </div>
+
+            <div class="demo-section">
+                <h3>📋 Comment tester</h3>
+                <ol>
+                    <li>Créez un nouvel utilisateur via l'API d'inscription</li>
+                    <li>Vérifiez votre boîte mail (spam inclus)</li>
+                    <li>Cliquez sur le bouton "Vérifier mon email"</li>
+                    <li>Vous devriez voir la belle page frontend au lieu de l'API brute</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
