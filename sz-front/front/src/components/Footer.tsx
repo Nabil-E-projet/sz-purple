@@ -1,10 +1,11 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { FileText, Shield, BarChart3, Upload, Eye, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
 
 const Footer = () => {
   const { isAuthenticated } = useAuth();
+  const location = useLocation();
 
   return (
     <footer className="mt-16 border-t border-border/40">
@@ -14,9 +15,18 @@ const Footer = () => {
             
             {/* Brand & Description */}
             <div className="space-y-4">
-              <Link to="/home" className="flex items-center gap-3 group">
-                <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
-                  <FileText className="w-5 h-5 text-primary-foreground" />
+              <Link
+                to="/home"
+                className="flex items-center gap-3 group"
+                onClick={(e) => {
+                  if (location.pathname === '/home') {
+                    e.preventDefault();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }
+                }}
+              >
+                <div className="w-10 h-10 shadow-lg group-hover:scale-105 transition-transform overflow-hidden">
+                  <img src="/favicon_salariz.svg" alt="Salariz" className="w-full h-full object-cover" />
                 </div>
                 <div>
                   <span className="font-bold text-xl bg-gradient-primary bg-clip-text text-transparent">

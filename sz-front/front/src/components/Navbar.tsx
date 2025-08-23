@@ -59,9 +59,18 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <Link to="/home" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
-                <FileText className="w-5 h-5 text-primary-foreground" />
+            <Link
+              to="/home"
+              className="flex items-center space-x-2 group"
+              onClick={(e) => {
+                if (location.pathname === '/home') {
+                  e.preventDefault();
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+              }}
+            >
+              <div className="w-8 h-8 shadow-lg group-hover:scale-105 transition-transform overflow-hidden">
+                <img src="/favicon_salariz.svg" alt="Salariz" className="w-full h-full object-cover" />
               </div>
               <span className="font-bold text-xl bg-gradient-primary bg-clip-text text-transparent">
                 Salariz
