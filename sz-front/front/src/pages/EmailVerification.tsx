@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { api } from '@/lib/api';
+import { getFrenchError } from '@/lib/errorUtils';
 
 const EmailVerification = () => {
   const [email, setEmail] = useState<string>('');
@@ -36,11 +37,8 @@ const EmailVerification = () => {
       setSuccess('Un nouvel email de vérification a été envoyé ! Vérifiez votre boîte de réception.');
       
     } catch (err: any) {
-      if (err.response?.status === 404) {
-        setError('Aucun compte non vérifié trouvé avec cette adresse email.');
-      } else {
-        setError(err.response?.data?.error || 'Erreur lors de l\'envoi de l\'email de vérification.');
-      }
+      const t = getFrenchError(err);
+      setError(t.description || 'Erreur lors de l\'envoi de l\'email de vérification.');
     } finally {
       setLoading(false);
     }

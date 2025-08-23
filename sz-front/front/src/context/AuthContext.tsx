@@ -81,7 +81,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       api.logout().catch(() => {});
       
       // Force immediate redirect to homepage - this happens NOW
-      window.location.href = '/home';
+      window.location.href = '/';
     },
     refresh: async () => {
       const refreshed = await api.refreshAccessToken();

@@ -13,7 +13,7 @@ const Navbar = () => {
     // Clear token immediately
     localStorage.removeItem('accessToken');
     // Force immediate redirect - don't wait for anything
-    window.location.href = '/home';
+    window.location.href = '/';
   };
   const [credits, setCredits] = useState<number | null>(null);
 
