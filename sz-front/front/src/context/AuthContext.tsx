@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 
 type User = {
@@ -25,6 +26,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const bootstrap = async () => {
@@ -68,8 +70,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     },
     logout: async () => {
       await api.logout();
+      // Clear all cached queries to avoid showing stale authenticated data
+      try { queryClient.clear(); } catch { /* no-op */ }
       setUser(null);
-      navigate('/login');
+      navigate('/login', { replace: true });
     },
     refresh: async () => {
       const refreshed = await api.refreshAccessToken();
