@@ -8,7 +8,6 @@ from rest_framework import permissions, status
 from .models import Order, CreditTransaction
 from django.contrib.auth import get_user_model
 import uuid
-from django.conf import settings
 
 User = get_user_model()
 
@@ -46,8 +45,8 @@ class PayPalExpressView(APIView):
             'item_name': f'Salariz - {credits} crédit(s)',
             'amount': amount,
             'currency_code': 'EUR',
-            'return': f"{settings.FRONTEND_URL}/?payment=success",
-            'cancel_return': f"{settings.FRONTEND_URL}/?payment=cancel",
+            'return': 'http://localhost:8080/?payment=success',
+            'cancel_return': 'http://localhost:8080/?payment=cancel',
             'notify_url': request.build_absolute_uri('/api/billing/paypal-ipn/'),
             'custom': str(order.id),
         }

@@ -2,7 +2,6 @@ import os
 from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
-from urllib.parse import urlparse
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,12 +23,6 @@ def _env_bool(name: str, default: bool) -> bool:
 DEBUG = _env_bool('DEBUG', True)
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost').split(',')
-
-# Frontend base URL used for building verification/reset links and payment return URLs
-# Example: https://sz-purple.onrender.com
-FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:8080').rstrip('/')
-_p = urlparse(FRONTEND_URL)
-FRONTEND_ORIGIN = f"{_p.scheme}://{_p.netloc}" if _p.scheme and _p.netloc else FRONTEND_URL
 
 
 # Application definition
@@ -157,8 +150,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.CustomUser'
 
 # CORS configuration
-# When using cookies (credentials), you cannot use wildcard origins. Restrict in production.
-CORS_ALLOW_ALL_ORIGINS = DEBUG
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_METHODS = [
     'DELETE',
     'GET',
@@ -179,11 +171,6 @@ CORS_ALLOW_HEADERS = [
     'x-requested-with',
 ]
 CORS_ALLOW_CREDENTIALS = True
-
-if not DEBUG:
-    CORS_ALLOWED_ORIGINS = [FRONTEND_ORIGIN]
-    # CSRF is not used for JWT auth, but trust the frontend origin to be safe with cookies
-    CSRF_TRUSTED_ORIGINS = [FRONTEND_ORIGIN]
 
 # REST Framework settings
 REST_FRAMEWORK = {

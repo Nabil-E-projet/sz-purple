@@ -10,8 +10,6 @@ import {
   LogIn
 } from 'lucide-react';
 
-import { api } from '@/lib/api';
-
 const EmailVerificationResult = () => {
   const [searchParams] = useSearchParams();
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
@@ -34,15 +32,25 @@ const EmailVerificationResult = () => {
     if (redirectToken) {
       const verifyEmail = async () => {
         try {
-          const data = await api.get<{ message?: string; error?: string }>(
-            `/api/verify-email/?token=${encodeURIComponent(redirectToken)}`
-          );
-          setStatus('success');
-          setMessage(data?.message || 'Email vérifié avec succès');
-        } catch (err: any) {
+          const response = await fetch(`http://localhost:8000/api/verify-email/?token=${encodeURIComponent(redirectToken)}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            setStatus('success');
+            setMessage(data.message || 'Email vérifié avec succès');
+          } else {
+            setStatus('error');
+            setMessage(data.error || 'Erreur lors de la vérification');
+          }
+        } catch (error) {
           setStatus('error');
-          const msg = err?.error?.error || err?.error?.message || 'Erreur lors de la vérification';
-          setMessage(msg);
+          setMessage('Erreur de connexion lors de la vérification');
         }
       };
 
@@ -72,15 +80,25 @@ const EmailVerificationResult = () => {
         // Si pas de statut dans l'URL, faire l'appel API classique
         const verifyEmail = async () => {
           try {
-            const data = await api.get<{ message?: string; error?: string }>(
-              `/api/verify-email/?token=${encodeURIComponent(actualToken)}`
-            );
-            setStatus('success');
-            setMessage(data?.message || 'Email vérifié avec succès');
-          } catch (err: any) {
+            const response = await fetch(`http://localhost:8000/api/verify-email/?token=${encodeURIComponent(actualToken)}`, {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+              setStatus('success');
+              setMessage(data.message || 'Email vérifié avec succès');
+            } else {
+              setStatus('error');
+              setMessage(data.error || 'Erreur lors de la vérification');
+            }
+          } catch (error) {
             setStatus('error');
-            const msg = err?.error?.error || err?.error?.message || 'Erreur lors de la vérification';
-            setMessage(msg);
+            setMessage('Erreur de connexion lors de la vérification');
           }
         };
 
