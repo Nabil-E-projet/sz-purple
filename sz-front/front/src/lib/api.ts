@@ -153,6 +153,14 @@ class ApiClient {
     return this.get('/api/profile/');
   }
 
+  public updateProfile<T = any>(data: { username?: string; first_name?: string; last_name?: string }): Promise<T> {
+    return this.patch('/api/profile/', data);
+  }
+
+  public resendVerificationEmail<T = any>(email: string): Promise<T> {
+    return this.post('/api/resend-verification/', { email });
+  }
+
   // Billing
   public getMyCredits<T = { credits: number }>(): Promise<T> {
     return this.get('/api/billing/me/credits/');

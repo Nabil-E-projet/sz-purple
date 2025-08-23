@@ -13,6 +13,9 @@ import AnalysisDetails from "./pages/AnalysisDetails";
 import NotFound from "./pages/NotFound";
 import BuyCredits from "./pages/BuyCredits";
 import PaymentSuccess from "./pages/PaymentSuccess";
+import Profile from "./pages/Profile";
+import EmailVerification from "./pages/EmailVerification";
+import EmailVerificationResult from "./pages/EmailVerificationResult";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import WelcomeAnimation from "./components/WelcomeAnimation";
@@ -34,6 +37,8 @@ const App = () => (
                 <Route path="/" element={<PaymentSuccess />} />
                 <Route path="/home" element={<Homepage />} />
                 <Route path="/login" element={<LoginPage />} />
+                <Route path="/email-verification" element={<EmailVerification />} />
+                <Route path="/verify-email" element={<EmailVerificationResult />} />
                 <Route
                   path="/upload"
                   element={
@@ -63,6 +68,14 @@ const App = () => (
                   element={
                     <ProtectedRoute>
                       <AnalysisDetails />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/profile"
+                  element={
+                    <ProtectedRoute>
+                      <Profile />
                     </ProtectedRoute>
                   }
                 />

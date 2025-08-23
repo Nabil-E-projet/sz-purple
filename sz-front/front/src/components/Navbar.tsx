@@ -92,9 +92,9 @@ const Navbar = () => {
                     Crédits: {credits}
                   </Link>
                 )}
-                <div className="w-8 h-8 rounded-full bg-gradient-primary flex items-center justify-center">
+                <Link to="/profile" className="w-8 h-8 rounded-full bg-gradient-primary flex items-center justify-center hover:opacity-80 transition-opacity">
                   <User className="w-4 h-4 text-primary-foreground" />
-                </div>
+                </Link>
                 <Button variant="ghost" size="sm" onClick={handleLogout}>
                   <LogOut className="w-4 h-4 mr-2" />
                   Déconnexion
@@ -148,18 +148,30 @@ const Navbar = () => {
               
               <div className="pt-4 border-t border-border">
                 {isAuthenticated ? (
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    onClick={async () => {
-                      await handleLogout();
-                      setIsOpen(false);
-                    }}
-                    className="w-full justify-start px-3 py-2"
-                  >
-                    <LogOut className="w-4 h-4 mr-2" />
-                    Déconnexion
-                  </Button>
+                  <div className="space-y-1">
+                    <Link
+                      to="/profile"
+                      className="block px-3 py-2 rounded-md text-base font-medium text-foreground hover:text-primary hover:bg-primary/5 transition-all duration-200"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <div className="flex items-center space-x-2">
+                        <User className="w-4 h-4" />
+                        <span>Mon Profil</span>
+                      </div>
+                    </Link>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={async () => {
+                        await handleLogout();
+                        setIsOpen(false);
+                      }}
+                      className="w-full justify-start px-3 py-2"
+                    >
+                      <LogOut className="w-4 h-4 mr-2" />
+                      Déconnexion
+                    </Button>
+                  </div>
                 ) : (
                   <>
                     <Link

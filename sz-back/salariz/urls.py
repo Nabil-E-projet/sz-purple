@@ -3,7 +3,7 @@ from django.urls import path,include
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework_simplejwt.views import TokenRefreshView
-from users.views import RegisterView, UserProfileView, EmailVerificationView, CustomTokenObtainPairView, LogoutView, CookieTokenRefreshView
+from users.views import RegisterView, UserProfileView, EmailVerificationView, ResendVerificationView, CustomTokenObtainPairView, LogoutView, CookieTokenRefreshView
 from django.http import HttpResponse
 
 # Vue simple pour le health check
@@ -19,6 +19,7 @@ urlpatterns = [
     path('api/register/', RegisterView.as_view(), name='register'),
     path('api/profile/', UserProfileView.as_view(), name='profile'),
     path('api/verify-email/', EmailVerificationView.as_view(), name='verify-email'),
+    path('api/resend-verification/', ResendVerificationView.as_view(), name='resend-verification'),
     path('api/logout/', LogoutView.as_view(), name='logout'),
     # Documents endpoints
     path('api/payslips/', include('documents.urls')),

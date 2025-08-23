@@ -20,20 +20,57 @@ class RegisterView(generics.CreateAPIView):
     permission_classes = (AllowAny,)
     serializer_class = UserCreateSerializer
 
+    def create(self, request, *args, **kwargs):
+        # Vérifier si un utilisateur non vérifié existe déjà
+        email = request.data.get('email')
+        username = request.data.get('username')
+        
+        if email:
+            existing_user = User.objects.filter(email=email, is_active=False, is_email_verified=False).first()
+            if existing_user:
+                # Renvoyer l'email de vérification pour l'utilisateur existant
+                self.send_verification_email(existing_user)
+                return Response({
+                    "message": "Un compte avec cette adresse email existe déjà mais n'est pas vérifié. Un nouvel email de vérification a été envoyé.",
+                    "email": email
+                }, status=status.HTTP_200_OK)
+        
+        if username:
+            existing_user = User.objects.filter(username=username, is_active=False, is_email_verified=False).first()
+            if existing_user:
+                # Renvoyer l'email de vérification pour l'utilisateur existant
+                self.send_verification_email(existing_user)
+                return Response({
+                    "message": "Un compte avec ce nom d'utilisateur existe déjà mais n'est pas vérifié. Un nouvel email de vérification a été envoyé.",
+                    "email": existing_user.email
+                }, status=status.HTTP_200_OK)
+
+        return super().create(request, *args, **kwargs)
+
     def perform_create(self, serializer):
         user = serializer.save()
         user.is_active = False  # désactiver jusqu'à confirmation de l'email
         user.save()
+        self.send_verification_email(user)
+    
+    def send_verification_email(self, user):
         signer = TimestampSigner()
         token = signer.sign(user.pk)
-        verification_url = f"http://localhost:8000/api/verify-email/?token={token}"
-        send_mail(
-            'Vérifiez votre adresse email',
-            f'Cliquez sur ce lien pour valider votre adresse email : {verification_url}',
-            settings.DEFAULT_FROM_EMAIL,
-            [user.email],
-            fail_silently=False,
-        )
+        # URL qui pointe directement vers le frontend avec redirection automatique
+        verification_url = f"http://localhost:8080/verify-email?redirect_token={token}"
+        try:
+            send_mail(
+                'Vérifiez votre adresse email - Salariz',
+                f'Bonjour,\n\nMerci de vous être inscrit sur Salariz !\n\nPour activer votre compte, cliquez sur ce lien :\n{verification_url}\n\nCe lien est valable 24 heures.\n\nÀ bientôt sur Salariz !',
+                settings.DEFAULT_FROM_EMAIL,
+                [user.email],
+                fail_silently=False,
+            )
+            print(f"Email de vérification envoyé à {user.email}")
+        except Exception as e:
+            print(f"Erreur lors de l'envoi de l'email: {e}")
+            # Ne pas faire échouer l'inscription à cause de l'email
+            pass
 
 
 class EmailVerificationView(APIView):
@@ -51,8 +88,7 @@ class EmailVerificationView(APIView):
             user.is_active = True
             user.is_email_verified = True
             user.save()
-#           frontend_url = "http://localhost:3000/verification-success"
-#           return redirect(frontend_url)   
+            
             return Response({"message": "Email vérifié avec succès"}, status=status.HTTP_200_OK)
         except SignatureExpired:
             return Response({"error": "Le token a expiré"}, status=status.HTTP_400_BAD_REQUEST)
@@ -60,6 +96,46 @@ class EmailVerificationView(APIView):
             return Response({"error": "Token invalide"}, status=status.HTTP_400_BAD_REQUEST)
         except User.DoesNotExist:
             return Response({"error": "L'utilisateur n'existe pas"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ResendVerificationView(APIView):
+    permission_classes = [AllowAny]
+    
+    def post(self, request):
+        email = request.data.get('email')
+        if not email:
+            return Response({"error": "L'adresse email est requise"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            user = User.objects.get(email=email, is_active=False, is_email_verified=False)
+            
+            # Renvoyer l'email de vérification
+            signer = TimestampSigner()
+            token = signer.sign(user.pk)
+            verification_url = f"http://localhost:8080/verify-email?redirect_token={token}"
+            
+            send_mail(
+                'Vérifiez votre adresse email - Salariz',
+                f'Bonjour,\n\nVoici un nouveau lien de vérification pour activer votre compte Salariz :\n{verification_url}\n\nCe lien est valable 24 heures.\n\nÀ bientôt sur Salariz !',
+                settings.DEFAULT_FROM_EMAIL,
+                [user.email],
+                fail_silently=False,
+            )
+            
+            return Response({
+                "message": "Un nouvel email de vérification a été envoyé.",
+                "email": email
+            }, status=status.HTTP_200_OK)
+            
+        except User.DoesNotExist:
+            return Response({
+                "error": "Aucun compte non vérifié trouvé avec cette adresse email."
+            }, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({
+                "error": "Erreur lors de l'envoi de l'email de vérification."
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
         
 class UserProfileView(generics.RetrieveUpdateAPIView):
     serializer_class = UserSerializer

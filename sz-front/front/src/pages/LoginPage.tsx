@@ -42,8 +42,41 @@ const LoginPage = () => {
         description: "Vérifiez votre email pour activer votre compte",
       });
     } catch (err: any) {
+      // Gestion spéciale pour les comptes non vérifiés
+      if (err?.response?.status === 200 && err?.response?.data?.message) {
+        toast({
+          title: 'Email de vérification envoyé',
+          description: err.response.data.message,
+        });
+        // Rediriger vers la page de vérification d'email
+        navigate('/email-verification');
+        return;
+      }
+      
+      // Gestion des erreurs de validation
+      const errorData = err?.response?.data;
+      if (errorData && typeof errorData === 'object') {
+        const errors = [];
+        if (errorData.username) errors.push(`Nom d'utilisateur: ${errorData.username.join(', ')}`);
+        if (errorData.email) errors.push(`Email: ${errorData.email.join(', ')}`);
+        if (errorData.password) errors.push(`Mot de passe: ${errorData.password.join(', ')}`);
+        
+        if (errors.length > 0) {
+          toast({
+            title: 'Erreur de validation',
+            description: errors.join(' | '),
+            variant: 'destructive'
+          });
+          return;
+        }
+      }
+      
       const msg = err?.error || 'Erreur lors de la création du compte';
-      toast({ title: 'Erreur', description: typeof msg === 'string' ? msg : JSON.stringify(msg) });
+      toast({ 
+        title: 'Erreur', 
+        description: typeof msg === 'string' ? msg : JSON.stringify(msg),
+        variant: 'destructive'
+      });
     } finally {
       setIsLoading(false);
     }
@@ -214,15 +247,23 @@ const LoginPage = () => {
               </TabsContent>
             </Tabs>
 
-            <div className="mt-6 text-center text-sm text-muted-foreground">
-              En continuant, vous acceptez nos{' '}
-              <Link to="/terms" className="text-primary hover:underline">
-                conditions d'utilisation
-              </Link>{' '}
-              et notre{' '}
-              <Link to="/privacy" className="text-primary hover:underline">
-                politique de confidentialité
-              </Link>
+            <div className="mt-6 text-center space-y-3">
+              <div className="text-sm text-muted-foreground">
+                <Link to="/email-verification" className="text-primary hover:underline font-medium">
+                  📧 Problème avec la vérification d'email ?
+                </Link>
+              </div>
+              
+              <div className="text-sm text-muted-foreground">
+                En continuant, vous acceptez nos{' '}
+                <Link to="/terms" className="text-primary hover:underline">
+                  conditions d'utilisation
+                </Link>{' '}
+                et notre{' '}
+                <Link to="/privacy" className="text-primary hover:underline">
+                  politique de confidentialité
+                </Link>
+              </div>
             </div>
           </CardContent>
         </Card>
