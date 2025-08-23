@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { api } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
+import { getFrenchError } from '@/lib/errorUtils';
 import { motion } from 'framer-motion';
 import { 
   CreditCard, 
@@ -52,7 +53,8 @@ const BuyCredits = () => {
         throw new Error('URL de paiement indisponible');
       }
     } catch (e: any) {
-      toast({ title: 'Erreur', description: e?.error?.message || e?.message || 'Paiement indisponible' });
+      const t = getFrenchError(e);
+      toast({ title: t.title || 'Erreur', description: t.description || 'Paiement indisponible', variant: t.variant });
     } finally {
       setLoading(null);
     }
@@ -68,9 +70,11 @@ const BuyCredits = () => {
       // Forcer le refresh des crédits dans la navbar
       window.dispatchEvent(new CustomEvent('creditsUpdated'));
     } catch (e: any) {
+      const t = getFrenchError(e);
       toast({ 
-        title: 'Déjà réclamé', 
-        description: e?.error?.message || 'Vous avez déjà réclamé votre crédit gratuit aujourd\'hui' 
+        title: t.title || 'Déjà réclamé', 
+        description: t.description || 'Vous avez déjà réclamé votre crédit gratuit aujourd\'hui',
+        variant: t.variant,
       });
     } finally {
       setLoading(null);
@@ -87,7 +91,8 @@ const BuyCredits = () => {
       // Forcer le refresh des crédits dans la navbar
       window.dispatchEvent(new CustomEvent('creditsUpdated'));
     } catch (e: any) {
-      toast({ title: 'Erreur test', description: e?.error?.message || 'Simulation échouée' });
+      const t = getFrenchError(e);
+      toast({ title: t.title || 'Erreur test', description: t.description || 'Simulation échouée', variant: t.variant });
     } finally {
       setLoading(null);
     }

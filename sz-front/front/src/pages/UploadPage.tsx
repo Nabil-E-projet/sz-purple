@@ -14,6 +14,7 @@ import { fr } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { api } from '@/lib/api';
+import { getFrenchError, isPaymentRequired } from '@/lib/errorUtils';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const UploadPage = () => {
@@ -96,7 +97,8 @@ const UploadPage = () => {
 				});
 				setConventions(sortedData);
 			} catch (e: any) {
-				toast({ title: 'Erreur', description: 'Impossible de charger les conventions collectives' });
+				const t = getFrenchError(e);
+				toast({ title: t.title || 'Erreur', description: t.description || 'Impossible de charger les conventions collectives', variant: t.variant });
 			} finally {
 				setLoadingConventions(false);
 			}
@@ -234,13 +236,13 @@ const UploadPage = () => {
 			toast({ title: 'Upload terminé', description: 'Analyse lancée automatiquement' });
 			navigate('/dashboard');
 		} catch (err: any) {
-			if (err?.status === 402 || err?.error?.code === 'payment_required') {
-				toast({ title: 'Crédits insuffisants', description: "Veuillez acheter des crédits pour lancer l'analyse." });
+			if (isPaymentRequired(err)) {
+				toast({ title: 'Crédits insuffisants', description: "Veuillez acheter des crédits pour lancer l'analyse.", variant: 'destructive' });
 				navigate('/buy-credits');
 				return;
 			}
-			const msg = err?.error || err?.message || 'Erreur lors de l\'analyse';
-			toast({ title: 'Erreur', description: typeof msg === 'string' ? msg : JSON.stringify(msg) });
+			const t = getFrenchError(err);
+			toast({ title: t.title || 'Erreur', description: t.description || "Une erreur est survenue. Veuillez réessayer.", variant: t.variant });
 		} finally {
 			setIsAnalyzing(false);
 		}

@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FileText, Mail, Lock, User, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/AuthContext';
+import { getFrenchError } from '@/lib/errorUtils';
 
 const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -25,8 +26,8 @@ const LoginPage = () => {
       toast({ title: "Connexion réussie", description: "Bienvenue sur Salariz" });
       navigate('/dashboard');
     } catch (err: any) {
-      const msg = err?.error?.detail || err?.error?.message || 'Identifiants invalides';
-      toast({ title: 'Erreur de connexion', description: String(msg) });
+      const t = getFrenchError(err);
+      toast({ title: t.title || 'Erreur de connexion', description: t.description || 'Identifiants invalides', variant: t.variant });
     } finally {
       setIsLoading(false);
     }
@@ -42,40 +43,11 @@ const LoginPage = () => {
         description: "Vérifiez votre email pour activer votre compte",
       });
     } catch (err: any) {
-      // Gestion spéciale pour les comptes non vérifiés
-      if (err?.response?.status === 200 && err?.response?.data?.message) {
-        toast({
-          title: 'Email de vérification envoyé',
-          description: err.response.data.message,
-        });
-        // Rediriger vers la page de vérification d'email
-        navigate('/email-verification');
-        return;
-      }
-      
-      // Gestion des erreurs de validation
-      const errorData = err?.response?.data;
-      if (errorData && typeof errorData === 'object') {
-        const errors = [];
-        if (errorData.username) errors.push(`Nom d'utilisateur: ${errorData.username.join(', ')}`);
-        if (errorData.email) errors.push(`Email: ${errorData.email.join(', ')}`);
-        if (errorData.password) errors.push(`Mot de passe: ${errorData.password.join(', ')}`);
-        
-        if (errors.length > 0) {
-          toast({
-            title: 'Erreur de validation',
-            description: errors.join(' | '),
-            variant: 'destructive'
-          });
-          return;
-        }
-      }
-      
-      const msg = err?.error || 'Erreur lors de la création du compte';
-      toast({ 
-        title: 'Erreur', 
-        description: typeof msg === 'string' ? msg : JSON.stringify(msg),
-        variant: 'destructive'
+      const t = getFrenchError(err);
+      toast({
+        title: t.title || 'Erreur',
+        description: t.description || 'Erreur lors de la création du compte',
+        variant: t.variant,
       });
     } finally {
       setIsLoading(false);

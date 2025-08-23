@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Lock, ArrowLeft, KeyRound, CheckCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { apiClient } from '@/api/apiClient';
+import { getFrenchError } from '@/lib/errorUtils';
 
 const ResetPassword = () => {
   const [searchParams] = useSearchParams();
@@ -62,25 +63,11 @@ const ResetPassword = () => {
       });
 
     } catch (err: any) {
-      let errorMsg = 'Une erreur est survenue';
-      
-      if (err?.response?.data) {
-        const errorData = err.response.data;
-        if (errorData.error) {
-          errorMsg = errorData.error;
-        } else if (errorData.new_password) {
-          errorMsg = `Mot de passe: ${errorData.new_password.join(', ')}`;
-        } else if (errorData.confirm_password) {
-          errorMsg = `Confirmation: ${errorData.confirm_password.join(', ')}`;
-        }
-      } else if (err?.error) {
-        errorMsg = err.error;
-      }
-      
+      const t = getFrenchError(err);
       toast({
-        title: "Erreur",
-        description: errorMsg,
-        variant: "destructive"
+        title: t.title || 'Erreur',
+        description: t.description || 'Une erreur est survenue',
+        variant: t.variant,
       });
     } finally {
       setIsLoading(false);
