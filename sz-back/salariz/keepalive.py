@@ -2,13 +2,15 @@ import threading
 import time
 import requests
 import logging
+import os
 
 logger = logging.getLogger('salariz.keepalive')
 
 class KeepAliveThread(threading.Thread):
     def __init__(self, *args, **kwargs):
         self.interval = kwargs.pop('interval', 840)  # 14 minutes (en secondes)
-        self.host = kwargs.pop('host', 'https://salariz-backend-1.onrender.com')
+        host_env = os.environ['RENDER_EXTERNAL_URL']
+        self.host = kwargs.pop('host', host_env.rstrip('/'))
         super().__init__(*args, **kwargs)
         self.daemon = True  # Le thread s'arrêtera quand le programme principal s'arrête
 
