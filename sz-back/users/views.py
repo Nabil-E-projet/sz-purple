@@ -59,6 +59,9 @@ class RegisterView(generics.CreateAPIView):
         # URL qui pointe directement vers le frontend avec redirection automatique
         verification_url = f"http://localhost:8080/verify-email?redirect_token={token}"
         
+        # Nom à afficher dans l'email
+        display_name = (user.get_full_name() or user.username or user.email)
+        
         # Email HTML moderne avec glassmorphism - cohérent avec la DA du site
         html_message = f"""
         <!DOCTYPE html>
@@ -296,7 +299,7 @@ class RegisterView(generics.CreateAPIView):
                     </div>
                     
                     <div class="content">
-                        <div class="greeting">Bonjour ! <span class="sparkles">✨</span></div>
+                        <div class="greeting">Bonjour {display_name} ! <span class="sparkles">✨</span></div>
                         
                         <div class="message">
                             <p>Nous sommes <strong>ravis</strong> de vous accueillir sur Salariz !</p>
@@ -342,7 +345,7 @@ class RegisterView(generics.CreateAPIView):
         """
         
         # Version texte brut pour compatibilité
-        text_message = f"""Bonjour !
+        text_message = f"""Bonjour {display_name},
 
 Merci de vous être inscrit sur Salariz !
 
@@ -425,6 +428,9 @@ class ResendVerificationView(APIView):
             signer = TimestampSigner()
             token = signer.sign(user.pk)
             verification_url = f"http://localhost:8080/verify-email?redirect_token={token}"
+            
+            # Nom à afficher dans l'email
+            display_name = (user.get_full_name() or user.username or user.email)
             
             # Email HTML pour le renvoi
             html_message = f"""
@@ -663,7 +669,7 @@ class ResendVerificationView(APIView):
                         </div>
                         
                         <div class="content">
-                            <div class="greeting">Nouveau lien de vérification <span class="sparkles">🔄</span></div>
+                            <div class="greeting">Bonjour {display_name} ! <span class="sparkles">🔄</span></div>
                             
                             <div class="message">
                                 <p>Vous avez demandé un nouveau lien de vérification pour votre compte <strong>Salariz</strong>.</p>
@@ -701,7 +707,7 @@ class ResendVerificationView(APIView):
             """
             
             # Version texte brut pour compatibilité
-            text_message = f"""Bonjour,
+            text_message = f"""Bonjour {display_name},
 
 Voici un nouveau lien de vérification pour activer votre compte Salariz :
 {verification_url}
@@ -858,6 +864,9 @@ class RequestPasswordResetView(APIView):
             
             # URL qui pointe vers le frontend
             reset_url = f"http://localhost:8080/reset-password?token={token}"
+            
+            # Nom à afficher dans l'email
+            display_name = (user.get_full_name() or user.username or user.email)
             
             # Email HTML pour le reset de mot de passe
             html_message = f"""
@@ -1120,7 +1129,7 @@ class RequestPasswordResetView(APIView):
                         </div>
                         
                         <div class="content">
-                            <div class="greeting">Mot de passe oublié ? <span class="sparkles">🔑</span></div>
+                            <div class="greeting">Bonjour {display_name} ! <span class="sparkles">🔑</span></div>
                             
                             <div class="message">
                                 <p>Vous avez demandé à réinitialiser votre mot de passe pour votre compte <strong>Salariz</strong>.</p>
@@ -1166,7 +1175,7 @@ class RequestPasswordResetView(APIView):
             """
             
             # Version texte brut pour compatibilité
-            text_message = f"""Bonjour,
+            text_message = f"""Bonjour {display_name},
 
 Vous avez demandé à réinitialiser votre mot de passe pour votre compte Salariz.
 

@@ -9,6 +9,7 @@
 node_modules/
 sz-front/node_modules/
 sz-back/venv/
+../node_modules/
 
 # Build outputs
 sz-front/build/
