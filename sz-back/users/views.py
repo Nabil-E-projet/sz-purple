@@ -69,6 +69,8 @@ class RegisterView(generics.CreateAPIView):
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="format-detection" content="telephone=no">
             <title>Vérification de votre compte Salariz</title>
             <style>
                 body {{
@@ -364,8 +366,15 @@ Ce lien est valable 24 heures.
             email = EmailMultiAlternatives(
                 subject='🎯 Bienvenue sur Salariz - Vérifiez votre email',
                 body=text_message,
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                to=[user.email]
+                from_email='verify@salariz.com',
+                to=[user.email],
+                headers={
+                    'Reply-To': 'support@salariz.com',
+                    'X-Mailer': 'Salariz Platform',
+                    'X-Priority': '1',
+                    'Importance': 'high',
+                    'List-Unsubscribe': '<mailto:unsubscribe@salariz.com>'
+                }
             )
             email.attach_alternative(html_message, "text/html")
             email.send()
@@ -378,7 +387,7 @@ Ce lien est valable 24 heures.
                 send_mail(
                     'Vérifiez votre adresse email - Salariz',
                     text_message,
-                    settings.DEFAULT_FROM_EMAIL,
+                    'verify@salariz.com',
                     [user.email],
                     fail_silently=False,
                 )
@@ -439,6 +448,7 @@ class ResendVerificationView(APIView):
             <head>
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <meta http-equiv="X-UA-Compatible" content="IE=edge">
                 <title>Nouveau lien de vérification Salariz</title>
                 <style>
                     body {{
@@ -718,17 +728,14 @@ Ce lien est valable 24 heures.
             """
             
             try:
-                from django.core.mail import EmailMultiAlternatives
-                
-                # Créer l'email avec HTML et texte brut
-                email = EmailMultiAlternatives(
-                    subject='🔄 Nouveau lien de vérification Salariz',
-                    body=text_message,
-                    from_email=settings.DEFAULT_FROM_EMAIL,
-                    to=[user.email]
+                send_mail(
+                    'Nouveau lien de vérification Salariz',
+                    f'Bonjour {display_name},\n\nVoici votre nouveau lien de vérification : {verification_url}\n\nCe lien est valable 24 heures.\n\nCordialement,\nL\'équipe Salariz',
+                    'verify@salariz.com',
+                    [user.email],
+                    fail_silently=False,
+                    html_message=html_message
                 )
-                email.attach_alternative(html_message, "text/html")
-                email.send()
                 
                 print(f"Email de renvoi HTML envoyé à {user.email}")
             except Exception as e:
