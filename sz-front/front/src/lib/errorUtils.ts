@@ -199,9 +199,13 @@ export function getFrenchError(err: any): TranslatedError {
   }
 
   if (status === 404) {
+    const lines = buildMessagesFromData(data)
+    const description = lines.length > 0
+      ? lines.join('\n')
+      : 'La ressource demandée est introuvable.'
     return {
       title: 'Introuvable',
-      description: 'La ressource demandée est introuvable.',
+      description,
       variant: 'destructive',
       status,
       code,

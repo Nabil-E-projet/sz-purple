@@ -9,6 +9,7 @@ import {
   Home,
   LogIn
 } from 'lucide-react';
+import { API_BASE_URL } from '@/lib/api';
 
 const EmailVerificationResult = () => {
   const [searchParams] = useSearchParams();
@@ -32,7 +33,7 @@ const EmailVerificationResult = () => {
     if (redirectToken) {
       const verifyEmail = async () => {
         try {
-          const response = await fetch(`http://localhost:8000/api/verify-email/?token=${encodeURIComponent(redirectToken)}`, {
+          const response = await fetch(`${API_BASE_URL}/api/verify-email/?token=${encodeURIComponent(redirectToken)}`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
@@ -80,7 +81,7 @@ const EmailVerificationResult = () => {
         // Si pas de statut dans l'URL, faire l'appel API classique
         const verifyEmail = async () => {
           try {
-            const response = await fetch(`http://localhost:8000/api/verify-email/?token=${encodeURIComponent(actualToken)}`, {
+            const response = await fetch(`${API_BASE_URL}/api/verify-email/?token=${encodeURIComponent(actualToken)}`, {
               method: 'GET',
               headers: {
                 'Content-Type': 'application/json',
